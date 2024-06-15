@@ -1,0 +1,2215 @@
+
+FITNAT Theme blog page main birds eye view code main whole
+
+
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, Link as RouterLink, useNavigate } from 'react-router-dom';
+// import './Dashboard.css';
+import {
+  Typography, Box,Container, Stack, Table, TableBody, Button, Grid, Card, TableCell, TableContainer, TableHead, TableRow, Paper, Checkbox, FormControlLabel, FormGroup, List, ListItem, ListItemText, Dialog, DialogActions, DialogContent, DialogTitle, TablePagination,
+} from '@mui/material';
+
+// import Stack from '@mui/material/Stack';
+// import Button from '@mui/material/Button';
+// import Container from '@mui/material/Container';
+// import Grid from '@mui/material/Unstable_Grid2';
+// import Typography from '@mui/material/Typography';
+
+import { posts } from 'src/_mock/blog';
+
+import Iconify from 'src/components/iconify';
+
+import PostCard from '../post-card';
+import PostSort from '../post-sort';
+import PostSearch from '../post-search';
+// import formatDistanceStrictWithOptions from 'date-fns/esm/fp/formatDistanceStrictWithOptions/index.js';
+
+// ----------------------------------------------------------------------
+
+
+
+
+const packageDetails = {
+  Gold: 4,
+  Premium: 8,
+  Deluxe: 12,
+};
+
+ const users = [
+  {
+    id: 1,
+    details: [
+      { label: 'Name', value: 'John Doe' },
+      { label: 'Package', value: 'Premium' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-01-01' },
+      { label: 'End Date', value: '2023-12-31' }
+    ]
+  },
+  {
+    id: 2,
+    details: [
+      { label: 'Name', value: 'Jane Smith' },
+      { label: 'Package', value: 'Premium' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-02-01' },
+      { label: 'End Date', value: '2023-11-30' }
+    ]
+  },
+  // Adding 10 more users
+  {
+    id: 3,
+    details: [
+      { label: 'Name', value: 'Michael Brown' },
+      { label: 'Package', value: 'Deluxe' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-03-01' },
+      { label: 'End Date', value: '2023-12-31' }
+    ]
+  },
+  {
+    id: 4,
+    details: [
+      { label: 'Name', value: 'Emily Davis' },
+      { label: 'Package', value: 'Premium' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-04-01' },
+      { label: 'End Date', value: '2023-12-31' }
+    ]
+  },
+  {
+    id: 5,
+    details: [
+      { label: 'Name', value: 'David Wilson' },
+      { label: 'Package', value: 'Gold' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-05-01' },
+      { label: 'End Date', value: '2023-12-31' }
+    ]
+  },
+  {
+    id: 6,
+    details: [
+      { label: 'Name', value: 'Olivia Martinez' },
+      { label: 'Package', value: 'Gold' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-06-01' },
+      { label: 'End Date', value: '2023-12-31' }
+    ]
+  },
+  {
+    id: 7,
+    details: [
+      { label: 'Name', value: 'James Johnson' },
+      { label: 'Package', value: 'Deluxe' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-07-01' },
+      { label: 'End Date', value: '2023-12-31' }
+    ]
+  },
+  {
+    id: 8,
+    details: [
+      { label: 'Name', value: 'Sophia Lee' },
+      { label: 'Package', value: 'Gold' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-08-01' },
+      { label: 'End Date', value: '2023-12-31' }
+    ]
+  },
+  {
+    id: 9,
+    details: [
+      { label: 'Name', value: 'Robert White' },
+      { label: 'Package', value: 'Premium' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-09-01' },
+      { label: 'End Date', value: '2023-12-31' }
+    ]
+  },
+  {
+    id: 10,
+    details: [
+      { label: 'Name', value: 'Emma Garcia' },
+      { label: 'Package', value: 'Premium' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-10-01' },
+      { label: 'End Date', value: '2023-12-31' }
+    ]
+  },
+  {
+    id: 11,
+    details: [
+      { label: 'Name', value: 'Daniel Harris' },
+      { label: 'Package', value: 'Deluxe' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-11-01' },
+      { label: 'End Date', value: '2023-12-31' }
+    ]
+  },
+  {
+    id: 12,
+    details: [
+      { label: 'Name', value: 'Isabella Clark' },
+      { label: 'Package', value: 'Premium' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-12-01' },
+      { label: 'End Date', value: '2023-12-31' }
+    ]
+  }
+];
+
+
+export default function BlogView() {
+
+  const navigate = useNavigate();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [columnVisibility, setColumnVisibility] = useState({
+    Name: true,
+    'Start Date': true,
+    'End Date': true,
+    Package: true,
+    ' Link': true,
+    // Initialize all weeks to be visible by default
+    ...Array.from({ length: 12 }, (_, i) => `Week ${i + 1}`).reduce((acc, week) => ({ ...acc, [week]: true }), {})
+  });
+
+  const [updateClicked, setUpdateClicked] = useState({});
+  const [tasksClicked, setTasksClicked] = useState({});
+  const [filterDialogOpen, setFilterDialogOpen] = useState(false);
+  ----------------------------------------------------------------------------------
+  const [addPatientDialogOpen, setAddPatientDialogOpen] = useState(false);
+  ----------------------------------------------------------------------------------
+  // Pagination state
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const toggleColumnVisibility = (column) => {
+    setColumnVisibility((prev) => ({
+      ...prev,
+      [column]: !prev[column]
+    }));
+  };
+
+  const handleUpdate = (userId, week) => {
+    setUpdateClicked((prev) => ({
+      ...prev,
+      [`${userId}-${week}`]: !prev[`${userId}-${week}`]
+    }));
+  };
+
+  const handleTasks = (userId, week) => {
+    setTasksClicked((prev) => ({
+      ...prev,
+      [`${userId}-${week}`]: !prev[`${userId}-${week}`]
+    }));
+  };
+
+------------------------------------------------------------------
+
+ const handleAddPatientOpen = () => {
+    setAddPatientDialogOpen(true);
+  };
+
+  const handleAddPatientClose = () => {
+    setAddPatientDialogOpen(false);
+  };
+
+----------------------------------------------------------------
+
+  const toggleDrawer = () => {
+    setDrawerOpen(!drawerOpen);
+  };
+
+  const generateWeeks = (packageType) => {
+    const numberOfWeeks = packageDetails[packageType];
+    return Array.from({ length: numberOfWeeks }, (_, i) => `Week ${i + 1}`);
+  };
+
+  const handleFilterOpen = () => {
+    setFilterDialogOpen(true);
+  };
+
+  const handleFilterClose = () => {
+    setFilterDialogOpen(false);
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+// export default function BlogView() {
+  return (
+    <Container>
+      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+        <Typography variant="h4">Dashboard</Typography>
+
+        <Button 
+        variant="contained"  
+        style={{ width: '16%', display: 'flex', justifyContent: 'space-between', alignItems: 'right' }}
+          color="inherit"
+          startIcon={<Iconify icon="eva:plus-fill" />}
+        >
+          Add Patient
+        </Button>
+      </Stack>
+---------------------------------------------------------
+      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+        <Typography variant="h4">Dashboard</Typography>
+        <Button
+          variant="contained"
+          style={{ width: '16%', display: 'flex', justifyContent: 'space-between', alignItems: 'right' }}
+          color="inherit"
+          startIcon={<Iconify icon="eva:plus-fill" />}
+          onClick={handleAddPatientOpen}
+        >
+          Add Patient
+        </Button>
+      </Stack>
+--------------------------------------------------------
+
+    {/* <Grid>
+      Hello
+
+    </Grid> */}
+    <Box display="flex">
+      {/* <Box className={`menu-bar ${drawerOpen ? 'open' : 'closed'}`}>   */}
+      {/* <Box className={`menu-bar ${drawerOpen ? 'open' : 'closed'}`} display="flex" flexDirection="row" justifyContent="center" alignItems="center"> */}
+        {/* <List>
+          <Typography variant="h4" component="h4" alignText='center' gutterBottom>
+            FITNAT
+          </Typography>
+          <ListItem button component={RouterLink} to="/page1">
+            <ListItemText primary="Add Patient" />
+          </ListItem>
+          <ListItem button component={RouterLink} to="/page2">
+            <ListItemText primary="Profile" />
+          </ListItem>
+          <ListItem button component={RouterLink} to="/page3">
+            <ListItemText primary="Logout" />
+          </ListItem>
+        </List> */}
+      {/* </Box> */}
+      <Box style={{ flex: 1, transition: 'margin-left 0.3s ease', marginLeft: drawerOpen ? '250px' : '0', display: 'flex', flexDirection: 'column', alignItems: 'baseline' }}>
+        <Box my={1} style={{ width: '95%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          {/* <Typography variant="h4" component="h4" gutterBottom>
+            Dashboard
+          </Typography> */}
+
+          <Button variant="outlined" 
+          // startIcon={<FilterListIcon />} 
+          onClick={handleFilterOpen}>
+            Collapse Columns
+          </Button>
+        </Box>
+
+        <Dialog
+          open={filterDialogOpen}
+          onClose={handleFilterClose}
+          maxWidth="xs"
+          position="fixed"
+          right={0}
+          top={50}
+          style={{ width: '300px', zIndex: 1 }}
+        >
+          <DialogTitle>Collapse Columns</DialogTitle>
+          <DialogContent>
+            <FormGroup>
+              {users[0].details.map((detail) => (
+                <FormControlLabel
+                  key={detail.label}
+                  control={
+                    <Checkbox
+                      checked={columnVisibility[detail.label]}
+                      onChange={() => toggleColumnVisibility(detail.label)}
+                      color="primary"
+                    />
+                  }
+                  label={detail.label}
+                />
+              ))}
+              {Array.from({ length: 12 }, (_, i) => `Week ${i + 1}`).map((week) => (
+                <FormControlLabel
+                  key={week}
+                  control={
+                    <Checkbox
+                      checked={columnVisibility[week]}
+                      onChange={() => toggleColumnVisibility(week)}
+                      color="primary"
+                    />
+                  }
+                  label={week}
+                />
+              ))}
+            </FormGroup>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleFilterClose} color="primary">
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        <Grid xs={12} md={2} margin={5}>
+          <Card elevation={10} backgroundColor="#000000" sx={{ padding: 3, backgroundColor: "#BFF6C3" }}>
+            <TableContainer component={Paper} style={{ width: 'auto', marginInline: 'auto', overflowX: 'auto' }}>
+              <Table size="small" aria-label="user details table">
+                <TableHead>
+                  <TableRow>
+                    {users[0].details.map((detail) => (
+                      columnVisibility[detail.label] && (
+                        <TableCell key={detail.label} style={{ padding: '8px', fontSize: '0.975rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 'bold', position: 'sticky', top: 0, backgroundColor: '#ACE1AF' }}>
+                          {detail.label}
+                        </TableCell>
+                      )
+                    ))}
+                    {Array.from({ length: 12 }, (_, i) => `Week ${i + 1}`).map((week) => (
+                      columnVisibility[week] && (
+                        <TableCell key={week} colSpan={2} style={{ padding: '8px', fontSize: '0.975rem', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 'bold', position: 'sticky', top: 0, backgroundColor: '#ACE1AF' }}>
+                          {week}
+                        </TableCell>
+                      )
+                    ))}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {users.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((user, index) => (
+                    <TableRow key={user.id} style={{ backgroundColor: (page * rowsPerPage + index) % 2 === 0 ? '#8DECB4' : '#ffffff' }}>
+                      {user.details.map((detail) => (
+                        columnVisibility[detail.label] && (
+                          <TableCell key={detail.label} style={{ padding: '8px', fontSize: '0.875rem', whiteSpace: 'nowrap', alignItems: 'center', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {detail.label === 'Link' ? (
+                              <Button
+                                variant="contained"
+                                size="small"
+                                color="primary"
+                                // startIcon={<LinkIcon />}
+                                href={detail.value}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{ borderRadius: '50%', minWidth: '40px' }} // Adding styles for rounding the button
+                              >
+                                {/* Rendering only the link icon */}
+                                {/* <LinkIcon /> */}
+                              </Button>
+                            ) : (
+                              detail.value
+                            )}
+                          </TableCell>
+                        )
+                      ))}
+                      {Array.from({ length: 12 }, (_, i) => `Week ${i + 1}`).map((week, i) => (
+                        columnVisibility[week] && (
+                          <React.Fragment key={`${week}-${user.id}`}>
+                            <TableCell style={{ padding: '8px', fontSize: '0.875rem', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              <Button
+                                variant="contained"
+                                size="large"
+                                color={updateClicked[`${user.id}-${week}`] ? 'success' : 'inherit'}
+                                onClick={() => handleUpdate(user.id, week)}
+                                style={{ minWidth: '40px', padding: '4px 8px' }}
+                                disabled={i >= packageDetails[user.details.find(detail => detail.label === 'Package').value]}
+                              >
+                                Upd
+                              </Button>
+                            </TableCell>
+                            <TableCell style={{ padding: '8px', fontSize: '0.875rem', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              <Button
+                                variant="contained"
+                                size="large"
+                                color={tasksClicked[`${user.id}-${week}`] ? 'success' : 'info'}
+                                onClick={() => handleTasks(user.id, week)}
+                                style={{ minWidth: '40px', padding: '4px 8px' }}
+                                disabled={i >= packageDetails[user.details.find(detail => detail.label === 'Package').value]}
+                              >
+                                Tks
+                              </Button>
+                            </TableCell>
+                          </React.Fragment>
+                        )
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              <TablePagination
+                rowsPerPageOptions={[5, 15, 30]}
+                component="div"
+                count={users.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
+            </TableContainer>
+          </Card>
+        </Grid>
+      </Box>
+    </Box>
+
+
+      {/* <Stack mb={5} direction="row" alignItems="center" justifyContent="space-between">
+        <PostSearch posts={posts} />
+        <PostSort
+          options={[
+            { value: 'latest', label: 'Latest' },
+            { value: 'popular', label: 'Popular' },
+            { value: 'oldest', label: 'Oldest' },
+          ]}
+        />
+      </Stack> */}
+
+      {/* <Grid container spacing={3}>
+        {posts.map((post, index) => (
+          <PostCard key={post.id} post={post} index={index} />
+        ))}
+      </Grid> */}
+
+
+      <Dialog open={addPatientDialogOpen} onClose={handleAddPatientClose}>
+        <DialogTitle>Add Patient</DialogTitle>
+        <DialogContent>
+          <form>
+            <TextField
+              margin="dense"
+              id="name"
+              label="Name"
+              type="text"
+              fullWidth
+              variant="outlined"
+            />
+            <TextField
+              margin="dense"
+              id="start-date"
+              label="Start Date"
+              type="date"
+              fullWidth
+              variant="outlined"
+              InputLabelProps={{ shrink: true }}
+            />
+            <TextField
+              margin="dense"
+              id="end-date"
+              label="End Date"
+              type="date"
+              fullWidth
+              variant="outlined"
+              InputLabelProps={{ shrink: true }}
+            />
+            <TextField
+              margin="dense"
+              id="package"
+              label="Package"
+              type="text"
+              fullWidth
+              variant="outlined"
+            />
+            <TextField
+              margin="dense"
+              id="link"
+              label="Link"
+              type="url"
+              fullWidth
+              variant="outlined"
+            />
+            {/* Add more fields as necessary */}
+          </form>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleAddPatientClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleAddPatientClose} color="primary">
+            Add
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Container>
+  );
+}
+
+
+
+
+
+
+
+
+
+
+
+
+===========================================================================================================================
+Add new patient feature is implemented in this code
+
+
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, Link as RouterLink, useNavigate } from 'react-router-dom';
+import {
+  Typography, Box, Container, Stack, Table, TableBody, Button, Grid, Card, TableCell, TableContainer, TableHead, TableRow, Paper, Checkbox, FormControlLabel, FormGroup, Dialog, DialogActions, DialogContent, DialogTitle, TablePagination, TextField,
+} from '@mui/material';
+import Iconify from 'src/components/iconify';
+
+const packageDetails = {
+  Gold: 4,
+  Premium: 8,
+  Deluxe: 12,
+};
+
+const users = [
+  {
+    id: 1,
+    details: [
+      { label: 'Name', value: 'John Doe' },
+      { label: 'Package', value: 'Premium' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-01-01' },
+      { label: 'End Date', value: '2023-12-31' }
+    ]
+  },
+  {
+    id: 2,
+    details: [
+      { label: 'Name', value: 'Jane Smith' },
+      { label: 'Package', value: 'Premium' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-02-01' },
+      { label: 'End Date', value: '2023-11-30' }
+    ]
+  },
+  // Adding 10 more users
+  {
+    id: 3,
+    details: [
+      { label: 'Name', value: 'Michael Brown' },
+      { label: 'Package', value: 'Deluxe' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-03-01' },
+      { label: 'End Date', value: '2023-12-31' }
+    ]
+  },
+  {
+    id: 4,
+    details: [
+      { label: 'Name', value: 'Emily Davis' },
+      { label: 'Package', value: 'Premium' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-04-01' },
+      { label: 'End Date', value: '2023-12-31' }
+    ]
+  },
+  {
+    id: 5,
+    details: [
+      { label: 'Name', value: 'David Wilson' },
+      { label: 'Package', value: 'Gold' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-05-01' },
+      { label: 'End Date', value: '2023-12-31' }
+    ]
+  },
+  {
+    id: 6,
+    details: [
+      { label: 'Name', value: 'Olivia Martinez' },
+      { label: 'Package', value: 'Gold' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-06-01' },
+      { label: 'End Date', value: '2023-12-31' }
+    ]
+  },
+  {
+    id: 7,
+    details: [
+      { label: 'Name', value: 'James Johnson' },
+      { label: 'Package', value: 'Deluxe' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-07-01' },
+      { label: 'End Date', value: '2023-12-31' }
+    ]
+  },
+  {
+    id: 8,
+    details: [
+      { label: 'Name', value: 'Sophia Lee' },
+      { label: 'Package', value: 'Gold' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-08-01' },
+      { label: 'End Date', value: '2023-12-31' }
+    ]
+  },
+  {
+    id: 9,
+    details: [
+      { label: 'Name', value: 'Robert White' },
+      { label: 'Package', value: 'Premium' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-09-01' },
+      { label: 'End Date', value: '2023-12-31' }
+    ]
+  },
+  {
+    id: 10,
+    details: [
+      { label: 'Name', value: 'Emma Garcia' },
+      { label: 'Package', value: 'Premium' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-10-01' },
+      { label: 'End Date', value: '2023-12-31' }
+    ]
+  },
+  {
+    id: 11,
+    details: [
+      { label: 'Name', value: 'Daniel Harris' },
+      { label: 'Package', value: 'Deluxe' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-11-01' },
+      { label: 'End Date', value: '2023-12-31' }
+    ]
+  },
+  {
+    id: 12,
+    details: [
+      { label: 'Name', value: 'Isabella Clark' },
+      { label: 'Package', value: 'Premium' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-12-01' },
+      { label: 'End Date', value: '2023-12-31' }
+    ]
+  }
+];
+
+export default function BlogView() {
+  const navigate = useNavigate();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [columnVisibility, setColumnVisibility] = useState({
+    Name: true,
+    'Start Date': true,
+    'End Date': true,
+    Package: true,
+    Link: true,
+    ...Array.from({ length: 12 }, (_, i) => `Week ${i + 1}`).reduce((acc, week) => ({ ...acc, [week]: true }), {}),
+  });
+
+  const [updateClicked, setUpdateClicked] = useState({});
+  const [tasksClicked, setTasksClicked] = useState({});
+  const [filterDialogOpen, setFilterDialogOpen] = useState(false);
+  const [addPatientDialogOpen, setAddPatientDialogOpen] = useState(false);
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const toggleColumnVisibility = (column) => {
+    setColumnVisibility((prev) => ({
+      ...prev,
+      [column]: !prev[column],
+    }));
+  };
+
+  const handleUpdate = (userId, week) => {
+    setUpdateClicked((prev) => ({
+      ...prev,
+      [`${userId}-${week}`]: !prev[`${userId}-${week}`],
+    }));
+  };
+
+  const handleTasks = (userId, week) => {
+    setTasksClicked((prev) => ({
+      ...prev,
+      [`${userId}-${week}`]: !prev[`${userId}-${week}`],
+    }));
+  };
+
+  const toggleDrawer = () => {
+    setDrawerOpen(!drawerOpen);
+  };
+
+  const generateWeeks = (packageType) => {
+    const numberOfWeeks = packageDetails[packageType];
+    return Array.from({ length: numberOfWeeks }, (_, i) => `Week ${i + 1}`);
+  };
+
+  const handleFilterOpen = () => {
+    setFilterDialogOpen(true);
+  };
+
+  const handleFilterClose = () => {
+    setFilterDialogOpen(false);
+  };
+
+  const handleAddPatientOpen = () => {
+    setAddPatientDialogOpen(true);
+  };
+
+  const handleAddPatientClose = () => {
+    setAddPatientDialogOpen(false);
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  return (
+    <Container>
+      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+        <Typography variant="h4">Dashboard</Typography>
+        <Button
+          variant="contained"
+          style={{ width: '16%', display: 'flex', justifyContent: 'space-between', alignItems: 'right' }}
+          color="inherit"
+          startIcon={<Iconify icon="eva:plus-fill" />}
+          onClick={handleAddPatientOpen}
+        >
+          Add Patient
+        </Button>
+      </Stack>
+
+      <Box display="flex">
+        <Box style={{ flex: 1, transition: 'margin-left 0.3s ease', marginLeft: drawerOpen ? '250px' : '0', display: 'flex', flexDirection: 'column', alignItems: 'baseline' }}>
+          <Box my={1} style={{ width: '95%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Button variant="outlined" onClick={handleFilterOpen}>
+              Collapse Columns
+            </Button>
+          </Box>
+
+          <Dialog
+            open={filterDialogOpen}
+            onClose={handleFilterClose}
+            maxWidth="xs"
+            position="fixed"
+            right={0}
+            top={50}
+            style={{ width: '300px', zIndex: 1 }}
+          >
+            <DialogTitle>Collapse Columns</DialogTitle>
+            <DialogContent>
+              <FormGroup>
+                {users[0].details.map((detail) => (
+                  <FormControlLabel
+                    key={detail.label}
+                    control={
+                      <Checkbox
+                        checked={columnVisibility[detail.label]}
+                        onChange={() => toggleColumnVisibility(detail.label)}
+                        color="primary"
+                      />
+                    }
+                    label={detail.label}
+                  />
+                ))}
+                {Array.from({ length: 12 }, (_, i) => `Week ${i + 1}`).map((week) => (
+                  <FormControlLabel
+                    key={week}
+                    control={
+                      <Checkbox
+                        checked={columnVisibility[week]}
+                        onChange={() => toggleColumnVisibility(week)}
+                        color="primary"
+                      />
+                    }
+                    label={week}
+                  />
+                ))}
+              </FormGroup>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleFilterClose} color="primary">
+                Close
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <Card elevation={10} backgroundColor="#000000" sx={{ padding: 3, backgroundColor: "#BFF6C3" }}>
+                <TableContainer component={Paper} style={{ width: 'auto', marginInline: 'auto', overflowX: 'auto' }}>
+                  <Table size="small" aria-label="user details table">
+                    <TableHead>
+                      <TableRow>
+                        {users[0].details.map((detail) => (
+                          columnVisibility[detail.label] && (
+                            <TableCell key={detail.label} style={{ padding: '8px', fontSize: '0.975rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 'bold', position: 'sticky', top: 0, backgroundColor: '#ACE1AF' }}>
+                              {detail.label}
+                            </TableCell>
+                          )
+                        ))}
+                        {Array.from({ length: 12 }, (_, i) => `Week ${i + 1}`).map((week) => (
+                          columnVisibility[week] && (
+                            <TableCell key={week} colSpan={2} style={{ padding: '8px', fontSize: '0.975rem', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 'bold', position: 'sticky', top: 0, backgroundColor: '#ACE1AF' }}>
+                              {week}
+                            </TableCell>
+                          )
+                        ))}
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {users.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((user, index) => (
+                        <TableRow key={user.id} style={{ backgroundColor: (page * rowsPerPage + index) % 2 === 0 ? '#8DECB4' : '#ffffff' }}>
+                          {user.details.map((detail) => (
+                            columnVisibility[detail.label] && (
+                              <TableCell key={detail.label} style={{ padding: '8px', fontSize: '0.875rem', whiteSpace: 'nowrap', alignItems: 'center', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                {detail.label === 'Link' ? (
+                                  <Button
+                                    variant="contained"
+                                    size="small"
+                                    color="primary"
+                                    href={detail.value}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{ borderRadius: '50%', minWidth: '40px' }}
+                                  >
+                                    Add new Patient
+                                  </Button>
+                                ) : (
+                                  detail.value
+                                )}
+                              </TableCell>
+                            )
+                          ))}
+                          {Array.from({ length: 12 }, (_, i) => `Week ${i + 1}`).map((week, i) => (
+                            columnVisibility[week] && (
+                              <React.Fragment key={`${week}-${user.id}`}>
+                                <TableCell style={{ padding: '8px', fontSize: '0.875rem', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                  <Button
+                                    variant="contained"
+                                    size="large"
+                                    color={updateClicked[`${user.id}-${week}`] ? 'success' : 'inherit'}
+                                    onClick={() => handleUpdate(user.id, week)}
+                                    style={{ minWidth: '40px', padding: '4px 8px' }}
+                                    disabled={i >= packageDetails[user.details[3].value]}
+                                  >
+                                    Update
+                                  </Button>
+                                </TableCell>
+                                <TableCell style={{ padding: '8px', fontSize: '0.875rem', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                  <Button
+                                    variant="contained"
+                                    size="large"
+                                    color={tasksClicked[`${user.id}-${week}`] ? 'success' : 'inherit'}
+                                    onClick={() => handleTasks(user.id, week)}
+                                    style={{ minWidth: '40px', padding: '4px 8px' }}
+                                    disabled={i >= packageDetails[user.details[3].value]}
+                                  >
+                                    Tasks
+                                  </Button>
+                                </TableCell>
+                              </React.Fragment>
+                            )
+                          ))}
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+                <TablePagination
+                  rowsPerPageOptions={[10, 25, 50]}
+                  component="div"
+                  count={users.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+              </Card>
+            </Grid>
+          </Grid>
+        </Box>
+      </Box>
+
+      <Dialog open={addPatientDialogOpen} onClose={handleAddPatientClose}>
+        <DialogTitle>Add Patient</DialogTitle>
+        <DialogContent>
+          <form>
+            <TextField
+              margin="dense"
+              id="name"
+              label="Name"
+              type="text"
+              fullWidth
+              variant="outlined"
+            />
+            <TextField
+              margin="dense"
+              id="start-date"
+              label="Start Date"
+              type="date"
+              fullWidth
+              variant="outlined"
+              InputLabelProps={{ shrink: true }}
+            />
+            <TextField
+              margin="dense"
+              id="end-date"
+              label="End Date"
+              type="date"
+              fullWidth
+              variant="outlined"
+              InputLabelProps={{ shrink: true }}
+            />
+            <TextField
+              margin="dense"
+              id="package"
+              label="Package"
+              type="text"
+              fullWidth
+              variant="outlined"
+            />
+            <TextField
+              margin="dense"
+              id="link"
+              label="Link"
+              type="url"
+              fullWidth
+              variant="outlined"
+            />
+            {/* Add more fields as necessary */}
+          </form>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleAddPatientClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleAddPatientClose} color="primary">
+            Add
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Container>
+  );
+}
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+latest perfect code before of add patient responsivness setting
+
+
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, Link as RouterLink, useNavigate } from 'react-router-dom';
+// import './Dashboard.css';
+import {
+  Typography, Box,Container,TextField, Stack, Table, TableBody, Button, Grid, Card, TableCell, TableContainer, TableHead, TableRow, Paper, Checkbox, FormControlLabel, FormGroup, List, ListItem, ListItemText, Dialog, DialogActions, DialogContent, DialogTitle, TablePagination,
+} from '@mui/material';
+
+// import Stack from '@mui/material/Stack';
+// import Button from '@mui/material/Button';
+// import Container from '@mui/material/Container';
+// import Grid from '@mui/material/Unstable_Grid2';
+// import Typography from '@mui/material/Typography';
+
+import { posts } from 'src/_mock/blog';
+
+import Iconify from 'src/components/iconify';
+
+import PostCard from '../post-card';
+import PostSort from '../post-sort';
+import PostSearch from '../post-search';
+// import formatDistanceStrictWithOptions from 'date-fns/esm/fp/formatDistanceStrictWithOptions/index.js';
+
+// ----------------------------------------------------------------------
+
+
+
+
+const packageDetails = {
+  Gold: 4,
+  Premium: 8,
+  Deluxe: 12,
+};
+
+ const users = [
+  {
+    id: 1,
+    details: [
+      { label: 'Name', value: 'John Doe' },
+      { label: 'Package', value: 'Premium' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-01-01' },
+      { label: 'End Date', value: '2023-12-31' }
+    ]
+  },
+  {
+    id: 2,
+    details: [
+      { label: 'Name', value: 'Jane Smith' },
+      { label: 'Package', value: 'Premium' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-02-01' },
+      { label: 'End Date', value: '2023-11-30' }
+    ]
+  },
+  // Adding 10 more users
+  {
+    id: 3,
+    details: [
+      { label: 'Name', value: 'Michael Brown' },
+      { label: 'Package', value: 'Deluxe' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-03-01' },
+      { label: 'End Date', value: '2023-12-31' }
+    ]
+  },
+  {
+    id: 4,
+    details: [
+      { label: 'Name', value: 'Emily Davis' },
+      { label: 'Package', value: 'Premium' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-04-01' },
+      { label: 'End Date', value: '2023-12-31' }
+    ]
+  },
+  {
+    id: 5,
+    details: [
+      { label: 'Name', value: 'David Wilson' },
+      { label: 'Package', value: 'Gold' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-05-01' },
+      { label: 'End Date', value: '2023-12-31' }
+    ]
+  },
+  {
+    id: 6,
+    details: [
+      { label: 'Name', value: 'Olivia Martinez' },
+      { label: 'Package', value: 'Gold' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-06-01' },
+      { label: 'End Date', value: '2023-12-31' }
+    ]
+  },
+  {
+    id: 7,
+    details: [
+      { label: 'Name', value: 'James Johnson' },
+      { label: 'Package', value: 'Deluxe' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-07-01' },
+      { label: 'End Date', value: '2023-12-31' }
+    ]
+  },
+  {
+    id: 8,
+    details: [
+      { label: 'Name', value: 'Sophia Lee' },
+      { label: 'Package', value: 'Gold' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-08-01' },
+      { label: 'End Date', value: '2023-12-31' }
+    ]
+  },
+  {
+    id: 9,
+    details: [
+      { label: 'Name', value: 'Robert White' },
+      { label: 'Package', value: 'Premium' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-09-01' },
+      { label: 'End Date', value: '2023-12-31' }
+    ]
+  },
+  {
+    id: 10,
+    details: [
+      { label: 'Name', value: 'Emma Garcia' },
+      { label: 'Package', value: 'Premium' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-10-01' },
+      { label: 'End Date', value: '2023-12-31' }
+    ]
+  },
+  {
+    id: 11,
+    details: [
+      { label: 'Name', value: 'Daniel Harris' },
+      { label: 'Package', value: 'Deluxe' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-11-01' },
+      { label: 'End Date', value: '2023-12-31' }
+    ]
+  },
+  {
+    id: 12,
+    details: [
+      { label: 'Name', value: 'Isabella Clark' },
+      { label: 'Package', value: 'Premium' },
+      { label: 'Link', value: 'http://example.com/exercise1' },
+      { label: 'Start Date', value: '2023-12-01' },
+      { label: 'End Date', value: '2023-12-31' }
+    ]
+  }
+];
+
+
+export default function BlogView() {
+
+  const navigate = useNavigate();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [columnVisibility, setColumnVisibility] = useState({
+    Name: true,
+    'Start Date': true,
+    'End Date': true,
+    Package: true,
+    ' Link': true,
+    // Initialize all weeks to be visible by default
+    ...Array.from({ length: 12 }, (_, i) => `Week ${i + 1}`).reduce((acc, week) => ({ ...acc, [week]: true }), {})
+  });
+
+  const [updateClicked, setUpdateClicked] = useState({});
+  const [tasksClicked, setTasksClicked] = useState({});
+  const [filterDialogOpen, setFilterDialogOpen] = useState(false);
+  const [addPatientDialogOpen, setAddPatientDialogOpen] = useState(false);
+  // Pagination state
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const toggleColumnVisibility = (column) => {
+    setColumnVisibility((prev) => ({
+      ...prev,
+      [column]: !prev[column]
+    }));
+  };
+
+  const handleUpdate = (userId, week) => {
+    setUpdateClicked((prev) => ({
+      ...prev,
+      [`${userId}-${week}`]: !prev[`${userId}-${week}`]
+    }));
+  };
+
+  const handleTasks = (userId, week) => {
+    setTasksClicked((prev) => ({
+      ...prev,
+      [`${userId}-${week}`]: !prev[`${userId}-${week}`]
+    }));
+  };
+
+
+ const handleAddPatientOpen = () => {
+    setAddPatientDialogOpen(true);
+  };
+
+  const handleAddPatientClose = () => {
+    setAddPatientDialogOpen(false);
+  };
+
+
+  const toggleDrawer = () => {
+    setDrawerOpen(!drawerOpen);
+  };
+
+  const generateWeeks = (packageType) => {
+    const numberOfWeeks = packageDetails[packageType];
+    return Array.from({ length: numberOfWeeks }, (_, i) => `Week ${i + 1}`);
+  };
+
+  const handleFilterOpen = () => {
+    setFilterDialogOpen(true);
+  };
+
+  const handleFilterClose = () => {
+    setFilterDialogOpen(false);
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+// export default function BlogView() {
+  return (
+    <Container>
+      
+      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+        <Typography variant="h4">Dashboard</Typography>
+        <Button
+          variant="contained"
+          style={{ width: '16%', display: 'flex', justifyContent: 'space-between', alignItems: 'right' }}
+          color="inherit"
+          startIcon={<Iconify icon="eva:plus-fill" />}
+          onClick={handleAddPatientOpen}
+        >
+          Add Patient
+        </Button>
+      </Stack>
+
+    {/* <Grid>
+      Hello
+
+    </Grid> */}
+    <Box display="flex">
+      {/* <Box className={`menu-bar ${drawerOpen ? 'open' : 'closed'}`}>   */}
+      {/* <Box className={`menu-bar ${drawerOpen ? 'open' : 'closed'}`} display="flex" flexDirection="row" justifyContent="center" alignItems="center"> */}
+        {/* <List>
+          <Typography variant="h4" component="h4" alignText='center' gutterBottom>
+            FITNAT
+          </Typography>
+          <ListItem button component={RouterLink} to="/page1">
+            <ListItemText primary="Add Patient" />
+          </ListItem>
+          <ListItem button component={RouterLink} to="/page2">
+            <ListItemText primary="Profile" />
+          </ListItem>
+          <ListItem button component={RouterLink} to="/page3">
+            <ListItemText primary="Logout" />
+          </ListItem>
+        </List> */}
+      {/* </Box> */}
+      <Box style={{ flex: 1, transition: 'margin-left 0.3s ease', marginLeft: drawerOpen ? '250px' : '0', display: 'flex', flexDirection: 'column', alignItems: 'baseline' }}>
+        <Box my={1} style={{ width: '95%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          {/* <Typography variant="h4" component="h4" gutterBottom>
+            Dashboard
+          </Typography> */}
+
+          <Button variant="outlined" 
+          // startIcon={<FilterListIcon />} 
+          onClick={handleFilterOpen}>
+            Collapse Columns
+          </Button>
+        </Box>
+
+        <Dialog
+          open={filterDialogOpen}
+          onClose={handleFilterClose}
+          maxWidth="xs"
+          position="fixed"
+          right={0}
+          top={50}
+          style={{ width: '300px', zIndex: 1 }}
+        >
+          <DialogTitle>Collapse Columns</DialogTitle>
+          <DialogContent>
+            <FormGroup>
+              {users[0].details.map((detail) => (
+                <FormControlLabel
+                  key={detail.label}
+                  control={
+                    <Checkbox
+                      checked={columnVisibility[detail.label]}
+                      onChange={() => toggleColumnVisibility(detail.label)}
+                      color="primary"
+                    />
+                  }
+                  label={detail.label}
+                />
+              ))}
+              {Array.from({ length: 12 }, (_, i) => `Week ${i + 1}`).map((week) => (
+                <FormControlLabel
+                  key={week}
+                  control={
+                    <Checkbox
+                      checked={columnVisibility[week]}
+                      onChange={() => toggleColumnVisibility(week)}
+                      color="primary"
+                    />
+                  }
+                  label={week}
+                />
+              ))}
+            </FormGroup>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleFilterClose} color="primary">
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        <Grid xs={12} md={2} margin={5}>
+          <Card elevation={10} backgroundColor="#000000" sx={{ padding: 3, backgroundColor: "#BFF6C3" }}>
+            <TableContainer component={Paper} style={{ width: 'auto', marginInline: 'auto', overflowX: 'auto' }}>
+              <Table size="small" aria-label="user details table">
+                <TableHead>
+                  <TableRow>
+                    {users[0].details.map((detail) => (
+                      columnVisibility[detail.label] && (
+                        <TableCell key={detail.label} style={{ padding: '8px', fontSize: '0.975rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 'bold', position: 'sticky', top: 0, backgroundColor: '#ACE1AF' }}>
+                          {detail.label}
+                        </TableCell>
+                      )
+                    ))}
+                    {Array.from({ length: 12 }, (_, i) => `Week ${i + 1}`).map((week) => (
+                      columnVisibility[week] && (
+                        <TableCell key={week} colSpan={2} style={{ padding: '8px', fontSize: '0.975rem', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 'bold', position: 'sticky', top: 0, backgroundColor: '#ACE1AF' }}>
+                          {week}
+                        </TableCell>
+                      )
+                    ))}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {users.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((user, index) => (
+                    <TableRow key={user.id} style={{ backgroundColor: (page * rowsPerPage + index) % 2 === 0 ? '#8DECB4' : '#ffffff' }}>
+                      {user.details.map((detail) => (
+                        columnVisibility[detail.label] && (
+                          <TableCell key={detail.label} style={{ padding: '8px', fontSize: '0.875rem', whiteSpace: 'nowrap', alignItems: 'center', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {detail.label === 'Link' ? (
+                              <Button
+                                variant="contained"
+                                size="small"
+                                color="primary"
+                                // startIcon={<LinkIcon />}
+                                href={detail.value}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{ borderRadius: '50%', minWidth: '40px' }} // Adding styles for rounding the button
+                              >
+                                {/* Rendering only the link icon */}
+                                {/* <LinkIcon /> */}
+                              </Button>
+                            ) : (
+                              detail.value
+                            )}
+                          </TableCell>
+                        )
+                      ))}
+                      {Array.from({ length: 12 }, (_, i) => `Week ${i + 1}`).map((week, i) => (
+                        columnVisibility[week] && (
+                          <React.Fragment key={`${week}-${user.id}`}>
+                            <TableCell style={{ padding: '8px', fontSize: '0.875rem', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              <Button
+                                variant="contained"
+                                size="large"
+                                color={updateClicked[`${user.id}-${week}`] ? 'success' : 'inherit'}
+                                onClick={() => handleUpdate(user.id, week)}
+                                style={{ minWidth: '40px', padding: '4px 8px' }}
+                                disabled={i >= packageDetails[user.details.find(detail => detail.label === 'Package').value]}
+                              >
+                                Upd
+                              </Button>
+                            </TableCell>
+                            <TableCell style={{ padding: '8px', fontSize: '0.875rem', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              <Button
+                                variant="contained"
+                                size="large"
+                                color={tasksClicked[`${user.id}-${week}`] ? 'success' : 'info'}
+                                onClick={() => handleTasks(user.id, week)}
+                                style={{ minWidth: '40px', padding: '4px 8px' }}
+                                disabled={i >= packageDetails[user.details.find(detail => detail.label === 'Package').value]}
+                              >
+                                Tks
+                              </Button>
+                            </TableCell>
+                          </React.Fragment>
+                        )
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              <TablePagination
+                rowsPerPageOptions={[5, 15, 30]}
+                component="div"
+                count={users.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
+            </TableContainer>
+          </Card>
+        </Grid>
+      </Box>
+    </Box>
+
+
+      {/* <Stack mb={5} direction="row" alignItems="center" justifyContent="space-between">
+        <PostSearch posts={posts} />
+        <PostSort
+          options={[
+            { value: 'latest', label: 'Latest' },
+            { value: 'popular', label: 'Popular' },
+            { value: 'oldest', label: 'Oldest' },
+          ]}
+        />
+      </Stack> */}
+
+      {/* <Grid container spacing={3}>
+        {posts.map((post, index) => (
+          <PostCard key={post.id} post={post} index={index} />
+        ))}
+      </Grid> */}
+
+
+      <Dialog open={addPatientDialogOpen} onClose={handleAddPatientClose}>
+        <DialogTitle>Add Patient</DialogTitle>
+        <DialogContent>
+          <form>
+            <TextField
+              margin="dense"
+              id="name"
+              label="Name"
+              type="text"
+              fullWidth
+              variant="outlined"
+            />
+            <TextField
+              margin="dense"
+              id="start-date"
+              label="Start Date"
+              type="date"
+              fullWidth
+              variant="outlined"
+              InputLabelProps={{ shrink: true }}
+            />
+            <TextField
+              margin="dense"
+              id="end-date"
+              label="End Date"
+              type="date"
+              fullWidth
+              variant="outlined"
+              InputLabelProps={{ shrink: true }}
+            />
+            <TextField
+              margin="dense"
+              id="package"
+              label="Package"
+              type="text"
+              fullWidth
+              variant="outlined"
+            />
+            <TextField
+              margin="dense"
+              id="link"
+              label="Link"
+              type="url"
+              fullWidth
+              variant="outlined"
+            />
+            {/* Add more fields as necessary */}
+          </form>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleAddPatientClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleAddPatientClose} color="primary">
+            Add
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Container>
+  );
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+
+
+user-table-row whole main code
+
+
+
+import { useState } from 'react';
+import PropTypes from 'prop-types';
+
+import Stack from '@mui/material/Stack';
+import Avatar from '@mui/material/Avatar';
+import Popover from '@mui/material/Popover';
+import TableRow from '@mui/material/TableRow';
+import Checkbox from '@mui/material/Checkbox';
+import MenuItem from '@mui/material/MenuItem';
+import TableCell from '@mui/material/TableCell';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+
+import Label from 'src/components/label';
+import Iconify from 'src/components/iconify';
+
+// ----------------------------------------------------------------------
+
+export default function UserTableRow({
+  selected,
+  name,
+  avatarUrl,
+  company,
+  role,
+  isVerified,
+  status,
+  handleClick,
+}) {
+  const [open, setOpen] = useState(null);
+
+  const handleOpenMenu = (event) => {
+    setOpen(event.currentTarget);
+  };
+
+  const handleCloseMenu = () => {
+    setOpen(null);
+  };
+
+  return (
+    <>
+      <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
+        <TableCell padding="checkbox">
+          <Checkbox disableRipple checked={selected} onChange={handleClick} />
+        </TableCell>
+
+        <TableCell component="th" scope="row" padding="none">
+          <Stack direction="row" alignItems="center" spacing={2}>
+            <Avatar alt={name} src={avatarUrl} />
+            <Typography variant="subtitle2" noWrap>
+              {name}
+            </Typography>
+          </Stack>
+        </TableCell>
+
+        <TableCell>{company}</TableCell>
+
+        <TableCell>{role}</TableCell>
+
+        <TableCell align="center">{isVerified ? 'Yes' : 'No'}</TableCell>
+
+        <TableCell>
+          <Label color={(status === 'banned' && 'error') || 'success'}>{status}</Label>
+        </TableCell>
+
+        <TableCell align="right">
+          <IconButton onClick={handleOpenMenu}>
+            <Iconify icon="eva:more-vertical-fill" />
+          </IconButton>
+        </TableCell>
+      </TableRow>
+
+      <Popover
+        open={!!open}
+        anchorEl={open}
+        onClose={handleCloseMenu}
+        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+        PaperProps={{
+          sx: { width: 140 },
+        }}
+      >
+        <MenuItem onClick={handleCloseMenu}>
+          <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} />
+          Edit
+        </MenuItem>
+
+        <MenuItem onClick={handleCloseMenu} sx={{ color: 'error.main' }}>
+          <Iconify icon="eva:trash-2-outline" sx={{ mr: 2 }} />
+          Delete
+        </MenuItem>
+      </Popover>
+    </>
+  );
+}
+
+UserTableRow.propTypes = {
+  avatarUrl: PropTypes.any,
+  company: PropTypes.any,
+  handleClick: PropTypes.func,
+  isVerified: PropTypes.any,
+  name: PropTypes.any,
+  role: PropTypes.any,
+  selected: PropTypes.any,
+  status: PropTypes.string,
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
+main code of the user-view page to th beginning
+
+import { useState } from 'react';
+
+import Card from '@mui/material/Card';
+import Stack from '@mui/material/Stack';
+import Table from '@mui/material/Table';
+import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
+import TableBody from '@mui/material/TableBody';
+import Typography from '@mui/material/Typography';
+import TableContainer from '@mui/material/TableContainer';
+import TablePagination from '@mui/material/TablePagination';
+
+import { users } from 'src/_mock/user';
+
+import Iconify from 'src/components/iconify';
+import Scrollbar from 'src/components/scrollbar';
+
+import TableNoData from '../table-no-data';
+import UserTableRow from '../user-table-row';
+import UserTableHead from '../user-table-head';
+import TableEmptyRows from '../table-empty-rows';
+import UserTableToolbar from '../user-table-toolbar';
+import { emptyRows, applyFilter, getComparator } from '../utils';
+
+// ----------------------------------------------------------------------
+
+export default function UserPage() {
+  const [page, setPage] = useState(0);
+
+  const [order, setOrder] = useState('asc');
+
+  const [selected, setSelected] = useState([]);
+
+  const [orderBy, setOrderBy] = useState('name');
+
+  const [filterName, setFilterName] = useState('');
+
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const handleSort = (event, id) => {
+    const isAsc = orderBy === id && order === 'asc';
+    if (id !== '') {
+      setOrder(isAsc ? 'desc' : 'asc');
+      setOrderBy(id);
+    }
+  };
+
+  const handleEdit = (id) => {
+    // Handle edit functionality here
+    console.log('Edit user with id:', id);
+  };
+
+  const handleDelete = (id) => {
+    // Handle delete functionality here
+    console.log('Delete user with id:', id);
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setPage(0);
+    setRowsPerPage(parseInt(event.target.value, 10));
+  };
+
+  const handleFilterByName = (event) => {
+    setPage(0);
+    setFilterName(event.target.value);
+  };
+
+  const dataFiltered = applyFilter({
+    inputData: users,
+    comparator: getComparator(order, orderBy),
+    filterName,
+  });
+
+  const notFound = !dataFiltered.length && !!filterName;
+
+  return (
+    <Container>
+      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+        <Typography variant="h4">Users</Typography>
+
+        <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
+          New User
+        </Button>
+      </Stack>
+
+      <Card>
+        <UserTableToolbar
+          numSelected={selected.length}
+          filterName={filterName}
+          onFilterName={handleFilterByName}
+        />
+
+        <Scrollbar>
+          <TableContainer sx={{ overflow: 'unset' }}>
+            <Table sx={{ minWidth: 800 }}>
+              <UserTableHead
+                order={order}
+                orderBy={orderBy}
+                rowCount={users.length}
+                headLabel={[
+                  { id: 'name', label: 'Name' },
+                  { id: 'company', label: 'Company' },
+                  { id: 'role', label: 'Role' },
+                  { id: 'isVerified', label: 'Verified', align: 'center' },
+                  { id: 'status', label: 'Status' },
+                  { id: 'actions', label: 'Actions', align: 'center' },
+                ]}
+                onRequestSort={handleSort}
+              />
+              <TableBody>
+                {dataFiltered
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row) => (
+                    <UserTableRow
+                      // key={row.id}
+                      // id={row.id}
+                      name={row.name}
+                      role={row.role}
+                      status={row.status}
+                      company={row.company}
+                      avatarUrl={row.avatarUrl}
+                      isVerified={row.isVerified}
+                      onEdit={() => handleEdit(row.id)}
+                      onDelete={() => handleDelete(row.id)}
+                    />
+                  ))}
+
+                <TableEmptyRows
+                  height={77}
+                  emptyRows={emptyRows(page, rowsPerPage, users.length)}
+                />
+
+                {notFound && <TableNoData query={filterName} />}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Scrollbar>
+
+        <TablePagination
+          page={page}
+          component="div"
+          count={users.length}
+          rowsPerPage={rowsPerPage}
+          onPageChange={handleChangePage}
+          rowsPerPageOptions={[5, 10, 25]}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </Card>
+    </Container>
+  );
+}
+
+
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+user-table-head code all the main from tghe scratch
+
+
+import PropTypes from 'prop-types';
+
+import Box from '@mui/material/Box';
+import TableRow from '@mui/material/TableRow';
+import Checkbox from '@mui/material/Checkbox';
+import TableHead from '@mui/material/TableHead';
+import TableCell from '@mui/material/TableCell';
+import TableSortLabel from '@mui/material/TableSortLabel';
+
+import { visuallyHidden } from './utils';
+
+// ----------------------------------------------------------------------
+
+export default function UserTableHead({
+  order,
+  orderBy,
+  rowCount,
+  headLabel,
+  numSelected,
+  onRequestSort,
+  onSelectAllClick,
+}) {
+  const onSort = (property) => (event) => {
+    onRequestSort(event, property);
+  };
+
+  return (
+    <TableHead>
+      <TableRow>
+        <TableCell padding="checkbox">
+          <Checkbox
+            indeterminate={numSelected > 0 && numSelected < rowCount}
+            checked={rowCount > 0 && numSelected === rowCount}
+            onChange={onSelectAllClick}
+          />
+        </TableCell>
+
+        {headLabel.map((headCell) => (
+          <TableCell
+            key={headCell.id}
+            align={headCell.align || 'left'}
+            sortDirection={orderBy === headCell.id ? order : false}
+            sx={{ width: headCell.width, minWidth: headCell.minWidth }}
+          >
+            <TableSortLabel
+              hideSortIcon
+              active={orderBy === headCell.id}
+              direction={orderBy === headCell.id ? order : 'asc'}
+              onClick={onSort(headCell.id)}
+            >
+              {headCell.label}
+              {orderBy === headCell.id ? (
+                <Box sx={{ ...visuallyHidden }}>
+                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                </Box>
+              ) : null}
+            </TableSortLabel>
+          </TableCell>
+        ))}
+      </TableRow>
+    </TableHead>
+  );
+}
+
+UserTableHead.propTypes = {
+  order: PropTypes.oneOf(['asc', 'desc']),
+  orderBy: PropTypes.string,
+  rowCount: PropTypes.number,
+  headLabel: PropTypes.array,
+  numSelected: PropTypes.number,
+  onRequestSort: PropTypes.func,
+  onSelectAllClick: PropTypes.func,
+};
+
+
+
+
+
+
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+app-view page, main page of the fitnat, dashboard whole code main from scratch
+
+
+
+// Main dashboard of the fitnat
+
+
+import { faker } from '@faker-js/faker';
+
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Unstable_Grid2';
+import Typography from '@mui/material/Typography';
+
+import Iconify from 'src/components/iconify';
+
+import AppTasks from '../app-tasks';
+import AppNewsUpdate from '../app-news-update';
+import AppOrderTimeline from '../app-order-timeline';
+import AppCurrentVisits from '../app-current-visits';
+import AppWebsiteVisits from '../app-website-visits';
+import AppWidgetSummary from '../app-widget-summary';
+import AppTrafficBySite from '../app-traffic-by-site';
+import AppCurrentSubject from '../app-current-subject';
+import AppConversionRates from '../app-conversion-rates';
+
+// ----------------------------------------------------------------------
+
+export default function AppView() {
+  return (
+    <Container maxWidth="xl">
+      <Typography variant="h4" sx={{ mb: 5 }}>
+        Hi, Welcome back 👋
+      </Typography>
+
+      <Grid container spacing={3}>
+        <Grid xs={12} sm={6} md={3}>
+          <AppWidgetSummary
+            title="Weekly Sales"
+            total={714000}
+            color="success"
+            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_bag.png" />}
+          />
+        </Grid>
+
+        <Grid xs={12} sm={6} md={3}>
+          <AppWidgetSummary
+            title="New Users"
+            total={1352831}
+            color="info"
+            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_users.png" />}
+          />
+        </Grid>
+
+        <Grid xs={12} sm={6} md={3}>
+          <AppWidgetSummary
+            title="Item Orders"
+            total={1723315}
+            color="warning"
+            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_buy.png" />}
+          />
+        </Grid>
+
+        <Grid xs={12} sm={6} md={3}>
+          <AppWidgetSummary
+            title="Bug Reports"
+            total={234}
+            color="error"
+            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_message.png" />}
+          />
+        </Grid>
+
+        {/* <Grid xs={12} md={6} lg={8}>
+          <AppWebsiteVisits
+            title="Website Visits"
+            subheader="(+43%) than last year"
+            chart={{
+              labels: [
+                '01/01/2003',
+                '02/01/2003',
+                '03/01/2003',
+                '04/01/2003',
+                '05/01/2003',
+                '06/01/2003',
+                '07/01/2003',
+                '08/01/2003',
+                '09/01/2003',
+                '10/01/2003',
+                '11/01/2003',
+              ],
+              series: [
+                {
+                  name: 'Team A',
+                  type: 'column',
+                  fill: 'solid',
+                  data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30],
+                },
+                {
+                  name: 'Team B',
+                  type: 'area',
+                  fill: 'gradient',
+                  data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
+                },
+                {
+                  name: 'Team C',
+                  type: 'line',
+                  fill: 'solid',
+                  data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39],
+                },
+              ],
+            }}
+          />
+        </Grid> */}
+
+        {/* <Grid xs={12} md={6} lg={4}>
+          <AppCurrentVisits
+            title="Current Visits"
+            chart={{
+              series: [
+                { label: 'America', value: 4344 },
+                { label: 'Asia', value: 5435 },
+                { label: 'Europe', value: 1443 },
+                { label: 'Africa', value: 4443 },
+              ],
+            }}
+          />
+        </Grid> */}
+
+        {/* <Grid xs={12} md={6} lg={8}>
+          <AppConversionRates
+            title="Conversion Rates"
+            subheader="(+43%) than last year"
+            chart={{
+              series: [
+                { label: 'Italy', value: 400 },
+                { label: 'Japan', value: 430 },
+                { label: 'China', value: 448 },
+                { label: 'Canada', value: 470 },
+                { label: 'France', value: 540 },
+                { label: 'Germany', value: 580 },
+                { label: 'South Korea', value: 690 },
+                { label: 'Netherlands', value: 1100 },
+                { label: 'United States', value: 1200 },
+                { label: 'United Kingdom', value: 1380 },
+              ],
+            }}
+          />
+        </Grid> */}
+
+        {/* <Grid xs={12} md={6} lg={4}>
+          <AppCurrentSubject
+            title="Current Subject"
+            chart={{
+              categories: ['English', 'History', 'Physics', 'Geography', 'Chinese', 'Math'],
+              series: [
+                { name: 'Series 1', data: [80, 50, 30, 40, 100, 20] },
+                { name: 'Series 2', data: [20, 30, 40, 80, 20, 80] },
+                { name: 'Series 3', data: [44, 76, 78, 13, 43, 10] },
+              ],
+            }}
+          />
+        </Grid> */}
+
+        {/* <Grid xs={12} md={6} lg={8}>
+          <AppNewsUpdate
+            title="News Update"
+            list={[...Array(5)].map((_, index) => ({
+              id: faker.string.uuid(),
+              title: faker.person.jobTitle(),
+              description: faker.commerce.productDescription(),
+              image: `/assets/images/covers/cover_${index + 1}.jpg`,
+              postedAt: faker.date.recent(),
+            }))}
+          />
+        </Grid> */}
+
+        {/* <Grid xs={12} md={6} lg={4}>
+          <AppOrderTimeline
+            title="Order Timeline"
+            list={[...Array(5)].map((_, index) => ({
+              id: faker.string.uuid(),
+              title: [
+                '1983, orders, $4220',
+                '12 Invoices have been paid',
+                'Order #37745 from September',
+                'New order placed #XF-2356',
+                'New order placed #XF-2346',
+              ][index],
+              type: `order${index + 1}`,
+              time: faker.date.past(),
+            }))}
+          />
+        </Grid> */}
+
+        {/* <Grid xs={12} md={6} lg={4}>
+          <AppTrafficBySite
+            title="Traffic by Site"
+            list={[
+              {
+                name: 'FaceBook',
+                value: 323234,
+                icon: <Iconify icon="eva:facebook-fill" color="#1877F2" width={32} />,
+              },
+              {
+                name: 'Google',
+                value: 341212,
+                icon: <Iconify icon="eva:google-fill" color="#DF3E30" width={32} />,
+              },
+              {
+                name: 'Linkedin',
+                value: 411213,
+                icon: <Iconify icon="eva:linkedin-fill" color="#006097" width={32} />,
+              },
+              {
+                name: 'Twitter',
+                value: 443232,
+                icon: <Iconify icon="eva:twitter-fill" color="#1C9CEA" width={32} />,
+              },
+            ]}
+          />
+        </Grid> */}
+
+        {/* <Grid xs={12} md={6} lg={8}>
+          <AppTasks
+            title="Tasks"
+            list={[
+              { id: '1', name: 'Create FireStone Logo' },
+              { id: '2', name: 'Add SCSS and JS files if required' },
+              { id: '3', name: 'Stakeholder Meeting' },
+              { id: '4', name: 'Scoping & Estimations' },
+              { id: '5', name: 'Sprint Showcase' },
+            ]}
+          />
+        </Grid> */}
+      </Grid>
+    </Container>
+  );
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+JordanFlex code from scratch main
+
+
+// src/pages/JordanFlex.jsx
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+
+const JordanFlex = () => {
+  const navigate = useNavigate();
+
+  const handleExit = () => {
+    window.close();
+    // Alternatively, if you want to navigate back in the same window:
+    navigate('/');
+  };
+
+  return (
+    <>
+    <div>
+      <h1>JordanFlex Page</h1>
+      <button onClick={handleExit}>Exit</button>
+    </div>
+
+    
+    </>
+  );
+};
+
+export default JordanFlex;
