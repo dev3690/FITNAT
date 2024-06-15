@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
-import { TableHead, TableRow, TableCell, TableSortLabel } from '@mui/material';
+
+import { TableRow, TableHead, TableCell, TableSortLabel } from '@mui/material';
 
 UserTableHead.propTypes = {
   order: PropTypes.oneOf(['asc', 'desc']).isRequired,

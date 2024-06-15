@@ -1,32 +1,33 @@
 import { useState } from 'react';
+
 import {
   Card,
   Stack,
   Table,
   Button,
+  Dialog,
+  TableRow,
   Container,
   TableBody,
-  Typography,
-  TableContainer,
-  TablePagination,
-  TableRow,
   TableCell,
+  TextField,
+  Typography,
   IconButton,
-  Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
-  TextField,
+  TableContainer,
+  TablePagination,
 } from '@mui/material';
 
-import Scrollbar from 'src/components/scrollbar';
 import Iconify from 'src/components/iconify';
+import Scrollbar from 'src/components/scrollbar';
 
 // import TableNoData from '../table-no-data';
+import UserTableHead from './user-table-head';
 // import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from './user-table-toolbar';
-import { emptyRows, applyFilter, getComparator } from './utils';
-import UserTableHead from './user-table-head';
+import { applyFilter, getComparator } from './utils';
 
 // Sample user data
 const initialUsers = [

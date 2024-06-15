@@ -1,4 +1,4 @@
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import { Table, Paper, TableRow, TableBody, TableCell, TableHead, TableContainer } from '@mui/material';
 
 const users = [
   { id: 1, name: 'John Doe', number: '1234567890', role: 'Admin' },

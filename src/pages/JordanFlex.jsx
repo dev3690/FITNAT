@@ -1,9 +1,9 @@
 
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
 // import './Dashboard.css';
-import {
-  Typography, Box,Container,TextField, Stack, Table, TableBody, Button, Grid, Card, TableCell, TableContainer, TableHead, TableRow, Paper, Checkbox, FormControlLabel, FormGroup, List, ListItem, ListItemText, Dialog, DialogActions, DialogContent, DialogTitle, TablePagination,
+import { Box,Grid,Card, Stack, Table, Paper, Button, Dialog, TableRow, Checkbox, Container, TextField, TableBody, TableCell, TableHead, FormGroup, DialogTitle, DialogActions, DialogContent, TableContainer, TablePagination, FormControlLabel,
 } from '@mui/material';
 // import Stack from '@mui/material/Stack';
 // import SvgIcon from '@mui/material/SvgIcon';
@@ -15,9 +15,7 @@ import {
 // import Grid from '@mui/material/Unstable_Grid2';
 // import Typography from '@mui/material/Typography';
 
-import { posts } from 'src/_mock/blog';
 
-import Iconify from 'src/components/iconify';
 
 // import PostCard from '../post-card';
 // import PostSort from '../post-sort';
