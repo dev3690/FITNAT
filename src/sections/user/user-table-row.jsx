@@ -1,17 +1,21 @@
 
 
+
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 
-import Stack from '@mui/material/Stack';
-import Avatar from '@mui/material/Avatar';
-import Popover from '@mui/material/Popover';
-import TableRow from '@mui/material/TableRow';
-import Checkbox from '@mui/material/Checkbox';
-import MenuItem from '@mui/material/MenuItem';
-import TableCell from '@mui/material/TableCell';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
+import {
+  Stack,
+  Avatar,
+  Popover,
+  TableRow,
+  Checkbox,
+  MenuItem,
+  TableCell,
+  Typography,
+  IconButton,
+  Button,
+} from '@mui/material';
 
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
@@ -22,11 +26,14 @@ export default function UserTableRow({
   selected,
   name,
   avatarUrl,
-  company,
-  role,
-  isVerified,
-  status,
+  mobile,
+  username,
+  password,
+  isMaster,
+  type_id,
   handleClick,
+  handleEdit,
+  handleDelete,
 }) {
   const [open, setOpen] = useState(null);
 
@@ -40,10 +47,10 @@ export default function UserTableRow({
 
   return (
     <>
-      <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
-        <TableCell padding="checkbox">
+      <TableRow hover tabIndex={-1}>
+        {/* <TableCell padding="checkbox">
           <Checkbox disableRipple checked={selected} onChange={handleClick} />
-        </TableCell>
+        </TableCell> */}
 
         <TableCell component="th" scope="row" padding="none">
           <Stack direction="row" alignItems="center" spacing={2}>
@@ -54,20 +61,22 @@ export default function UserTableRow({
           </Stack>
         </TableCell>
 
-        <TableCell>{company}</TableCell>
+        <TableCell>{mobile}</TableCell>
 
-        <TableCell>{role}</TableCell>
+        <TableCell>{username}</TableCell>
 
-        <TableCell align="center">{isVerified ? 'Yes' : 'No'}</TableCell>
+        <TableCell align="center">{password}</TableCell>
 
         <TableCell>
-          <Label color={(status === 'banned' && 'error') || 'success'}>{status}</Label>
+          <Label color={(isMaster) ? 'success' : "primary"}>{isMaster ? "ADMIN":"USER"}</Label>
+        </TableCell>
+        <TableCell>
+          <Label color={(type_id == 1) ? 'success' : "primary"}>{type_id == 1 ? "ADMIN1":"ADMIN2"}</Label>
         </TableCell>
 
         <TableCell align="right">
-          <IconButton onClick={handleOpenMenu}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
+        <Button variant='contained' size='small' color='primary' sx={{marginRight:1}}>Edit</Button>
+             <Button variant='contained' size='small' color='error'>Delete</Button>
         </TableCell>
       </TableRow>
 
@@ -81,12 +90,12 @@ export default function UserTableRow({
           sx: { width: 140 },
         }}
       >
-        <MenuItem onClick={handleCloseMenu}>
+        <MenuItem onClick={() => { handleEdit(); handleCloseMenu(); }}>
           <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} />
           Edit
         </MenuItem>
 
-        <MenuItem onClick={handleCloseMenu} sx={{ color: 'error.main' }}>
+        <MenuItem onClick={() => { handleDelete(); handleCloseMenu(); }} sx={{ color: 'error.main' }}>
           <Iconify icon="eva:trash-2-outline" sx={{ mr: 2 }} />
           Delete
         </MenuItem>
@@ -95,13 +104,15 @@ export default function UserTableRow({
   );
 }
 
-UserTableRow.propTypes = {
-  avatarUrl: PropTypes.any,
-  company: PropTypes.any,
-  handleClick: PropTypes.func,
-  isVerified: PropTypes.any,
-  name: PropTypes.any,
-  role: PropTypes.any,
-  selected: PropTypes.any,
-  status: PropTypes.string,
-};
+// UserTableRow.propTypes = {
+//   selected: PropTypes.bool,
+//   name: PropTypes.string,
+//   avatarUrl: PropTypes.string,
+//   mobile: PropTypes.string,
+//   username: PropTypes.string,
+//   isVerified: PropTypes.bool,
+//   status: PropTypes.string,
+//   handleClick: PropTypes.func,
+//   handleEdit: PropTypes.func,
+//   handleDelete: PropTypes.func,
+// };

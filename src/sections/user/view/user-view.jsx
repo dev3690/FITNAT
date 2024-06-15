@@ -1,5 +1,5 @@
-import { useState } from 'react';
-
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import {
   Card,
   Stack,
@@ -19,39 +19,21 @@ import {
   TableContainer,
   TablePagination,
 } from '@mui/material';
-
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
-
+import UserTableRow from 'src/sections/user/user-table-row';
 import TableNoData from '../table-no-data';
 import UserTableHead from '../user-table-head';
 import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from '../user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
-
-// Sample user data
-const initialUsers = [
-  { id: 1, name: 'John Doe', number: '1234567890', role: 'Admin', isVerified: true, status: 'Active' },
-  { id: 2, name: 'Jane Smith', number: '0987654321', role: 'User', isVerified: true, status: 'Active' },
-  { id: 3, name: 'Alice Johnson', number: '1112223333', role: 'Admin', isVerified: false, status: 'Inactive' },
-  { id: 4, name: 'Bob Brown', number: '4445556666', role: 'User', isVerified: true, status: 'Active' },
-  { id: 5, name: 'Charlie Green', number: '7778889999', role: 'User', isVerified: false, status: 'Inactive' },
-  { id: 6, name: 'David Black', number: '2223334444', role: 'User', isVerified: true, status: 'Active' },
-  { id: 7, name: 'Eve White', number: '5556667777', role: 'Admin', isVerified: false, status: 'Inactive' },
-  { id: 8, name: 'Frank Blue', number: '8889990000', role: 'User', isVerified: true, status: 'Active' },
-  { id: 9, name: 'Grace Pink', number: '0001112222', role: 'User', isVerified: false, status: 'Inactive' },
-  { id: 10, name: 'Hank Gray', number: '3334445555', role: 'User', isVerified: true, status: 'Active' },
-  { id: 11, name: 'Ivy Orange', number: '6667778888', role: 'Admin', isVerified: false, status: 'Inactive' },
-  { id: 12, name: 'Jack Purple', number: '9990001111', role: 'User', isVerified: true, status: 'Active' },
-  { id: 13, name: 'Karen Red', number: '1231231234', role: 'User', isVerified: false, status: 'Inactive' },
-  { id: 14, name: 'Leo Gold', number: '4564564567', role: 'Admin', isVerified: true, status: 'Active' },
-  { id: 15, name: 'Mona Silver', number: '7897897890', role: 'User', isVerified: true, status: 'Active' },
-];
+import { USER, callAxiosApi, getData, insertData } from 'src/utils/api_utils';
+// import UserTableRow from './user-table-row';
 
 // ----------------------------------------------------------------------
 
 export default function UserPage() {
-  const [users, setUsers] = useState(initialUsers);
+  const [users, setUsers] = useState([]);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('name');
@@ -59,7 +41,34 @@ export default function UserPage() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [openDialog, setOpenDialog] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [isDataUpdated, setisDataUpdated] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+
+  useEffect(() => {
+    // Fetch users from API
+    const fetchUsers = async () => {
+      try {
+        const response = await callAxiosApi(getData,{table:USER})
+        console.log("RESP>>>>>",response)
+        setUsers(response?.data?.data);
+      } catch (error) {
+        console.error('Failed to fetch users:', error);
+      }
+    };
+
+    fetchUsers();
+  }, [isDataUpdated]);
+//   {
+//     "id": 1,
+//     "name": "Deep",
+//     "mobile": "6353783314",
+//     "username": "deep",
+//     "password": "123",
+//     "isMaster": true,
+//     "type_id": 1,
+//     "createdAt": "2024-06-15T12:16:19.000Z",
+//     "updatedAt": "2024-06-15T12:16:19.000Z"
+// }
 
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
@@ -73,27 +82,53 @@ export default function UserPage() {
     setOpenDialog(true);
   };
 
-  const handleDelete = (id) => {
-    setUsers(users.filter(user => user.id !== id));
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:3690/user_masters/${id}`);
+      setUsers(users.filter(user => user.id !== id));
+    } catch (error) {
+      console.error('Failed to delete user:', error);
+    }
   };
 
   const handleDialogClose = () => {
     setOpenDialog(false);
-    setCurrentUser(null);
+    // setCurrentUser({});
     setIsEditing(false);
   };
 
-  const handleDialogSave = () => {
+  const handleDialogSave = async () => {
     if (isEditing) {
-      setUsers(users.map(user => (user.id === currentUser.id ? currentUser : user)));
+      try {
+        await axios.put(`http://localhost:3690/user_masters/${currentUser.id}`, currentUser);
+        setUsers(users.map(user => (user.id === currentUser.id ? currentUser : user)));
+      } catch (error) {
+        console.error('Failed to update user:', error);
+      }
     } else {
-      setUsers([...users, { ...currentUser, id: users.length + 1, isVerified: false, status: 'Inactive' }]);
+      try {
+        //     setCurrentUser({ name: '', mobile: '', username: '', password: '', isMaster: false, type_id: '' });
+        if(!(currentUser?.name) ||!(currentUser?.mobile) ||!(currentUser?.username) || !(currentUser?.password) || !(currentUser?.type_id)){
+          alert("All fields are required")
+          return 
+        }
+        let data = currentUser
+
+        let response = await callAxiosApi(insertData,{...currentUser,table:USER})
+        console.log("insert RESP",response)
+        setisDataUpdated(!isDataUpdated)
+
+        // const response = await axios.post('http://localhost:3690/user_masters', currentUser);
+        // setUsers([...users, { ...currentUser, id: response.data.id, createdAt: response.data.createdAt, updatedAt: response.data.updatedAt }]);
+      } catch (error) {
+        console.error('Failed to add user:', error);
+      }
     }
     handleDialogClose();
   };
 
   const handleAddNewUser = () => {
-    setCurrentUser({ name: '', number: '', role: '' });
+    setCurrentUser({ name: '', mobile: '', username: '', password: '', isMaster: false, type_id: '' });
     setIsEditing(false);
     setOpenDialog(true);
   };
@@ -151,8 +186,11 @@ export default function UserPage() {
                 rowCount={users.length}
                 headLabel={[
                   { id: 'name', label: 'Name' },
-                  { id: 'number', label: 'Number' },
-                  { id: 'role', label: 'Role' },
+                  { id: 'mobile', label: 'Mobile' },
+                  { id: 'username', label: 'Username' },
+                  { id: 'password', label: 'Password' },
+                  { id: 'isMaster', label: 'Is Master' },
+                  { id: 'type_id', label: 'Type ID' },
                   { id: 'actions', label: 'Actions', align: 'center' },
                 ]}
                 onRequestSort={handleSort}
@@ -161,19 +199,20 @@ export default function UserPage() {
                 {dataFiltered
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
-                    <TableRow key={row.id}>
-                      <TableCell>{row.name}</TableCell>
-                      <TableCell>{row.number}</TableCell>
-                      <TableCell>{row.role}</TableCell>
-                      <TableCell align="center">
-                        <IconButton onClick={() => handleEdit(row)}>
-                          <Iconify icon="eva:edit-fill" />
-                        </IconButton>
-                        <IconButton onClick={() => handleDelete(row.id)}>
-                          <Iconify icon="eva:trash-2-outline" />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
+                    <UserTableRow
+                      key={row.id}
+                      selected={false}  // Modify based on your selection logic
+                      name={row.name}
+                      mobile={row.mobile} // Add this field to your data if needed
+                      company={row.company} // Modify or remove based on your data structure
+                      username={row.username} // Modify or remove based on your data structure
+                      password={row.password} // Modify or remove based on your data structure
+                      isMaster={row.isMaster} // Modify or remove based on your data structure
+                      type_id={row.type_id}
+                      handleClick={() => {}} // Implement if needed
+                      handleEdit={() => handleEdit(row)}
+                      handleDelete={() => handleDelete(row.id)}
+                    />
                   ))}
 
                 <TableEmptyRows
@@ -212,23 +251,49 @@ export default function UserPage() {
           />
           <TextField
             margin="dense"
-            name="number"
-            label="Number"
+            name="mobile"
+            label="Mobile"
             type="text"
             fullWidth
-            value={currentUser?.number || ''}
+            value={currentUser?.mobile || ''}
             onChange={handleInputChange}
           />
           <TextField
             margin="dense"
-            name="role"
-            label="Role"
+            name="username"
+            label="Username"
             type="text"
             fullWidth
-            value={currentUser?.role || ''}
+            value={currentUser?.username || ''}
             onChange={handleInputChange}
           />
-          {/* Add other fields as needed */}
+          <TextField
+            margin="dense"
+            name="password"
+            label="Password"
+            type="text"
+            fullWidth
+            value={currentUser?.password || ''}
+            onChange={handleInputChange}
+          />
+          <label>            
+            <input
+              name="isMaster"
+              type="checkbox"
+              checked={currentUser?.isMaster || false}
+              onChange={(e) => setCurrentUser({ ...currentUser, isMaster: e.target.checked })}
+            />
+            IsMaster
+          </label>
+          <TextField
+            margin="dense"
+            name="type_id"
+            label="Type ID"
+            type="number"
+            fullWidth
+            value={currentUser?.type_id || ''}
+            onChange={handleInputChange}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDialogClose}>Cancel</Button>

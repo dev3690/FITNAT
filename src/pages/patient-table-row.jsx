@@ -1,0 +1,54 @@
+import { useState } from 'react';
+import PropTypes from 'prop-types';
+import {
+  Stack,
+  Avatar,
+  Popover,
+  TableRow,
+  Checkbox,
+  MenuItem,
+  TableCell,
+  Typography,
+  IconButton,
+  Button,
+} from '@mui/material';
+import Iconify from 'src/components/iconify';
+
+export default function PatientTableRow({
+  row,
+  handleEdit,
+  handleDelete,
+}) {
+  const [open, setOpen] = useState(null);
+
+  const handleOpenMenu = (event) => {
+    setOpen(event.currentTarget);
+  };
+
+  const handleCloseMenu = () => {
+    setOpen(null);
+  };
+
+  return (
+    <>
+      <TableRow hover tabIndex={-1} key={row.id}>
+        <TableCell>{row.name}</TableCell>
+        <TableCell>{row.mobile}</TableCell>
+        <TableCell>{row.city}</TableCell>
+        <TableCell>{row.pain}</TableCell>
+        <TableCell><a href={row.url} target="_blank" rel="noopener noreferrer">{row.url}</a></TableCell>
+        <TableCell>{new Date(row.start_date).toLocaleDateString()}</TableCell>
+        <TableCell>{new Date(row.end_date).toLocaleDateString()}</TableCell>
+        <TableCell>{row.package}</TableCell>
+        <TableCell>{row.created_by}</TableCell>
+        <TableCell>{row.type_id}</TableCell>
+        <TableCell align="right">
+            <Button variant='contained' size='small' color='primary' sx={{marginRight:1}}>Edit</Button>
+             <Button variant='contained' size='small' color='error'>Delete</Button>
+        </TableCell>
+      
+      </TableRow>
+    </>
+  );
+}
+

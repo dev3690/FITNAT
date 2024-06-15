@@ -1,4 +1,8 @@
-import { useState } from 'react';
+
+
+
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 import {
   Card,
@@ -22,44 +26,39 @@ import {
 
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
-
-// import TableNoData from '../table-no-data';
 import UserTableHead from './user-table-head';
-// import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from './user-table-toolbar';
 import { applyFilter, getComparator } from './utils';
+import { callAxiosApi, getData,insertData,insertPatient,PATIENT } from 'src/utils/api_utils';
+import { getLocalItem } from 'src/utils/local_operations';
+import PatientTableRow from './patient-table-row';
 
-// Sample user data
-const initialUsers = [
-  { id: 1, name: 'John Doe', number: '1234567890', role: 'Admin', isVerified: true, status: 'Active' },
-  { id: 2, name: 'Jane Smith', number: '0987654321', role: 'User', isVerified: true, status: 'Active' },
-  { id: 3, name: 'Alice Johnson', number: '1112223333', role: 'Admin', isVerified: false, status: 'Inactive' },
-  { id: 4, name: 'Bob Brown', number: '4445556666', role: 'User', isVerified: true, status: 'Active' },
-  { id: 5, name: 'Charlie Green', number: '7778889999', role: 'User', isVerified: false, status: 'Inactive' },
-  { id: 6, name: 'David Black', number: '2223334444', role: 'User', isVerified: true, status: 'Active' },
-  { id: 7, name: 'Eve White', number: '5556667777', role: 'Admin', isVerified: false, status: 'Inactive' },
-  { id: 8, name: 'Frank Blue', number: '8889990000', role: 'User', isVerified: true, status: 'Active' },
-  { id: 9, name: 'Grace Pink', number: '0001112222', role: 'User', isVerified: false, status: 'Inactive' },
-  { id: 10, name: 'Hank Gray', number: '3334445555', role: 'User', isVerified: true, status: 'Active' },
-  { id: 11, name: 'Ivy Orange', number: '6667778888', role: 'Admin', isVerified: false, status: 'Inactive' },
-  { id: 12, name: 'Jack Purple', number: '9990001111', role: 'User', isVerified: true, status: 'Active' },
-  { id: 13, name: 'Karen Red', number: '1231231234', role: 'User', isVerified: false, status: 'Inactive' },
-  { id: 14, name: 'Leo Gold', number: '4564564567', role: 'Admin', isVerified: true, status: 'Active' },
-  { id: 15, name: 'Mona Silver', number: '7897897890', role: 'User', isVerified: true, status: 'Active' },
-];
-
-// ----------------------------------------------------------------------
+const apiUrl = 'http://localhost:3690/getData'; // Replace with your API URL
 
 export default function Ex1() {
-  const [users, setUsers] = useState(initialUsers);
+  const [patient, setPatient] = useState([]);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [openDialog, setOpenDialog] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentPatient, setCurrentPatient] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await callAxiosApi(getData,{table:PATIENT})
+      console.log(">>>>>>>",response)
+      setPatient(response.data.data); // Assuming response.data contains the data array
+    } catch (error) {
+      console.error('Failed to fetch patient:', error);
+    }
+  };
 
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
@@ -67,33 +66,48 @@ export default function Ex1() {
     setOrderBy(id);
   };
 
-  const handleEdit = (user) => {
-    setCurrentUser(user);
+  const handleEdit = (patient) => {
+    setCurrentPatient(patient);
     setIsEditing(true);
     setOpenDialog(true);
   };
 
   const handleDelete = (id) => {
-    setUsers(users.filter(user => user.id !== id));
+    try {
+      // Perform delete operation on backend if needed
+      // For this example, we are just updating the state
+      setPatient(patient.filter((patient) => patient.id !== id));
+    } catch (error) {
+      console.error('Failed to delete patient:', error);
+    }
   };
 
   const handleDialogClose = () => {
     setOpenDialog(false);
-    setCurrentUser(null);
+    setCurrentPatient({});
     setIsEditing(false);
   };
 
-  const handleDialogSave = () => {
+  const handleDialogSave = async() => {
     if (isEditing) {
-      setUsers(users.map(user => (user.id === currentUser.id ? currentUser : user)));
+      try {
+        // Perform update operation on backend if needed
+        // For this example, we are just updating the state
+        setPatient(patient.map((patient) => (patient.id === currentPatient.id ? currentPatient : patient)));
+      } catch (error) {
+        console.error('Failed to update patient:', error);
+      }
     } else {
-      setUsers([...users, { ...currentUser, id: users.length + 1, isVerified: false, status: 'Inactive' }]);
+      let localData = getLocalItem("data")
+      const response = await callAxiosApi(insertPatient,{...currentPatient,type_id:localData?.type_id,created_by:localData?.id})
+      console.log(">>>>>>>",response)
+      setPatient([...patient, { ...currentPatient, id: patient.length + 1 }]); // Assuming no ID is returned from backend
     }
     handleDialogClose();
   };
 
   const handleAddNewUser = () => {
-    setCurrentUser({ name: '', number: '', role: '' });
+    // setCurrentPatient({ name: '', number: '', role: '', isVerified: false, status: 'Inactive' });
     setIsEditing(false);
     setOpenDialog(true);
   };
@@ -114,11 +128,11 @@ export default function Ex1() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setCurrentUser({ ...currentUser, [name]: value });
+    setCurrentPatient({ ...currentPatient, [name]: value });
   };
 
   const dataFiltered = applyFilter({
-    inputData: users,
+    inputData: patient,
     comparator: getComparator(order, orderBy),
     filterName,
   });
@@ -129,14 +143,13 @@ export default function Ex1() {
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Patients</Typography>
-
         <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleAddNewUser}>
           New User
         </Button>
       </Stack>
 
-       <Card>
-       <UserTableToolbar
+      <Card>
+        <UserTableToolbar
           numSelected={0}
           filterName={filterName}
           onFilterName={handleFilterByName}
@@ -148,11 +161,18 @@ export default function Ex1() {
               <UserTableHead
                 order={order}
                 orderBy={orderBy}
-                rowCount={users.length}
+                rowCount={patient.length}
                 headLabel={[
                   { id: 'name', label: 'Name' },
-                  { id: 'number', label: 'Number' },
-                  { id: 'role', label: 'Role' },
+                  { id: 'mobile', label: 'Mobile' },
+                  { id: 'city', label: 'City' },
+                  { id: 'pain', label: 'Pain' },
+                  { id: 'url', label: 'URL' },
+                  { id: 'start_date', label: 'Start Date' },
+                  { id: 'end_date', label: 'End Date' },
+                  { id: 'package', label: 'Package' },
+                  { id: 'created_by', label: 'Created By' },
+                  { id: 'type_id', label: 'Type ID' },
                   { id: 'actions', label: 'Actions', align: 'center' },
                 ]}
                 onRequestSort={handleSort}
@@ -161,24 +181,12 @@ export default function Ex1() {
                 {dataFiltered
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
-                    <TableRow key={row.id}>
-                      <TableCell>{row.name}</TableCell>
-                      <TableCell>{row.number}</TableCell>
-                      <TableCell>{row.role}</TableCell>
-                      <TableCell align="center">
-                        <IconButton onClick={() => handleEdit(row)}>
-                          <Iconify icon="eva:edit-fill" />
-                        </IconButton>
-                        <IconButton onClick={() => handleDelete(row.id)}>
-                          <Iconify icon="eva:trash-2-outline" />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
+                    <PatientTableRow row={row}/>
                   ))}
 
                 {/* <TableEmptyRows
                   height={77}
-                  emptyRows={emptyRows(page, rowsPerPage, users.length)}
+                  emptyRows={emptyRows(page, rowsPerPage, patient.length)}
                 /> */}
 
                 {/* {notFound && <TableNoData query={filterName} />} */}
@@ -190,7 +198,7 @@ export default function Ex1() {
         <TablePagination
           page={page}
           component="div"
-          count={users.length}
+          count={patient.length}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}
           rowsPerPageOptions={[5, 10, 25]}
@@ -207,25 +215,76 @@ export default function Ex1() {
             label="Name"
             type="text"
             fullWidth
-            value={currentUser?.name || ''}
+            value={currentPatient?.name || ''}
             onChange={handleInputChange}
           />
           <TextField
             margin="dense"
-            name="number"
-            label="Number"
+            name="mobile"
+            label="Mobile"
             type="text"
             fullWidth
-            value={currentUser?.number || ''}
+            value={currentPatient?.mobile || ''}
             onChange={handleInputChange}
           />
           <TextField
             margin="dense"
-            name="role"
-            label="Role"
+            name="city"
+            label="City"
             type="text"
             fullWidth
-            value={currentUser?.role || ''}
+            value={currentPatient?.city || ''}
+            onChange={handleInputChange}
+          />
+          <TextField
+            margin="dense"
+            name="pain"
+            label="Pain"
+            type="text"
+            fullWidth
+            value={currentPatient?.pain || ''}
+            onChange={handleInputChange}
+          />
+          <TextField
+            margin="dense"
+            name="url"
+            label="URL"
+            type="text"
+            fullWidth
+            value={currentPatient?.url || ''}
+            onChange={handleInputChange}
+          />
+          <TextField
+            margin="dense"
+            name="start_date"
+            label="Start Date"
+            type="date"
+            fullWidth
+            InputLabelProps={{
+              shrink: true,
+            }}
+            value={currentPatient?.start_date || ''}
+            onChange={handleInputChange}
+          />
+          <TextField
+            margin="dense"
+            name="end_date"
+            label="End Date"
+            type="date"
+            fullWidth
+            InputLabelProps={{
+              shrink: true,
+            }}
+            value={currentPatient?.end_date || ''}
+            onChange={handleInputChange}
+          />
+          <TextField
+            margin="dense"
+            name="package"
+            label="Package"
+            // type="text"
+            fullWidth
+            value={currentPatient?.package || ''}
             onChange={handleInputChange}
           />
           {/* Add other fields as needed */}

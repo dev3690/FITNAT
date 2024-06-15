@@ -11,6 +11,7 @@ export const LoginPage = lazy(() => import('src/pages/login'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 export const JordanFlex = lazy(() => import('src/pages/JordanFlex')); // Import the new page
+export const BirdEyeView = lazy(() => import('src/pages/bird-eye-view')); // Import the new page
 
 // ----------------------------------------------------------------------
 
@@ -46,7 +47,7 @@ export default function Router() {
     },
     {
       path: 'jordanflex', // Add route for JordanFlex
-      element: <JordanFlex />,
+      element: <BirdEyeView />,
     },
   ]);
 

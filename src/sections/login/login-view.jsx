@@ -17,6 +17,8 @@ import { bgGradient } from 'src/theme/css';
 
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
+import { callAxiosApi, loginApi } from 'src/utils/api_utils';
+import { setLocalItem } from 'src/utils/local_operations';
 
 export default function LoginView() {
   const theme = useTheme();
@@ -32,16 +34,18 @@ export default function LoginView() {
     setError('');
 
     try {
-      const response = await axios.post('https://api.yourdomain.com/login', {
+      const response = await callAxiosApi(loginApi, {
         username,
         password,
-      });
+      })
+      console.log(response)
+
 
       if (response.status === 200) {
         // Save the token, if any
         // localStorage.setItem('token', response.data.token);
-
-        router.push('/dashboard');
+        setLocalItem("data", response?.data?.data)
+        router.push('/');
       }
     } catch (err) {
       setError('Invalid username or password');

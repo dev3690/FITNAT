@@ -3,8 +3,11 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // import './Dashboard.css';
-import { Box,Grid,Card, Stack, Table, Paper, Button, Dialog, TableRow, Checkbox, Container, TextField, TableBody, TableCell, TableHead, FormGroup, DialogTitle, DialogActions, DialogContent, TableContainer, TablePagination, FormControlLabel,
+import {
+  Box, Grid, Card, Stack, Table, Paper, Button, Dialog, TableRow, Checkbox, Container, TextField, TableBody, TableCell, TableHead, FormGroup, DialogTitle, DialogActions, DialogContent, TableContainer, TablePagination, FormControlLabel,
 } from '@mui/material';
+import UserTableHead from '../pages/user-table-head'
+import BirdEyeView from '../pages/bird-eye-view'
 // import Stack from '@mui/material/Stack';
 // import SvgIcon from '@mui/material/SvgIcon';
 // import HomeIcon from '@mui/material/HomeIcon';
@@ -33,7 +36,7 @@ const packageDetails = {
   Deluxe: 12,
 };
 
- const users = [
+const users = [
   {
     id: 1,
     details: [
@@ -160,15 +163,17 @@ const packageDetails = {
 
 
 
-export default function JordanFlex() {
-    // const navigate = useNavigate();
 
-    const handleExit = () => {
-        window.close();
-        
-        // Alternatively, if you want to navigate back in the same window:
-        navigate('/');
-      };
+
+export default function JordanFlex() {
+  // const navigate = useNavigate();
+
+  const handleExit = () => {
+    window.close();
+
+    // Alternatively, if you want to navigate back in the same window:
+    navigate('/');
+  };
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [columnVisibility, setColumnVisibility] = useState({
@@ -211,7 +216,7 @@ export default function JordanFlex() {
   };
 
 
- const handleAddPatientOpen = () => {
+  const handleAddPatientOpen = () => {
     setAddPatientDialogOpen(true);
   };
 
@@ -246,17 +251,17 @@ export default function JordanFlex() {
     setPage(0);
   };
 
-// export default function BlogView() {
+  // export default function BlogView() {
   return (
     <Container>
 
       <div>
         {/* <h1>JordanFlex Page</h1> */}
 
-        <button   onClick={handleExit}>Exit</button>
-        
+        <button onClick={handleExit}>Exit</button>
+
         {/* <HomeIcon /> */}
-    </div>
+      </div>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         {/* <Typography variant="h4">Dashboard</Typography> */}
         {/* <Button
@@ -270,13 +275,13 @@ export default function JordanFlex() {
         </Button> */}
       </Stack>
 
-    {/* <Grid>
+      {/* <Grid>
       Hello
 
     </Grid> */}
-    <Box display="flex">
-      {/* <Box className={`menu-bar ${drawerOpen ? 'open' : 'closed'}`}>   */}
-      {/* <Box className={`menu-bar ${drawerOpen ? 'open' : 'closed'}`} display="flex" flexDirection="row" justifyContent="center" alignItems="center"> */}
+      <Box display="flex">
+        {/* <Box className={`menu-bar ${drawerOpen ? 'open' : 'closed'}`}>   */}
+        {/* <Box className={`menu-bar ${drawerOpen ? 'open' : 'closed'}`} display="flex" flexDirection="row" justifyContent="center" alignItems="center"> */}
         {/* <List>
           <Typography variant="h4" component="h4" alignText='center' gutterBottom>
             FITNAT
@@ -291,164 +296,177 @@ export default function JordanFlex() {
             <ListItemText primary="Logout" />
           </ListItem>
         </List> */}
-      {/* </Box> */}
-      <Box style={{ flex: 1, transition: 'margin-left 0.3s ease', marginLeft: drawerOpen ? '250px' : '0', display: 'flex', flexDirection: 'column', alignItems: 'baseline' }}>
-        <Box my={1} style={{ width: '95%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          {/* <Typography variant="h4" component="h4" gutterBottom>
+        {/* </Box> */}
+        <Box style={{ flex: 1, transition: 'margin-left 0.3s ease', marginLeft: drawerOpen ? '250px' : '0', display: 'flex', flexDirection: 'column', alignItems: 'baseline' }}>
+          <Box my={1} style={{ width: '95%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            {/* <Typography variant="h4" component="h4" gutterBottom>
             Dashboard
           </Typography> */}
 
-          <Button variant="outlined" 
-          // startIcon={<FilterListIcon />} 
-          onClick={handleFilterOpen}>
-            Collapse Columns
-          </Button>
-        </Box>
-
-        <Dialog
-          open={filterDialogOpen}
-          onClose={handleFilterClose}
-          maxWidth="xs"
-          position="fixed"
-          right={0}
-          top={50}
-          style={{ width: '300px', zIndex: 1 }}
-        >
-          <DialogTitle>Collapse Columns</DialogTitle>
-          <DialogContent>
-            <FormGroup>
-              {users[0].details.map((detail) => (
-                <FormControlLabel
-                  key={detail.label}
-                  control={
-                    <Checkbox
-                      checked={columnVisibility[detail.label]}
-                      onChange={() => toggleColumnVisibility(detail.label)}
-                      color="primary"
-                    />
-                  }
-                  label={detail.label}
-                />
-              ))}
-              {Array.from({ length: 12 }, (_, i) => `Week ${i + 1}`).map((week) => (
-                <FormControlLabel
-                  key={week}
-                  control={
-                    <Checkbox
-                      checked={columnVisibility[week]}
-                      onChange={() => toggleColumnVisibility(week)}
-                      color="primary"
-                    />
-                  }
-                  label={week}
-                />
-              ))}
-            </FormGroup>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleFilterClose} color="primary">
-              Close
+            <Button variant="outlined"
+              // startIcon={<FilterListIcon />} 
+              onClick={handleFilterOpen}>
+              Collapse Columns
             </Button>
-          </DialogActions>
-        </Dialog>
+          </Box>
 
-        <Grid xs={12} md={2} margin={5}>
-          <Card elevation={10} backgroundColor="#000000" sx={{ padding: 3, backgroundColor: "#BFF6C3" }}>
-            <TableContainer component={Paper} style={{ width: 'auto', marginInline: 'auto', overflowX: 'auto' }}>
-              <Table size="small" aria-label="user details table">
-                <TableHead>
-                  <TableRow>
-                    {users[0].details.map((detail) => (
-                      columnVisibility[detail.label] && (
-                        <TableCell key={detail.label} style={{ padding: '8px', fontSize: '0.975rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 'bold', position: 'sticky', top: 0, backgroundColor: '#ACE1AF' }}>
-                          {detail.label}
-                        </TableCell>
-                      )
-                    ))}
-                    {Array.from({ length: 12 }, (_, i) => `Week ${i + 1}`).map((week) => (
-                      columnVisibility[week] && (
-                        <TableCell key={week} colSpan={2} style={{ padding: '8px', fontSize: '0.975rem', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 'bold', position: 'sticky', top: 0, backgroundColor: '#ACE1AF' }}>
-                          {week}
-                        </TableCell>
-                      )
-                    ))}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {users.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((user, index) => (
-                    <TableRow key={user.id} style={{ backgroundColor: (page * rowsPerPage + index) % 2 === 0 ? '#8DECB4' : '#ffffff' }}>
-                      {user.details.map((detail) => (
+          <Dialog
+            open={filterDialogOpen}
+            onClose={handleFilterClose}
+            maxWidth="xs"
+            position="fixed"
+            right={0}
+            top={50}
+            style={{ width: '300px', zIndex: 1 }}
+          >
+            <DialogTitle>Collapse Columns</DialogTitle>
+            <DialogContent>
+              <FormGroup>
+                {users[0].details.map((detail) => (
+                  <FormControlLabel
+                    key={detail.label}
+                    control={
+                      <Checkbox
+                        checked={columnVisibility[detail.label]}
+                        onChange={() => toggleColumnVisibility(detail.label)}
+                        color="primary"
+                      />
+                    }
+                    label={detail.label}
+                  />
+                ))}
+                {Array.from({ length: 12 }, (_, i) => `Week ${i + 1}`).map((week) => (
+                  <FormControlLabel
+                    key={week}
+                    control={
+                      <Checkbox
+                        checked={columnVisibility[week]}
+                        onChange={() => toggleColumnVisibility(week)}
+                        color="primary"
+                      />
+                    }
+                    label={week}
+                  />
+                ))}
+              </FormGroup>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleFilterClose} color="primary">
+                Close
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+          <Grid xs={12} md={2} margin={5}>
+            <Card elevation={10} backgroundColor="#000000" sx={{ padding: 3, backgroundColor: "#BFF6C3" }}>
+              <TableContainer component={Paper} style={{ width: 'auto', marginInline: 'auto', overflowX: 'auto' }}>
+                <Table size="small" aria-label="user details table">
+                  {/* UserTableHead */}
+                  <UserTableHead
+                    // order={order}
+                    // orderBy={orderBy}
+                    // rowCount={users.length}
+                    headLabel={
+                      [
+                        ...users[0].details.map((item, index) => ({ id: `${item}-${index}`, label: item?.label })),
+                        ...Array.from({ length: 12 }, (_, i) => `Week ${i + 1}`).map((item, index) => (({ id: `${item}-${index}`, label: item })))
+                      ]
+                    }
+                  // onRequestSort={handleSort}
+                  />                <TableHead>
+                    <TableRow>
+                      {users[0].details.map((detail) => (
                         columnVisibility[detail.label] && (
-                          <TableCell key={detail.label} style={{ padding: '8px', fontSize: '0.875rem', whiteSpace: 'nowrap', alignItems: 'center', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                            {detail.label === 'Link' ? (
-                              <Button
-                                variant="contained"
-                                size="small"
-                                color="primary"
-                                // startIcon={<LinkIcon />}
-                                href={detail.value}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{ borderRadius: '50%', minWidth: '40px' }} // Adding styles for rounding the button
-                              >
-                                Link
-                                {/* Rendering only the link icon */}
-                                {/* <LinkIcon /> */}
-                              </Button>
-                            ) : (
-                              detail.value
-                            )}
+                          <TableCell key={detail.label} style={{ padding: '8px', fontSize: '0.975rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 'bold', position: 'sticky', top: 0, backgroundColor: '#ACE1AF' }}>
+                            {detail.label}
                           </TableCell>
                         )
                       ))}
-                      {Array.from({ length: 12 }, (_, i) => `Week ${i + 1}`).map((week, i) => (
+                      {Array.from({ length: 12 }, (_, i) => `Week ${i + 1}`).map((week) => (
                         columnVisibility[week] && (
-                          <React.Fragment key={`${week}-${user.id}`}>
-                            <TableCell style={{ padding: '8px', fontSize: '0.875rem', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                              <Button
-                                variant="contained"
-                                size="large"
-                                color={updateClicked[`${user.id}-${week}`] ? 'success' : 'inherit'}
-                                onClick={() => handleUpdate(user.id, week)}
-                                style={{ minWidth: '40px', padding: '4px 8px' }}
-                                disabled={i >= packageDetails[user.details.find(detail => detail.label === 'Package').value]}
-                              >
-                                Upd
-                              </Button>
-                            </TableCell>
-                            <TableCell style={{ padding: '8px', fontSize: '0.875rem', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                              <Button
-                                variant="contained"
-                                size="large"
-                                color={tasksClicked[`${user.id}-${week}`] ? 'success' : 'info'}
-                                onClick={() => handleTasks(user.id, week)}
-                                style={{ minWidth: '40px', padding: '4px 8px' }}
-                                disabled={i >= packageDetails[user.details.find(detail => detail.label === 'Package').value]}
-                              >
-                                Tks
-                              </Button>
-                            </TableCell>
-                          </React.Fragment>
+                          <TableCell key={week} colSpan={2} style={{ padding: '8px', fontSize: '0.975rem', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 'bold', position: 'sticky', top: 0, backgroundColor: '#ACE1AF' }}>
+                            {week}
+                          </TableCell>
                         )
                       ))}
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-              <TablePagination
-                rowsPerPageOptions={[5, 15, 30]}
-                component="div"
-                count={users.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
-            </TableContainer>
-          </Card>
-        </Grid>
+                  </TableHead>
+                  <TableBody>
+                    {users.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((user, index) => (
+                      <TableRow key={user.id} style={{ backgroundColor: (page * rowsPerPage + index) % 2 === 0 ? '#8DECB4' : '#ffffff' }}>
+                        {user.details.map((detail) => (
+                          columnVisibility[detail.label] && (
+                            <TableCell key={detail.label} style={{ padding: '8px', fontSize: '0.875rem', whiteSpace: 'nowrap', alignItems: 'center', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              {detail.label === 'Link' ? (
+                                <Button
+                                  variant="contained"
+                                  size="small"
+                                  color="primary"
+                                  // startIcon={<LinkIcon />}
+                                  href={detail.value}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{ borderRadius: '50%', minWidth: '40px' }} // Adding styles for rounding the button
+                                >
+                                  Link
+                                  {/* Rendering only the link icon */}
+                                  {/* <LinkIcon /> */}
+                                </Button>
+                              ) : (
+                                detail.value
+                              )}
+                            </TableCell>
+                          )
+                        ))}
+                        {Array.from({ length: 12 }, (_, i) => `Week ${i + 1}`).map((week, i) => (
+                          columnVisibility[week] && (
+                            <React.Fragment key={`${week}-${user.id}`}>
+                              <TableCell style={{ padding: '8px', fontSize: '0.875rem', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                <Button
+                                  variant="contained"
+                                  size="large"
+                                  color={updateClicked[`${user.id}-${week}`] ? 'success' : 'inherit'}
+                                  onClick={() => handleUpdate(user.id, week)}
+                                  style={{ minWidth: '40px', padding: '4px 8px' }}
+                                  disabled={i >= packageDetails[user.details.find(detail => detail.label === 'Package').value]}
+                                >
+                                  Upd
+                                </Button>
+                              </TableCell>
+                              <TableCell style={{ padding: '8px', fontSize: '0.875rem', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                <Button
+                                  variant="contained"
+                                  size="large"
+                                  color={tasksClicked[`${user.id}-${week}`] ? 'success' : 'info'}
+                                  onClick={() => handleTasks(user.id, week)}
+                                  style={{ minWidth: '40px', padding: '4px 8px' }}
+                                  disabled={i >= packageDetails[user.details.find(detail => detail.label === 'Package').value]}
+                                >
+                                  Tks
+                                </Button>
+                              </TableCell>
+                            </React.Fragment>
+                          )
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+                <TablePagination
+                  rowsPerPageOptions={[5, 15, 30]}
+                  component="div"
+                  count={users.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+              </TableContainer>
+            </Card>
+            <BirdEyeView/>
+          </Grid>
+        </Box>
       </Box>
-    </Box>
 
 
       {/* <Stack mb={5} direction="row" alignItems="center" justifyContent="space-between">
