@@ -2,19 +2,16 @@
 
 
 import { useState } from 'react';
-import PropTypes from 'prop-types';
 
 import {
   Stack,
   Avatar,
+  Button,
   Popover,
   TableRow,
-  Checkbox,
   MenuItem,
   TableCell,
   Typography,
-  IconButton,
-  Button,
 } from '@mui/material';
 
 import Label from 'src/components/label';
@@ -25,6 +22,7 @@ import Iconify from 'src/components/iconify';
 export default function UserTableRow({
   selected,
   name,
+  id,
   avatarUrl,
   mobile,
   username,
@@ -75,31 +73,10 @@ export default function UserTableRow({
         </TableCell>
 
         <TableCell align="right">
-        <Button variant='contained' size='small' color='primary' sx={{marginRight:1}}>Edit</Button>
-             <Button variant='contained' size='small' color='error'>Delete</Button>
+        <Button variant='contained' size='small' color='primary' onClick={handleEdit} sx={{marginRight:1}}>Edit</Button>
+             <Button variant='contained' size='small' onClick={()=>handleDelete(id)} color='error'>Delete</Button>
         </TableCell>
       </TableRow>
-
-      <Popover
-        open={!!open}
-        anchorEl={open}
-        onClose={handleCloseMenu}
-        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-        PaperProps={{
-          sx: { width: 140 },
-        }}
-      >
-        <MenuItem onClick={() => { handleEdit(); handleCloseMenu(); }}>
-          <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} />
-          Edit
-        </MenuItem>
-
-        <MenuItem onClick={() => { handleDelete(); handleCloseMenu(); }} sx={{ color: 'error.main' }}>
-          <Iconify icon="eva:trash-2-outline" sx={{ mr: 2 }} />
-          Delete
-        </MenuItem>
-      </Popover>
     </>
   );
 }

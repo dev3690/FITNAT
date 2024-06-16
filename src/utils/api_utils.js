@@ -5,13 +5,13 @@ const localApiUrl = "http://localhost:3690"
 
 
 // All api routes
-const getData = localApiUrl + "/getData"
-const insertData = localApiUrl + "/insertData"
-const insertPatient = localApiUrl + "/insertPatient"
-const loginApi = localApiUrl + "/login"
-const birdViewApi = localApiUrl + "/birdView"
-const updateData = localApiUrl + "/updateData"
-
+const getData = `${localApiUrl}/getData`
+const insertData = `${localApiUrl}/insertData`
+const insertPatient = `${localApiUrl}/insertPatient`
+const loginApi = `${localApiUrl}/login`
+const birdViewApi = `${localApiUrl}/birdView`
+const updateData = `${localApiUrl}/updateData`
+const deleteData = `${localApiUrl}/deleteData`
 
 
 
@@ -22,17 +22,17 @@ const headers = {
 
 // common function to make api calls
 const callAxiosApi = async (url = "", body = {}) => {
-    let data = JSON.stringify(body);
+    const data = JSON.stringify(body);
 
-    let config = {
+    const config = {
         method: 'post',
-        url: url,
-        headers: headers,
-        data: data
+        url,
+        headers,
+        data
     };
 
     try {
-        let response = await axios.request(config)
+        const response = await axios.request(config)
         return response
     } catch (error) {
         return error
@@ -47,4 +47,4 @@ const STATUS = "statusUpdate"
 const PATIENT = "patient"
 
 
-export { getData ,insertData,insertPatient,loginApi,updateData,birdViewApi,callAxiosApi,USER,PATIENT,STATUS}
+export { USER, STATUS, getData, PATIENT, deleteData, loginApi, insertData, updateData, birdViewApi, callAxiosApi, insertPatient }

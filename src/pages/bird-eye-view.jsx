@@ -1,19 +1,15 @@
-import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useState, useEffect } from 'react';
+
 import {
   Card,
-  Stack,
+  Grid,
   Table,
   Button,
   Dialog,
-  TableRow,
   Container,
   TableBody,
-  TableCell,
   TextField,
-  Grid,
-  Typography,
-  IconButton,
   DialogTitle,
   DialogContent,
   DialogActions,
@@ -21,17 +17,14 @@ import {
   TablePagination,
 } from '@mui/material';
 
+import { USER, insertData, birdViewApi, callAxiosApi } from 'src/utils/api_utils';
 
-import Iconify from 'src/components/iconify';
-import Scrollbar from 'src/components/scrollbar';
-import UserTableRow from 'src/sections/user/user-table-row';
+import BirdEyeTableRow from './bird-eye-table-row';
 import TableNoData from '../sections/user/table-no-data';
 import UserTableHead from '../sections/user/user-table-head';
 import TableEmptyRows from '../sections/user/table-empty-rows';
 import UserTableToolbar from '../sections/user/user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../sections/user/utils';
-import { USER, birdViewApi, callAxiosApi, getData, insertData } from 'src/utils/api_utils';
-import BirdEyeTableRow from './bird-eye-table-row';
 // import UserTableRow from './user-table-row';
 
 // ----------------------------------------------------------------------
@@ -216,7 +209,7 @@ export default function BirdEyeView() {
       try {
         const response = await callAxiosApi(birdViewApi)
 
-        let data = response?.data?.map((item) => ({
+        const data = response?.data?.map((item) => ({
           ...item?.patient_master,
           id:item?.id,
           totalWeeks:calcTimeline(item?.patient_master)?.totalWeeks,
@@ -231,14 +224,12 @@ export default function BirdEyeView() {
       }
     };
 
-    const filterWeekKeys = (obj) => {
-      return Object.keys(obj)
+    const filterWeekKeys = (obj) => Object.keys(obj)
         .filter(key => key.startsWith('week'))
         .reduce((acc, key) => {
           acc[key] = obj[key];
           return acc;
         }, {});
-    };
 
     // {
     //   table:"statusUpdate",
@@ -311,9 +302,9 @@ export default function BirdEyeView() {
           alert("All fields are required")
           return
         }
-        let data = currentUser
+        const data = currentUser
 
-        let response = await callAxiosApi(insertData, { ...currentUser, table: USER })
+        const response = await callAxiosApi(insertData, { ...currentUser, table: USER })
         console.log("insert RESP", response)
         setisDataUpdated(!isDataUpdated)
 
@@ -364,9 +355,7 @@ export default function BirdEyeView() {
   const notFound = !dataFiltered.length && !!filterName;
 
   return (
-    <>
-
-      <Container sx={{ display: "flex" }}>
+    <Container sx={{ display: "flex" }}>
 
         <Grid xs={12} md={2} margin={5}>
           <Card >
@@ -508,6 +497,5 @@ export default function BirdEyeView() {
           </DialogActions>
         </Dialog>
       </Container>
-    </>
   );
 }

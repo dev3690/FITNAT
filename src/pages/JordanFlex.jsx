@@ -6,8 +6,9 @@ import { useNavigate } from 'react-router-dom';
 import {
   Box, Grid, Card, Stack, Table, Paper, Button, Dialog, TableRow, Checkbox, Container, TextField, TableBody, TableCell, TableHead, FormGroup, DialogTitle, DialogActions, DialogContent, TableContainer, TablePagination, FormControlLabel,
 } from '@mui/material';
-import UserTableHead from '../pages/user-table-head'
-import BirdEyeView from '../pages/bird-eye-view'
+
+import BirdEyeView from "./bird-eye-view"
+import UserTableHead from "./user-table-head"
 // import Stack from '@mui/material/Stack';
 // import SvgIcon from '@mui/material/SvgIcon';
 // import HomeIcon from '@mui/material/HomeIcon';

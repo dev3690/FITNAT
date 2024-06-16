@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { useState } from 'react';
 
 import Box from '@mui/material/Box';
@@ -13,12 +12,13 @@ import InputAdornment from '@mui/material/InputAdornment';
 
 import { useRouter } from 'src/routes/hooks';
 
+import { setLocalItem } from 'src/utils/local_operations';
+import { loginApi, callAxiosApi } from 'src/utils/api_utils';
+
 import { bgGradient } from 'src/theme/css';
 
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
-import { callAxiosApi, loginApi } from 'src/utils/api_utils';
-import { setLocalItem } from 'src/utils/local_operations';
 
 export default function LoginView() {
   const theme = useTheme();

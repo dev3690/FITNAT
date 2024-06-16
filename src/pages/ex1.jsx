@@ -2,7 +2,6 @@
 
 
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 
 import {
   Card,
@@ -10,13 +9,10 @@ import {
   Table,
   Button,
   Dialog,
-  TableRow,
   Container,
   TableBody,
-  TableCell,
   TextField,
   Typography,
-  IconButton,
   DialogTitle,
   DialogContent,
   DialogActions,
@@ -24,14 +20,16 @@ import {
   TablePagination,
 } from '@mui/material';
 
+import { getLocalItem } from 'src/utils/local_operations';
+import { getData, PATIENT,callAxiosApi,insertPatient } from 'src/utils/api_utils';
+
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
+
 import UserTableHead from './user-table-head';
+import PatientTableRow from './patient-table-row';
 import UserTableToolbar from './user-table-toolbar';
 import { applyFilter, getComparator } from './utils';
-import { callAxiosApi, getData,insertData,insertPatient,PATIENT } from 'src/utils/api_utils';
-import { getLocalItem } from 'src/utils/local_operations';
-import PatientTableRow from './patient-table-row';
 
 const apiUrl = 'http://localhost:3690/getData'; // Replace with your API URL
 
@@ -98,7 +96,7 @@ export default function Ex1() {
         console.error('Failed to update patient:', error);
       }
     } else {
-      let localData = getLocalItem("data")
+      const localData = getLocalItem("data")
       const response = await callAxiosApi(insertPatient,{...currentPatient,type_id:localData?.type_id,created_by:localData?.id})
       console.log(">>>>>>>",response)
       setPatient([...patient, { ...currentPatient, id: patient.length + 1 }]); // Assuming no ID is returned from backend
@@ -154,7 +152,6 @@ export default function Ex1() {
           filterName={filterName}
           onFilterName={handleFilterByName}
         />
-
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
             <Table sx={{ minWidth: 800 }}>

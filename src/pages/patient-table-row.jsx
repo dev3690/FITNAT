@@ -1,18 +1,11 @@
 import { useState } from 'react';
-import PropTypes from 'prop-types';
+
 import {
-  Stack,
-  Avatar,
-  Popover,
-  TableRow,
-  Checkbox,
-  MenuItem,
-  TableCell,
-  Typography,
-  IconButton,
   Button,
+  TableRow,
+  TableCell,
 } from '@mui/material';
-import Iconify from 'src/components/iconify';
+
 
 export default function PatientTableRow({
   row,
@@ -30,8 +23,7 @@ export default function PatientTableRow({
   };
 
   return (
-    <>
-      <TableRow hover tabIndex={-1} key={row.id}>
+    <TableRow hover tabIndex={-1} key={row.id}>
         <TableCell>{row.name}</TableCell>
         <TableCell>{row.mobile}</TableCell>
         <TableCell>{row.city}</TableCell>
@@ -48,7 +40,6 @@ export default function PatientTableRow({
         </TableCell>
       
       </TableRow>
-    </>
   );
 }
 

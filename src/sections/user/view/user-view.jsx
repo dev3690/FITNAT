@@ -1,33 +1,36 @@
-import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useState, useEffect } from 'react';
+
 import {
   Card,
   Stack,
   Table,
   Button,
   Dialog,
-  TableRow,
   Container,
   TableBody,
-  TableCell,
   TextField,
   Typography,
-  IconButton,
   DialogTitle,
   DialogContent,
   DialogActions,
   TableContainer,
   TablePagination,
+  CircularProgress,
+  Box
 } from '@mui/material';
+import ConfirmationDialog from '../../../utils/confirmation_dialog'
+import { USER, getData, insertData, callAxiosApi, deleteData, updateData } from 'src/utils/api_utils';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
+
 import UserTableRow from 'src/sections/user/user-table-row';
+
 import TableNoData from '../table-no-data';
 import UserTableHead from '../user-table-head';
 import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from '../user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
-import { USER, callAxiosApi, getData, insertData } from 'src/utils/api_utils';
 // import UserTableRow from './user-table-row';
 
 // ----------------------------------------------------------------------
@@ -43,13 +46,16 @@ export default function UserPage() {
   const [currentUser, setCurrentUser] = useState(null);
   const [isDataUpdated, setisDataUpdated] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [confirmation, setConfirmation] = useState(false);
+  const [deleteID, setDeleteID] = useState(-1);
 
   useEffect(() => {
     // Fetch users from API
     const fetchUsers = async () => {
       try {
-        const response = await callAxiosApi(getData,{table:USER})
-        console.log("RESP>>>>>",response)
+        const response = await callAxiosApi(getData, { table: USER })
+        console.log("RESP>>>>>", response)
         setUsers(response?.data?.data);
       } catch (error) {
         console.error('Failed to fetch users:', error);
@@ -58,17 +64,6 @@ export default function UserPage() {
 
     fetchUsers();
   }, [isDataUpdated]);
-//   {
-//     "id": 1,
-//     "name": "Deep",
-//     "mobile": "6353783314",
-//     "username": "deep",
-//     "password": "123",
-//     "isMaster": true,
-//     "type_id": 1,
-//     "createdAt": "2024-06-15T12:16:19.000Z",
-//     "updatedAt": "2024-06-15T12:16:19.000Z"
-// }
 
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
@@ -84,8 +79,9 @@ export default function UserPage() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3690/user_masters/${id}`);
-      setUsers(users.filter(user => user.id !== id));
+      console.log("ID>>>>", id)
+      setDeleteID(id)
+      setConfirmation(true)
     } catch (error) {
       console.error('Failed to delete user:', error);
     }
@@ -100,22 +96,22 @@ export default function UserPage() {
   const handleDialogSave = async () => {
     if (isEditing) {
       try {
-        await axios.put(`http://localhost:3690/user_masters/${currentUser.id}`, currentUser);
-        setUsers(users.map(user => (user.id === currentUser.id ? currentUser : user)));
+       let data =  await axios.put(updateData, currentUser);
+       console.log("response",data)
       } catch (error) {
         console.error('Failed to update user:', error);
       }
     } else {
       try {
         //     setCurrentUser({ name: '', mobile: '', username: '', password: '', isMaster: false, type_id: '' });
-        if(!(currentUser?.name) ||!(currentUser?.mobile) ||!(currentUser?.username) || !(currentUser?.password) || !(currentUser?.type_id)){
+        if (!(currentUser?.name) || !(currentUser?.mobile) || !(currentUser?.username) || !(currentUser?.password) || !(currentUser?.type_id)) {
           alert("All fields are required")
-          return 
+          return
         }
-        let data = currentUser
+        const data = currentUser
 
-        let response = await callAxiosApi(insertData,{...currentUser,table:USER})
-        console.log("insert RESP",response)
+        const response = await callAxiosApi(insertData, { ...currentUser, table: USER })
+        console.log("insert RESP", response)
         setisDataUpdated(!isDataUpdated)
 
         // const response = await axios.post('http://localhost:3690/user_masters', currentUser);
@@ -160,6 +156,18 @@ export default function UserPage() {
 
   const notFound = !dataFiltered.length && !!filterName;
 
+  const handleConfirmation = async (data) => {
+    console.log(">>>>>", data)
+    setIsLoading(true)
+    if (data) {
+      let response = await callAxiosApi(deleteData, { table: USER,id:deleteID })
+      setisDataUpdated(!isDataUpdated)
+      console.log("response", response)
+    }
+    setConfirmation (false)
+    setIsLoading(false)
+  }
+
   return (
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
@@ -170,14 +178,16 @@ export default function UserPage() {
         </Button>
       </Stack>
 
-      <Card>
+      <Card >
         <UserTableToolbar
           numSelected={0}
           filterName={filterName}
           onFilterName={handleFilterByName}
         />
 
-        <Scrollbar>
+        {isLoading ? <Box display={"flex"} justifyContent={"center"}>
+          <CircularProgress />
+        </Box> : <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
             <Table sx={{ minWidth: 800 }}>
               <UserTableHead
@@ -201,6 +211,7 @@ export default function UserPage() {
                   .map((row) => (
                     <UserTableRow
                       key={row.id}
+                      id={row.id}
                       selected={false}  // Modify based on your selection logic
                       name={row.name}
                       mobile={row.mobile} // Add this field to your data if needed
@@ -209,9 +220,9 @@ export default function UserPage() {
                       password={row.password} // Modify or remove based on your data structure
                       isMaster={row.isMaster} // Modify or remove based on your data structure
                       type_id={row.type_id}
-                      handleClick={() => {}} // Implement if needed
+                      handleClick={() => { }} // Implement if needed
                       handleEdit={() => handleEdit(row)}
-                      handleDelete={() => handleDelete(row.id)}
+                      handleDelete={handleDelete}
                     />
                   ))}
 
@@ -224,7 +235,7 @@ export default function UserPage() {
               </TableBody>
             </Table>
           </TableContainer>
-        </Scrollbar>
+        </Scrollbar>}
 
         <TablePagination
           page={page}
@@ -276,7 +287,7 @@ export default function UserPage() {
             value={currentUser?.password || ''}
             onChange={handleInputChange}
           />
-          <label>            
+          <label>
             <input
               name="isMaster"
               type="checkbox"
@@ -300,6 +311,8 @@ export default function UserPage() {
           <Button onClick={handleDialogSave}>{isEditing ? 'Save' : 'Add'}</Button>
         </DialogActions>
       </Dialog>
+
+      <ConfirmationDialog openDialog={confirmation} message={"Are You Sure"} handleSave={handleConfirmation} />
     </Container>
   );
 }
