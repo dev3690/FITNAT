@@ -17,11 +17,12 @@ import {
   DialogContent,
   DialogActions,
   TableContainer,
-  TablePagination,
+  TablePagination,FormControl, InputLabel, Select, MenuItem
 } from '@mui/material';
 
 import { getLocalItem } from 'src/utils/local_operations';
-import { getData, PATIENT,callAxiosApi,insertPatient } from 'src/utils/api_utils';
+import { getData, PATIENT, callAxiosApi, insertPatient, updateData, deleteData } from 'src/utils/api_utils';
+import { formatDateYYMMDD } from 'src/utils/date_time';
 
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
@@ -30,6 +31,8 @@ import UserTableHead from './user-table-head';
 import PatientTableRow from './patient-table-row';
 import UserTableToolbar from './user-table-toolbar';
 import { applyFilter, getComparator } from './utils';
+import { endOfDay } from 'date-fns';
+import ConfirmationDialog from 'src/utils/confirmation_dialog';
 
 const apiUrl = 'http://localhost:3690/getData'; // Replace with your API URL
 
@@ -38,20 +41,30 @@ export default function Ex1() {
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('name');
+  const [confirmation, setConfirmation] = useState(false);
+
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [openDialog, setOpenDialog] = useState(false);
   const [currentPatient, setCurrentPatient] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [isDataUpdated, setisDataUpdated] = useState(false);
+  const [deleteID, setDeleteID] = useState(-1);
+
+  const [selectedValue, setSelectedValue] = useState('');
+
+  const handleChange = (event) => {
+    setSelectedValue(event.target.value);
+  };
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [isDataUpdated]);
 
   const fetchUsers = async () => {
     try {
-      const response = await callAxiosApi(getData,{table:PATIENT})
-      console.log(">>>>>>>",response)
+      const response = await callAxiosApi(getData, { table: PATIENT })
+      console.log(">>>>>>>", response)
       setPatient(response.data.data); // Assuming response.data contains the data array
     } catch (error) {
       console.error('Failed to fetch patient:', error);
@@ -64,7 +77,12 @@ export default function Ex1() {
     setOrderBy(id);
   };
 
-  const handleEdit = (patient) => {
+  const handleEdit = (patient = {}) => {
+    let start_date = formatDateYYMMDD(patient?.start_date)
+    let end_date = formatDateYYMMDD(patient?.end_date)
+    patient["start_date"] = start_date
+    patient["end_date"] = end_date
+
     setCurrentPatient(patient);
     setIsEditing(true);
     setOpenDialog(true);
@@ -72,9 +90,8 @@ export default function Ex1() {
 
   const handleDelete = (id) => {
     try {
-      // Perform delete operation on backend if needed
-      // For this example, we are just updating the state
-      setPatient(patient.filter((patient) => patient.id !== id));
+      setConfirmation(true)
+      setDeleteID(id)
     } catch (error) {
       console.error('Failed to delete patient:', error);
     }
@@ -86,19 +103,22 @@ export default function Ex1() {
     setIsEditing(false);
   };
 
-  const handleDialogSave = async() => {
+  const handleDialogSave = async () => {
     if (isEditing) {
       try {
-        // Perform update operation on backend if needed
-        // For this example, we are just updating the state
-        setPatient(patient.map((patient) => (patient.id === currentPatient.id ? currentPatient : patient)));
+        console.log("SELECTED",selectedValue)
+        let data = await callAxiosApi(updateData, { ...currentPatient, table: PATIENT });
+        setisDataUpdated(!isDataUpdated)
+        console.log("response", data)
       } catch (error) {
         console.error('Failed to update patient:', error);
       }
     } else {
       const localData = getLocalItem("data")
-      const response = await callAxiosApi(insertPatient,{...currentPatient,type_id:localData?.type_id,created_by:localData?.id})
-      console.log(">>>>>>>",response)
+      const response = await callAxiosApi(insertPatient, { ...currentPatient, type_id: localData?.type_id, created_by: localData?.id })
+      setisDataUpdated(!isDataUpdated)
+
+      console.log(">>>>>>>", response)
       setPatient([...patient, { ...currentPatient, id: patient.length + 1 }]); // Assuming no ID is returned from backend
     }
     handleDialogClose();
@@ -135,6 +155,18 @@ export default function Ex1() {
     filterName,
   });
 
+  const handleConfirmation = async (data) => {
+    console.log(">>>>>", data)
+    // setIsLoading(true)
+    if (data) {
+      let response = await callAxiosApi(deleteData, { table: PATIENT,id:deleteID })
+      setisDataUpdated(!isDataUpdated)
+      console.log("response", response)
+    }
+    setConfirmation(false)
+    // setIsLoading(false)
+  }
+
   const notFound = !dataFiltered.length && !!filterName;
 
   return (
@@ -142,7 +174,7 @@ export default function Ex1() {
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Patients</Typography>
         <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleAddNewUser}>
-          New User
+          New Patient
         </Button>
       </Stack>
 
@@ -178,7 +210,8 @@ export default function Ex1() {
                 {dataFiltered
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
-                    <PatientTableRow row={row}/>
+                    <PatientTableRow row={row} handleEdit={() => handleEdit(row)} handleDelete={handleDelete}
+                    />
                   ))}
 
                 {/* <TableEmptyRows
@@ -204,7 +237,7 @@ export default function Ex1() {
       </Card>
 
       <Dialog open={openDialog} onClose={handleDialogClose}>
-        <DialogTitle>{isEditing ? 'Edit User' : 'Add New User'}</DialogTitle>
+        <DialogTitle>{isEditing ? 'Edit Patient' : 'Add New Patient'}</DialogTitle>
         <DialogContent>
           <TextField
             margin="dense"
@@ -219,7 +252,7 @@ export default function Ex1() {
             margin="dense"
             name="mobile"
             label="Mobile"
-            type="text"
+            type="number"
             fullWidth
             value={currentPatient?.mobile || ''}
             onChange={handleInputChange}
@@ -284,6 +317,19 @@ export default function Ex1() {
             value={currentPatient?.package || ''}
             onChange={handleInputChange}
           />
+          {/* <FormControl variant="outlined" fullWidth>
+            <InputLabel id="demo-simple-select-outlined-label">Select Option</InputLabel>
+            <Select
+              labelId="demo-simple-select-outlined-label"
+              id="demo-simple-select-outlined"
+              value={selectedValue}
+              onChange={handleChange}
+              label="Select Option"
+            >
+              <MenuItem value={1}>Dhairya</MenuItem>
+              <MenuItem value={2}>Wife</MenuItem>
+            </Select>
+          </FormControl> */}
           {/* Add other fields as needed */}
         </DialogContent>
         <DialogActions>
@@ -291,6 +337,8 @@ export default function Ex1() {
           <Button onClick={handleDialogSave}>{isEditing ? 'Save' : 'Add'}</Button>
         </DialogActions>
       </Dialog>
+      <ConfirmationDialog openDialog={confirmation} message={"Are You Sure"} handleSave={handleConfirmation} />
+
     </Container>
   );
 }

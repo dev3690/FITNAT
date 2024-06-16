@@ -94,9 +94,14 @@ export default function UserPage() {
   };
 
   const handleDialogSave = async () => {
+    if (!(currentUser?.name) || !(currentUser?.mobile) || !(currentUser?.username) || !(currentUser?.password) || !(currentUser?.type_id)) {
+      alert("All fields are required")
+      return
+    }
     if (isEditing) {
       try {
-       let data =  await axios.put(updateData, currentUser);
+       let data =  await callAxiosApi(updateData, {...currentUser,table:USER});
+       setisDataUpdated(!isDataUpdated)
        console.log("response",data)
       } catch (error) {
         console.error('Failed to update user:', error);
@@ -104,10 +109,7 @@ export default function UserPage() {
     } else {
       try {
         //     setCurrentUser({ name: '', mobile: '', username: '', password: '', isMaster: false, type_id: '' });
-        if (!(currentUser?.name) || !(currentUser?.mobile) || !(currentUser?.username) || !(currentUser?.password) || !(currentUser?.type_id)) {
-          alert("All fields are required")
-          return
-        }
+        
         const data = currentUser
 
         const response = await callAxiosApi(insertData, { ...currentUser, table: USER })
@@ -264,7 +266,7 @@ export default function UserPage() {
             margin="dense"
             name="mobile"
             label="Mobile"
-            type="text"
+            type="number"
             fullWidth
             value={currentUser?.mobile || ''}
             onChange={handleInputChange}
