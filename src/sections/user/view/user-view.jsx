@@ -31,6 +31,7 @@ import UserTableHead from '../user-table-head';
 import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from '../user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
+import { getLocalItem } from 'src/utils/local_operations';
 // import UserTableRow from './user-table-row';
 
 // ----------------------------------------------------------------------
@@ -94,25 +95,26 @@ export default function UserPage() {
   };
 
   const handleDialogSave = async () => {
-    if (!(currentUser?.name) || !(currentUser?.mobile) || !(currentUser?.username) || !(currentUser?.password) || !(currentUser?.type_id)) {
+    let localData = getLocalItem("data")
+    console.log(currentUser)
+
+    if (!(currentUser?.name?.trim()) || (!currentUser?.mobile?.trim() || currentUser?.mobile?.trim()?.length != 10) || !(currentUser?.username?.trim()) || !(currentUser?.password?.trim())) {
       alert("All fields are required")
       return
     }
     if (isEditing) {
       try {
-       let data =  await callAxiosApi(updateData, {...currentUser,table:USER});
-       setisDataUpdated(!isDataUpdated)
-       console.log("response",data)
+        let data = await callAxiosApi(updateData, { ...currentUser, table: USER ,type_id : localData?.type_id});
+        setisDataUpdated(!isDataUpdated)
+        console.log("response", data)
       } catch (error) {
         console.error('Failed to update user:', error);
       }
     } else {
       try {
-        //     setCurrentUser({ name: '', mobile: '', username: '', password: '', isMaster: false, type_id: '' });
-        
         const data = currentUser
-
-        const response = await callAxiosApi(insertData, { ...currentUser, table: USER })
+        console.log(data)
+        const response = await callAxiosApi(insertData, { ...currentUser, table: USER,type_id : localData?.type_id })
         console.log("insert RESP", response)
         setisDataUpdated(!isDataUpdated)
 
@@ -162,16 +164,16 @@ export default function UserPage() {
     console.log(">>>>>", data)
     setIsLoading(true)
     if (data) {
-      let response = await callAxiosApi(deleteData, { table: USER,id:deleteID })
+      let response = await callAxiosApi(deleteData, { table: USER, id: deleteID })
       setisDataUpdated(!isDataUpdated)
       console.log("response", response)
     }
-    setConfirmation (false)
+    setConfirmation(false)
     setIsLoading(false)
   }
 
   return (
-    <Container>
+    <Container maxWidth="xl">
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Users</Typography>
 
@@ -214,13 +216,13 @@ export default function UserPage() {
                     <UserTableRow
                       key={row.id}
                       id={row.id}
-                      selected={false}  // Modify based on your selection logic
+                      selected={false}  // 
                       name={row.name}
                       mobile={row.mobile} // Add this field to your data if needed
-                      company={row.company} // Modify or remove based on your data structure
-                      username={row.username} // Modify or remove based on your data structure
-                      password={row.password} // Modify or remove based on your data structure
-                      isMaster={row.isMaster} // Modify or remove based on your data structure
+                      company={row.company}
+                      username={row.username}
+                      password={row.password}
+                      isMaster={row.isMaster}
                       type_id={row.type_id}
                       handleClick={() => { }} // Implement if needed
                       handleEdit={() => handleEdit(row)}
@@ -276,6 +278,7 @@ export default function UserPage() {
             name="username"
             label="Username"
             type="text"
+            disabled={isEditing}
             fullWidth
             value={currentUser?.username || ''}
             onChange={handleInputChange}
@@ -298,15 +301,6 @@ export default function UserPage() {
             />
             IsMaster
           </label>
-          <TextField
-            margin="dense"
-            name="type_id"
-            label="Type ID"
-            type="number"
-            fullWidth
-            value={currentUser?.type_id || ''}
-            onChange={handleInputChange}
-          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDialogClose}>Cancel</Button>

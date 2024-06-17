@@ -1,7 +1,7 @@
 
 
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import {
   Button,
@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 
 import { STATUS, updateData, callAxiosApi } from 'src/utils/api_utils';
+import { getWeeklyEndDates } from 'src/utils/date_time';
 
 
 // ----------------------------------------------------------------------
@@ -33,6 +34,7 @@ export default function BirdEyeTableRow({
   handleDelete,
 }) {
   const [open, setOpen] = useState(null);
+  const [isUpcoming, setIsUpcoming] = useState(false);
 
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
@@ -43,20 +45,25 @@ export default function BirdEyeTableRow({
   }
 
   const onstatusChanged = async (data) => {
-    console.log("data to update",data)
+    console.log("data to update", data)
     const response = await callAxiosApi(updateData, data)
     upliftState()
     console.log("<><><><><><>", response)
   }
 
+  useEffect(() => {
+    let range = getWeeklyEndDates(new Date(start_date).toLocaleString().split(",")[0], new Date(end_date).toLocaleString().split(",")[0], currentWeek)
+    setIsUpcoming(range)
+    console.log("WEEK range", range)
+  }, [])
 
   return (
     <TableRow hover tabIndex={-1}>
-        {/* <TableCell padding="checkbox">
+      {/* <TableCell padding="checkbox">
           <Checkbox disableRipple checked={selected} onChange={handleClick} />
         </TableCell> */}
 
-        {/* <TableCell component="th" scope="row" padding="none">
+      {/* <TableCell component="th" scope="row" padding="none">
           <Stack direction="row" alignItems="center" spacing={2}>
             <Avatar alt={name} src={avatarUrl} />
             <Typography variant="subtitle2" noWrap>
@@ -65,54 +72,54 @@ export default function BirdEyeTableRow({
           </Stack>
         </TableCell> */}
 
-        <TableCell>{name}</TableCell>
-        <TableCell>{pack}</TableCell>
-        <TableCell align="center">
+      <TableCell>{name}</TableCell>
+      <TableCell>{pack}</TableCell>
+      <TableCell align="center">
+        <Button
+          variant="outlined"
+          href={url}
+          size="small"
+          color="success"
+        // onClick={() => handleTasks(user.id, week)}
+        // style={{ minWidth: '40px', padding: '4px 8px' }}
+        // disabled={i >= packageDetails[user.details.find(detail => detail.label === 'Package').value]}
+        >
+          link
+        </Button>
+
+      </TableCell>
+      <TableCell align="center">{new Date(start_date).toLocaleString().split(",")[0]}</TableCell>
+      <TableCell align="center">{new Date(end_date).toLocaleString().split(",")[0]}</TableCell>
+      {Array.from({ length: 12 }, (_, i) => i).map((item) => (
+        <TableCell id={`index${item}`} align="center" sx={{ backgroundColor: isUpcoming && item + 1 == currentWeek ? "#b5ddf2" : (item + 1 == currentWeek && "#e4eaec"), borderRadius: item + 1 == currentWeek && "20px 0px 20px 0px" }} >
           <Button
-            variant="outlined"
-            href={url}
+            variant="contained"
             size="small"
-            color="success"
-          // onClick={() => handleTasks(user.id, week)}
+            color={status[`week${item + 1}u1`] == 1 ? 'success' : "error"}
+            disabled={item + 1 > totalWeeks}
+            onClick={() => onstatusChanged({ id, table: STATUS, [`week${item + 1}u1`]: status[`week${item + 1}u1`] == 1 ? 0 : 1 })}
           // style={{ minWidth: '40px', padding: '4px 8px' }}
           // disabled={i >= packageDetails[user.details.find(detail => detail.label === 'Package').value]}
           >
-            link
+            UPD
           </Button>
-
+          <Button
+            variant="contained"
+            size="small"
+            sx={{ margin: "10px" }}
+            color={status[`week${item + 1}u2`] == 1 ? 'success' : "error"}
+            disabled={item + 1 > totalWeeks}
+            onClick={() => onstatusChanged({ id, table: STATUS, [`week${item + 1}u2`]: status[`week${item + 1}u2`] == 1 ? 0 : 1 })}
+          // style={{ minWidth: '40px', padding: '4px 8px' }}
+          // disabled={i >= packageDetails[user.details.find(detail => detail.label === 'Package').value]}
+          >
+            TKS
+          </Button>
         </TableCell>
-        <TableCell align="center">{new Date(start_date).toLocaleString().split(",")[0]}</TableCell>
-        <TableCell align="center">{new Date(end_date).toLocaleString().split(",")[0]}</TableCell>
-        {Array.from({ length: 12 }, (_, i) => i).map((item) => (
-          <TableCell id={`index${  item}`} align="center" sx={{ backgroundColor: item + 1 == currentWeek && "#e4eaec", borderRadius: item + 1 == currentWeek && "20px 0px 20px 0px" }} >
-            <Button
-              variant="contained"
-              size="small"
-              color={status[`week${item + 1}u1`] == 1 ? 'success' : "error"}
-              disabled={item + 1 > totalWeeks}
-              onClick={() => onstatusChanged({ id ,table:STATUS,[`week${item + 1}u1`]:status[`week${item + 1}u1`] == 1 ? 0 : 1})}
-            // style={{ minWidth: '40px', padding: '4px 8px' }}
-            // disabled={i >= packageDetails[user.details.find(detail => detail.label === 'Package').value]}
-            >
-              UPD
-            </Button>
-            <Button
-              variant="contained"
-              size="small"
-              sx={{ margin: "10px" }}
-              color={status[`week${item + 1}u2`] == 1 ? 'success' : "error"}
-              disabled={item + 1 > totalWeeks}
-              onClick={() => onstatusChanged({ id ,table:STATUS,[`week${item + 1}u2`]:status[`week${item + 1}u2`] == 1 ? 0 : 1})}
-            // style={{ minWidth: '40px', padding: '4px 8px' }}
-            // disabled={i >= packageDetails[user.details.find(detail => detail.label === 'Package').value]}
-            >
-              TKS
-            </Button>
-          </TableCell>
-        )
-        )
-        }
-      </TableRow>
+      )
+      )
+      }
+    </TableRow>
   );
 }
 

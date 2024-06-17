@@ -15,7 +15,7 @@ const navConfig = [
   {
     title: 'user',
     path: '/user',
-    icon: icon('ic_user'),
+    icon: icon('user'),
   },
   // {
   //   title: 'product',
@@ -31,17 +31,17 @@ const navConfig = [
   {
     title: 'Patients',
     path: '/ex1',
-    icon: icon('ic_lock'),
+    icon: icon('patient1'),
   },
   {
     title: 'Birds Eye View', // Add new menu item
     path: '/jordanflex',
-    icon: icon('ic_lock'),
+    icon: icon('eye'),
   },
   {
     title: 'logout',
     path: '/login',
-    icon: icon('ic_lock'),
+    icon: icon('exit'),
   }
   // {
   //   title: 'Not found',

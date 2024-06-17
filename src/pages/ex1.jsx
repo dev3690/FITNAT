@@ -17,7 +17,11 @@ import {
   DialogContent,
   DialogActions,
   TableContainer,
-  TablePagination,FormControl, InputLabel, Select, MenuItem
+  TablePagination,FormControl, InputLabel, Select, MenuItem,
+  Grid,
+  OutlinedInput,
+  Checkbox,
+  ListItemText
 } from '@mui/material';
 
 import { getLocalItem } from 'src/utils/local_operations';
@@ -51,11 +55,12 @@ export default function Ex1() {
   const [isDataUpdated, setisDataUpdated] = useState(false);
   const [deleteID, setDeleteID] = useState(-1);
 
-  const [selectedValue, setSelectedValue] = useState('');
+  const painOptions = [
+    'Headache', 'Neck Pain', 'Shoulder Pain', 'Back Pain', 'Hip Pain', 
+    'Knee Pain', 'Ankle Pain', 'Foot Pain', 'Elbow Pain', 'Wrist Pain', 
+    'Hand Pain', 'Chest Pain'
+  ];
 
-  const handleChange = (event) => {
-    setSelectedValue(event.target.value);
-  };
 
   useEffect(() => {
     fetchUsers();
@@ -80,8 +85,11 @@ export default function Ex1() {
   const handleEdit = (patient = {}) => {
     let start_date = formatDateYYMMDD(patient?.start_date)
     let end_date = formatDateYYMMDD(patient?.end_date)
+    let pain = patient?.pain?.split(",")
+
     patient["start_date"] = start_date
     patient["end_date"] = end_date
+    patient.pain = pain
 
     setCurrentPatient(patient);
     setIsEditing(true);
@@ -104,9 +112,11 @@ export default function Ex1() {
   };
 
   const handleDialogSave = async () => {
+    let pain = currentPatient?.pain.join(",")
+    currentPatient.pain = pain
     if (isEditing) {
       try {
-        console.log("SELECTED",selectedValue)
+        
         let data = await callAxiosApi(updateData, { ...currentPatient, table: PATIENT });
         setisDataUpdated(!isDataUpdated)
         console.log("response", data)
@@ -115,11 +125,10 @@ export default function Ex1() {
       }
     } else {
       const localData = getLocalItem("data")
+      console.log("Patient",currentPatient)
       const response = await callAxiosApi(insertPatient, { ...currentPatient, type_id: localData?.type_id, created_by: localData?.id })
       setisDataUpdated(!isDataUpdated)
-
       console.log(">>>>>>>", response)
-      setPatient([...patient, { ...currentPatient, id: patient.length + 1 }]); // Assuming no ID is returned from backend
     }
     handleDialogClose();
   };
@@ -167,10 +176,18 @@ export default function Ex1() {
     // setIsLoading(false)
   }
 
+  const handlePainChange = (event) => {
+    const { target: { value } } = event;
+    console.log(value)
+    setCurrentPatient({
+      ...currentPatient,
+      pain: value,
+    });
+  };
   const notFound = !dataFiltered.length && !!filterName;
 
   return (
-    <Container>
+    <Container maxWidth="xl">
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Patients</Typography>
         <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleAddNewUser}>
@@ -210,7 +227,7 @@ export default function Ex1() {
                 {dataFiltered
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
-                    <PatientTableRow row={row} handleEdit={() => handleEdit(row)} handleDelete={handleDelete}
+                    <PatientTableRow row={row} handleEdit={() => handleEdit({...row})} handleDelete={handleDelete}
                     />
                   ))}
 
@@ -236,18 +253,23 @@ export default function Ex1() {
         />
       </Card>
 
-      <Dialog open={openDialog} onClose={handleDialogClose}>
+      {openDialog && <Dialog open={openDialog} onClose={handleDialogClose}>
         <DialogTitle>{isEditing ? 'Edit Patient' : 'Add New Patient'}</DialogTitle>
         <DialogContent>
+        <Grid xs={12} container spacing={2} >
+        <Grid xs={12} item sm={6} >
           <TextField
             margin="dense"
             name="name"
+            required
             label="Name"
             type="text"
             fullWidth
             value={currentPatient?.name || ''}
             onChange={handleInputChange}
           />
+          </Grid>
+          <Grid xs={12} item sm={6}> 
           <TextField
             margin="dense"
             name="mobile"
@@ -257,16 +279,34 @@ export default function Ex1() {
             value={currentPatient?.mobile || ''}
             onChange={handleInputChange}
           />
+          </Grid>
+          <Grid xs={12} item sm={6}> 
           <TextField
             margin="dense"
             name="city"
-            label="City"
+            label="City/State"
             type="text"
             fullWidth
             value={currentPatient?.city || ''}
             onChange={handleInputChange}
           />
+          </Grid>
+
+          <Grid xs={12} item sm={6}> 
           <TextField
+            margin="dense"
+            name="country"
+            label="Country"
+            type="text"
+            fullWidth
+            value={currentPatient?.country || ''}
+            onChange={handleInputChange}
+          />
+          </Grid>
+
+          <Grid xs={12} item sm={12}>
+
+          {/* <TextField
             margin="dense"
             name="pain"
             label="Pain"
@@ -274,16 +314,31 @@ export default function Ex1() {
             fullWidth
             value={currentPatient?.pain || ''}
             onChange={handleInputChange}
-          />
-          <TextField
-            margin="dense"
-            name="url"
-            label="URL"
-            type="text"
-            fullWidth
-            value={currentPatient?.url || ''}
-            onChange={handleInputChange}
-          />
+          /> */}
+
+              <FormControl fullWidth margin="dense">
+                <InputLabel>Pain</InputLabel>
+                <Select
+                  multiple
+                  value={currentPatient?.pain || []}
+                  onChange={handlePainChange}
+                  input={<OutlinedInput label="Pain" />}
+                  renderValue={(selected) => {
+                   return selected?.join(",")
+                  }} // selected.join thi error ave
+                >
+                  {painOptions.map((pain) => (
+                    <MenuItem key={pain} value={pain}>
+                      <Checkbox checked={currentPatient?.pain?.includes(pain) || ''} />
+                      <ListItemText primary={pain} />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+
+          </Grid> 
+          <Grid xs={12} item sm={6}> 
           <TextField
             margin="dense"
             name="start_date"
@@ -296,6 +351,9 @@ export default function Ex1() {
             value={currentPatient?.start_date || ''}
             onChange={handleInputChange}
           />
+          </Grid>
+          
+          <Grid xs={12} item sm={6}>
           <TextField
             margin="dense"
             name="end_date"
@@ -308,7 +366,9 @@ export default function Ex1() {
             value={currentPatient?.end_date || ''}
             onChange={handleInputChange}
           />
-          <TextField
+          </Grid>
+          <Grid xs={12} item sm={12}>
+          {/* <TextField
             margin="dense"
             name="package"
             label="Package"
@@ -316,27 +376,44 @@ export default function Ex1() {
             fullWidth
             value={currentPatient?.package || ''}
             onChange={handleInputChange}
-          />
-          {/* <FormControl variant="outlined" fullWidth>
+          /> */}
+
+          <FormControl variant="outlined" fullWidth>
             <InputLabel id="demo-simple-select-outlined-label">Select Option</InputLabel>
             <Select
               labelId="demo-simple-select-outlined-label"
               id="demo-simple-select-outlined"
-              value={selectedValue}
-              onChange={handleChange}
-              label="Select Option"
+              name='package'
+              value={currentPatient?.package}
+              onChange={handleInputChange}
+              label="Select Package"
             >
-              <MenuItem value={1}>Dhairya</MenuItem>
-              <MenuItem value={2}>Wife</MenuItem>
+              <MenuItem value={1}>FITNAT Coaching Premium</MenuItem>
+              <MenuItem value={2}>FITNAT Coaching Delux</MenuItem>
+              <MenuItem value={3}>FITNAT Coaching Personal Training</MenuItem>
             </Select>
-          </FormControl> */}
+          </FormControl>
           {/* Add other fields as needed */}
+        </Grid>
+
+          <Grid xs={12} item sm={12}>
+          <TextField
+            margin="dense"
+            name="url"
+            label="URL"
+            type="text"
+            fullWidth
+            value={currentPatient?.url || ''}
+            onChange={handleInputChange}
+          />
+          </Grid>
+          </Grid>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDialogClose}>Cancel</Button>
           <Button onClick={handleDialogSave}>{isEditing ? 'Save' : 'Add'}</Button>
         </DialogActions>
-      </Dialog>
+      </Dialog>}
       <ConfirmationDialog openDialog={confirmation} message={"Are You Sure"} handleSave={handleConfirmation} />
 
     </Container>
