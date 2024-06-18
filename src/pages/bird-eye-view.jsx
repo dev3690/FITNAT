@@ -42,7 +42,15 @@ export default function BirdEyeView() {
   const [currentUser, setCurrentUser] = useState(null);
   const [isDataUpdated, setisDataUpdated] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-
+  let optionList = [
+    { id: 1, label: "Name" },
+    { id: 2, label: "Package" },
+    { id: 3, label: "Link" },
+    { id: 4, label: "Start Date" },
+    { id: 5, label: "End Date" },
+    ...Array.from({ length: 12 }, (_, i) => `Week ${i + 1}`).map((item, index) => (({ id: `${item}-${index}`, label: item })))
+  ]
+  const [selectedColumns, setSelectedColumns] = useState(optionList?.map((item)=>item?.label));
 
   useEffect(() => {
     // Fetch users from API
@@ -192,6 +200,11 @@ export default function BirdEyeView() {
   };
   const navigate = useNavigate();
 
+  const handleSelectedColumns = (selected) =>{
+    console.log(">>>>>>>>",selected)
+    setSelectedColumns(selected)
+  }
+
   const notFound = !dataFiltered.length && !!filterName;
 
   return (
@@ -208,6 +221,7 @@ export default function BirdEyeView() {
           <UserTableToolbar
             numSelected={0}
             filterName={filterName}
+            handleSelectedColumns = {handleSelectedColumns} 
             onFilterName={handleFilterByName}
           />
 
@@ -219,20 +233,14 @@ export default function BirdEyeView() {
                 // orderBy={orderBy}
                 // rowCount={users.length}
                 headLabel={
-                  [
-                    { id: 1, label: "Name" },
-                    { id: 2, label: "Package" },
-                    { id: 3, label: "Link" },
-                    { id: 4, label: "Start Date" },
-                    { id: 5, label: "End Date" },
-                    ...Array.from({ length: 12 }, (_, i) => `Week ${i + 1}`).map((item, index) => (({ id: `${item}-${index}`, label: item })))
-                  ]
+                  optionList?.filter((item)=>selectedColumns.includes(item?.label))
                 } />
               <TableBody>
                 {dataFiltered
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => (
                     <BirdEyeTableRow
+                    selectedColumns ={selectedColumns}
                       id={row.id}
                       index={index}
                       currentWeek={row?.currentWeek}

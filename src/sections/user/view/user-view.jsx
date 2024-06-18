@@ -25,7 +25,6 @@ import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 
 import UserTableRow from 'src/sections/user/user-table-row';
-
 import TableNoData from '../table-no-data';
 import UserTableHead from '../user-table-head';
 import TableEmptyRows from '../table-empty-rows';
@@ -100,11 +99,12 @@ export default function UserPage() {
 
     if (!(currentUser?.name?.trim()) || (!currentUser?.mobile?.trim() || currentUser?.mobile?.trim()?.length != 10) || !(currentUser?.username?.trim()) || !(currentUser?.password?.trim())) {
       alert("All fields are required")
+      
       return
     }
     if (isEditing) {
       try {
-        let data = await callAxiosApi(updateData, { ...currentUser, table: USER ,type_id : localData?.type_id});
+        let data = await callAxiosApi(updateData, { ...currentUser, table: USER, type_id: localData?.type_id });
         setisDataUpdated(!isDataUpdated)
         console.log("response", data)
       } catch (error) {
@@ -114,7 +114,7 @@ export default function UserPage() {
       try {
         const data = currentUser
         console.log(data)
-        const response = await callAxiosApi(insertData, { ...currentUser, table: USER,type_id : localData?.type_id })
+        const response = await callAxiosApi(insertData, { ...currentUser, table: USER, type_id: localData?.type_id })
         console.log("insert RESP", response)
         setisDataUpdated(!isDataUpdated)
 
@@ -189,9 +189,7 @@ export default function UserPage() {
           onFilterName={handleFilterByName}
         />
 
-        {isLoading ? <Box display={"flex"} justifyContent={"center"}>
-          <CircularProgress />
-        </Box> : <Scrollbar>
+<Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
             <Table sx={{ minWidth: 800 }}>
               <UserTableHead
@@ -239,7 +237,7 @@ export default function UserPage() {
               </TableBody>
             </Table>
           </TableContainer>
-        </Scrollbar>}
+        </Scrollbar>
 
         <TablePagination
           page={page}
@@ -254,58 +252,60 @@ export default function UserPage() {
 
       <Dialog open={openDialog} onClose={handleDialogClose}>
         <DialogTitle>{isEditing ? 'Edit User' : 'Add New User'}</DialogTitle>
-        <DialogContent>
-          <TextField
-            margin="dense"
-            name="name"
-            label="Name"
-            type="text"
-            fullWidth
-            value={currentUser?.name || ''}
-            onChange={handleInputChange}
-          />
-          <TextField
-            margin="dense"
-            name="mobile"
-            label="Mobile"
-            type="number"
-            fullWidth
-            value={currentUser?.mobile || ''}
-            onChange={handleInputChange}
-          />
-          <TextField
-            margin="dense"
-            name="username"
-            label="Username"
-            type="text"
-            disabled={isEditing}
-            fullWidth
-            value={currentUser?.username || ''}
-            onChange={handleInputChange}
-          />
-          <TextField
-            margin="dense"
-            name="password"
-            label="Password"
-            type="text"
-            fullWidth
-            value={currentUser?.password || ''}
-            onChange={handleInputChange}
-          />
-          <label>
-            <input
-              name="isMaster"
-              type="checkbox"
-              checked={currentUser?.isMaster || false}
-              onChange={(e) => setCurrentUser({ ...currentUser, isMaster: e.target.checked })}
+       {isLoading ? <CircularProgress/> : <>
+          <DialogContent>
+            <TextField
+              margin="dense"
+              name="name"
+              label="Name"
+              type="text"
+              fullWidth
+              value={currentUser?.name || ''}
+              onChange={handleInputChange}
             />
-            IsMaster
-          </label>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDialogClose}>Cancel</Button>
-          <Button onClick={handleDialogSave}>{isEditing ? 'Save' : 'Add'}</Button>
-        </DialogActions>
+            <TextField
+              margin="dense"
+              name="mobile"
+              label="Mobile"
+              type="number"
+              fullWidth
+              value={currentUser?.mobile || ''}
+              onChange={handleInputChange}
+            />
+            <TextField
+              margin="dense"
+              name="username"
+              label="Username"
+              type="text"
+              disabled={isEditing}
+              fullWidth
+              value={currentUser?.username || ''}
+              onChange={handleInputChange}
+            />
+            <TextField
+              margin="dense"
+              name="password"
+              label="Password"
+              type="text"
+              fullWidth
+              value={currentUser?.password || ''}
+              onChange={handleInputChange}
+            />
+            <label>
+              <input
+                name="isMaster"
+                type="checkbox"
+                checked={currentUser?.isMaster || false}
+                onChange={(e) => setCurrentUser({ ...currentUser, isMaster: e.target.checked })}
+              />
+              IsMaster
+            </label>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleDialogClose}>Cancel</Button>
+            <Button onClick={handleDialogSave}>{isEditing ? 'Save' : 'Add'}</Button>
+          </DialogActions>
+        </>}
       </Dialog>
 
       <ConfirmationDialog openDialog={confirmation} message={"Are You Sure"} handleSave={handleConfirmation} />

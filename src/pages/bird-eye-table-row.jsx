@@ -21,8 +21,9 @@ export default function BirdEyeTableRow({
   id,
   pack,
   pain,
+  selectedColumns,
   url,
-  currentWeek,
+  // currentWeek,
   totalWeeks,
   status,
   index,
@@ -34,6 +35,7 @@ export default function BirdEyeTableRow({
   handleDelete,
 }) {
   const [open, setOpen] = useState(null);
+  const [currentWeek, setCurrentWeek] = useState(-1);
   const [isUpcoming, setIsUpcoming] = useState(false);
 
   const handleOpenMenu = (event) => {
@@ -52,29 +54,17 @@ export default function BirdEyeTableRow({
   }
 
   useEffect(() => {
-    let range = getWeeklyEndDates(new Date(start_date).toLocaleString().split(",")[0], new Date(end_date).toLocaleString().split(",")[0], currentWeek)
-    setIsUpcoming(range)
-    console.log("WEEK range", range)
+    let { isNotify, currWeek } = getWeeklyEndDates(new Date(start_date).toLocaleString().split(",")[0], new Date(end_date).toLocaleString().split(",")[0], currentWeek)
+    setCurrentWeek(currWeek)
+    setIsUpcoming(isNotify)
+    console.log("WEEK range", { isNotify, currWeek })
   }, [])
 
   return (
     <TableRow hover tabIndex={-1}>
-      {/* <TableCell padding="checkbox">
-          <Checkbox disableRipple checked={selected} onChange={handleClick} />
-        </TableCell> */}
-
-      {/* <TableCell component="th" scope="row" padding="none">
-          <Stack direction="row" alignItems="center" spacing={2}>
-            <Avatar alt={name} src={avatarUrl} />
-            <Typography variant="subtitle2" noWrap>
-              {name}
-            </Typography>
-          </Stack>
-        </TableCell> */}
-
-      <TableCell>{name}</TableCell>
-      <TableCell>{pack}</TableCell>
-      <TableCell align="center">
+      {selectedColumns?.includes("Name") && <TableCell>{name}</TableCell>}
+      {selectedColumns?.includes("Package") && <TableCell>{pack}</TableCell>}
+      {selectedColumns?.includes("Link") && <TableCell align="center">
         <Button
           variant="outlined"
           href={url}
@@ -87,11 +77,11 @@ export default function BirdEyeTableRow({
           link
         </Button>
 
-      </TableCell>
-      <TableCell align="center">{new Date(start_date).toLocaleString().split(",")[0]}</TableCell>
-      <TableCell align="center">{new Date(end_date).toLocaleString().split(",")[0]}</TableCell>
+      </TableCell>}
+      {selectedColumns?.includes("Start Date") && <TableCell align="center">{new Date(start_date).toLocaleString().split(",")[0]}</TableCell>}
+      {selectedColumns?.includes("End Date") && <TableCell align="center">{new Date(end_date).toLocaleString().split(",")[0]}</TableCell>}
       {Array.from({ length: 12 }, (_, i) => i).map((item) => (
-        <TableCell id={`index${item}`} align="center" sx={{ backgroundColor: isUpcoming && item + 1 == currentWeek ? "#b5ddf2" : (item + 1 == currentWeek && "#e4eaec"), borderRadius: item + 1 == currentWeek && "20px 0px 20px 0px" }} >
+        selectedColumns.includes(`Week ${item + 1}`) && <TableCell id={`index${item}`} align="center" sx={{ backgroundColor: isUpcoming && item + 1 == currentWeek ? "#b5ddf2" : (item + 1 == currentWeek && "#e4eaec"), borderRadius: item + 1 == currentWeek && "20px 0px 20px 0px" }} >
           <Button
             variant="contained"
             size="small"
