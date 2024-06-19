@@ -19,10 +19,12 @@ import {
   TableContainer,
   TablePagination, FormControl, InputLabel, Select, MenuItem,
   Grid,
-  OutlinedInput,
+  OutlinedInput, Box,
+  CircularProgress,
   Checkbox,
   ListItemText
 } from '@mui/material';
+import { ToastContainer, toast } from 'react-toastify';
 
 import { getLocalItem } from 'src/utils/local_operations';
 import { getData, PATIENT, callAxiosApi, insertPatient, updateData, deleteData } from 'src/utils/api_utils';
@@ -37,6 +39,7 @@ import UserTableToolbar from './user-table-toolbar';
 import { applyFilter, getComparator } from './utils';
 import { endOfDay } from 'date-fns';
 import ConfirmationDialog from 'src/utils/confirmation_dialog';
+import 'react-toastify/dist/ReactToastify.css';
 
 const apiUrl = 'http://localhost:3690/getData'; // Replace with your API URL
 
@@ -54,6 +57,7 @@ export default function Ex1() {
   const [isEditing, setIsEditing] = useState(false);
   const [isDataUpdated, setisDataUpdated] = useState(false);
   const [deleteID, setDeleteID] = useState(-1);
+  const [isLoading, setIsLoading] = useState(false);
   const [isMaster, setIsMaster] = useState();
 
 
@@ -72,9 +76,13 @@ export default function Ex1() {
 
   const fetchUsers = async () => {
     try {
+      setIsLoading(true)
+
       const response = await callAxiosApi(getData, { table: PATIENT })
       console.log(">>>>>>>", response)
       setPatient(response.data.data); // Assuming response.data contains the data array
+      setIsLoading(false)
+
     } catch (error) {
       console.error('Failed to fetch patient:', error);
     }
@@ -118,14 +126,17 @@ export default function Ex1() {
   const handleDialogSave = async () => {
 
     if ((!currentPatient?.start_date || !currentPatient?.end_date || new Date(currentPatient?.start_date) >= new Date(currentPatient?.end_date))) {
-      alert("please select valid dates")
+      toast.error("please select valid dates")
+      // alert("please select valid dates")
       return
     }
     console.log(currentPatient?.pain)
     if (!(currentPatient?.name?.trim()) || !(currentPatient?.city?.trim()) ||
+      !(currentPatient?.country?.trim()) ||
       !(currentPatient?.pain?.join()?.length) || !(currentPatient?.package) ||
       !(currentPatient?.url?.trim()) || (currentPatient?.mobile?.trim().length != 10)) {
-      alert("please provide all Details")
+      toast.error("please provide all Details")
+      // alert("please provide all Details")
       return
     }
 
@@ -139,8 +150,12 @@ export default function Ex1() {
         let data = await callAxiosApi(updateData, { ...currentPatient, table: PATIENT });
         setisDataUpdated(!isDataUpdated)
         console.log("response", data)
+        toast.success("Patient Updated Successfully")
+
       } catch (error) {
         console.error('Failed to update patient:', error);
+        toast.error("Failed to update patient")
+
       }
     } else {
       const localData = getLocalItem("data")
@@ -148,6 +163,8 @@ export default function Ex1() {
       const response = await callAxiosApi(insertPatient, { ...currentPatient, type_id: localData?.type_id, created_by: localData?.id })
       setisDataUpdated(!isDataUpdated)
       console.log(">>>>>>>", response)
+      toast.success("New Patient Added Successfully")
+
     }
     handleDialogClose();
   };
@@ -207,6 +224,8 @@ export default function Ex1() {
 
   return (
     <Container maxWidth="xl">
+      <ToastContainer position='top-right' />
+
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Patients</Typography>
         {isMaster && <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleAddNewUser}>
@@ -222,7 +241,11 @@ export default function Ex1() {
         />
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
-            <Table sx={{ minWidth: 800 }}>
+            {isLoading ? (
+              <Box display="flex" justifyContent="center" alignItems="center" height={200}>
+                <CircularProgress />
+              </Box>
+            ) : <Table sx={{ minWidth: 800 }}>
               <UserTableHead
                 order={order}
                 orderBy={orderBy}
@@ -232,7 +255,7 @@ export default function Ex1() {
 
                   { id: 'name', label: 'Name' },
                   { id: 'mobile', label: 'Mobile' },
-                  { id: 'city', label: 'City' },
+                  { id: 'city', label: 'City/Country' },
                   { id: 'pain', label: 'Pain' },
                   { id: 'url', label: 'URL' },
                   { id: 'start_date', label: 'Start Date' },
@@ -247,8 +270,8 @@ export default function Ex1() {
               <TableBody>
                 {dataFiltered
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row,index) => (
-                    <PatientTableRow sr={index+1} isAdmin={isMaster} row={row} handleEdit={() => handleEdit({ ...row })} handleDelete={handleDelete}
+                  .map((row, index) => (
+                    <PatientTableRow sr={index + 1} isAdmin={isMaster} row={row} handleEdit={() => handleEdit({ ...row })} handleDelete={handleDelete}
                     />
                   ))}
 
@@ -259,7 +282,7 @@ export default function Ex1() {
 
                 {/* {notFound && <TableNoData query={filterName} />} */}
               </TableBody>
-            </Table>
+            </Table>}
           </TableContainer>
         </Scrollbar>
 

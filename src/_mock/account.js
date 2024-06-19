@@ -1,7 +1,11 @@
 // ----------------------------------------------------------------------
 
+import { getLocalItem } from 'src/utils/local_operations';
+
+let localData = getLocalItem("data")
 export const account = {
-  displayName: 'Dr. Dhairya Dalwadi',
+  
+  displayName: localData?.name,
   email: 'demo@minimals.cc',
-  photoURL: '/assets/images/avatars/avatar_25.jpg',
+  photoURL: '/assets/images/avatars/avatar_26.jpg',
 };

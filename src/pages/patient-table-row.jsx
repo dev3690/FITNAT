@@ -31,7 +31,7 @@ export default function PatientTableRow({
         <TableCell>{sr}</TableCell>
         <TableCell>{row.name}</TableCell>
         <TableCell>{row.mobile}</TableCell>
-        <TableCell>{row.city}</TableCell>
+        <TableCell>{row.city+"/"+row.country}</TableCell>
         <TableCell>{row.pain?.split(",")?.join("\n")}</TableCell>
         <TableCell ><a href={row.url}  target="_blank" rel="noopener noreferrer">{row.url}</a></TableCell>
         <TableCell>{new Date(row.start_date).toLocaleDateString()}</TableCell>
