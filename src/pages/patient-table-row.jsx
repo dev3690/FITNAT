@@ -37,8 +37,8 @@ export default function PatientTableRow({
         <TableCell>{new Date(row.start_date).toLocaleDateString()}</TableCell>
         <TableCell>{new Date(row.end_date).toLocaleDateString()}</TableCell>
         <TableCell>{getPackageName(row.package)}</TableCell>
-        <TableCell>{row.created_by==1 ? "Dr.Dhairya" : "DR. ?"}</TableCell>
-        <TableCell>{row.type_id==1 ? "Dr.Dhairya" : "DR. ?"}</TableCell>
+        <TableCell>{row.created_by==1 ? "Dr. Dhairya" : "Dr. Nidhi"}</TableCell>
+        <TableCell>{row.type_id==1 ? "Dr. Dhairya" : "Dr. Nidhi"}</TableCell>
         <TableCell align="right">
         <Box display="flex" justifyContent="flex-end">
             <Button variant='contained' disabled={!isAdmin} size='small' onClick={handleEdit} color='primary' sx={{marginRight:1}}>Edit</Button>

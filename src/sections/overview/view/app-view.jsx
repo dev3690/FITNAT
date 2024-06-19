@@ -41,8 +41,8 @@ const fetchdata = async() =>{
         Hi, {localData?.name} 👋
       </Typography>
 
-      <Grid container spacing={3}>
-        <Grid xs={12} sm={6} md={3}>
+      <Grid container spacing={4}>
+        <Grid xs={12} sm={6} md={4}>
           <AppWidgetSummary
             title="Total Patients"
             total={data?.totalCount}
@@ -51,7 +51,7 @@ const fetchdata = async() =>{
           />
         </Grid>
 
-          <Grid xs={12} sm={6} md={3}>
+          <Grid xs={12} sm={6} md={4}>
           <AppWidgetSummary
             title="Dhairya's Patients"
             total={data?.patientTypeCounts?.type1}
@@ -60,7 +60,7 @@ const fetchdata = async() =>{
           />
         </Grid>
 
-         <Grid xs={12} sm={6} md={3}>
+         <Grid xs={12} sm={6} md={4}>
           <AppWidgetSummary
             title="Nidhi's Patients"
             total={data?.patientTypeCounts?.type2}
@@ -72,7 +72,7 @@ const fetchdata = async() =>{
 
       <Grid container spacing={3} sx={{ mt: 3 }}>
         
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={12}>
           <Typography variant="h6" sx={{ mb: 2 }}>
             Patients
           </Typography>

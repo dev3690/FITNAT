@@ -12,19 +12,19 @@ export function PatientTable({patients}) {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Name</TableCell>
-            <TableCell>Mobile</TableCell>
-            <TableCell>City</TableCell>
-            <TableCell>Country</TableCell>
+            <TableCell align='center'>Name</TableCell>
+            <TableCell align='center'>Mobile</TableCell>
+            <TableCell align='center'>City</TableCell>
+            <TableCell align='center'>Country</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {patients?.map((patient) => (
             <TableRow key={patient.id}>
-              <TableCell>{patient.name}</TableCell>
-              <TableCell>{patient.mobile}</TableCell>
-              <TableCell>{patient.city}</TableCell>
-              <TableCell>{patient.country}</TableCell>
+              <TableCell align='center'>{patient.name}</TableCell>
+              <TableCell align='center'>{patient.mobile}</TableCell>
+              <TableCell align='center'>{patient.city}</TableCell>
+              <TableCell align='center'>{patient.country}</TableCell>
             </TableRow>
           ))}
         </TableBody>

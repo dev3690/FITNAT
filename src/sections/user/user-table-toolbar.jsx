@@ -86,13 +86,14 @@ export default function UserTableToolbar({ numSelected, filterName, onFilterName
                 <Iconify
                   icon="eva:search-fill"
                   sx={{ color: 'text.disabled', width: 20, height: 20 }}
-                />
+                  
+                /> 
               </InputAdornment>
             }
           />
         )}
 
-        {numSelected > 0 ? (
+        {/* {numSelected > 0 ? (
           <Tooltip title="Delete">
             <IconButton>
               <Iconify icon="eva:trash-2-fill" />
@@ -104,7 +105,7 @@ export default function UserTableToolbar({ numSelected, filterName, onFilterName
               <Iconify icon="ic:round-filter-list" />
             </IconButton>
           </Tooltip>
-        )}
+        )} */}
       </Toolbar>
 
       <Menu

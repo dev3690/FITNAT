@@ -10,15 +10,20 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { alpha, useTheme } from '@mui/material/styles';
 import InputAdornment from '@mui/material/InputAdornment';
 
+import {  CircularProgress,Divider } from '@mui/material';
 import { useRouter } from 'src/routes/hooks';
 
 import { setLocalItem } from 'src/utils/local_operations';
 import { loginApi, callAxiosApi } from 'src/utils/api_utils';
 
 import { bgGradient } from 'src/theme/css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
+
+// import LogoImage from 'src/components/iconify/';  // Adjust the path to your logo
 
 export default function LoginView() {
   const theme = useTheme();
@@ -39,16 +44,21 @@ export default function LoginView() {
         password,
       })
       console.log(response)
+      // console.log(">>>>>>>>>>>>>>error")
+      toast.error("Invalid username or password")
 
 
       if (response.status === 200) {
         // Save the token, if any
         // localStorage.setItem('token', response.data.token);
         setLocalItem("data", response?.data?.data)
+      toast.error("Invalid username or password")
         router.push('/');
       }
     } catch (err) {
       setError('Invalid username or password');
+  
+
     } finally {
       setLoading(false);
     }
@@ -98,6 +108,7 @@ export default function LoginView() {
         loading={loading}
         style={{ marginTop: '15px' }}
       >
+        {/* <CircularProgress /> */}
         Login
       </LoadingButton>
     </>
@@ -111,27 +122,25 @@ export default function LoginView() {
           imgUrl: '/assets/background/overlay_4.jpg',
         }),
         height: 1,
+        height: '100vh'
       }}
     >
-      <Logo
-        sx={{
-          position: 'fixed',
-          top: { xs: 16, md: 24 },
-          left: { xs: 16, md: 24 },
-        }}
-      />
+      <ToastContainer position='top-right' />
 
-      <Stack alignItems="center" justifyContent="center" sx={{ height: 1 }}>
+      <Stack alignItems="center" justifyContent="center" sx={{ height: 1, marginBottom:"10px" }}>
         <Card
-          sx={{
+           sx={{
             p: 5,
             width: 1,
+            // marginBottom: "20px",
             maxWidth: 420,
+            textAlign: 'center', // Center the content inside the Card
           }}
         >
+           <img src="/src/components/iconify/fitnatlogo.png" alt="Logo" style={{ width: '150px', marginBottom: '16px' }} />
           <Typography variant="h4">Sign in to FITNAT</Typography>
 
-          {/* <Divider sx={{ my: 3 }} /> */}
+          <Divider sx={{ my: 3 }} />
 
           {renderForm}
         </Card>
