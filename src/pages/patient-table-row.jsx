@@ -12,6 +12,8 @@ import { getPackageName } from 'src/utils/local_operations';
 export default function PatientTableRow({
   row,
   handleEdit,
+  sr,
+  isAdmin,
   handleDelete,
 }) {
   const [open, setOpen] = useState(null);
@@ -26,6 +28,7 @@ export default function PatientTableRow({
 
   return (
     <TableRow hover tabIndex={-1} key={row.id}>
+        <TableCell>{sr}</TableCell>
         <TableCell>{row.name}</TableCell>
         <TableCell>{row.mobile}</TableCell>
         <TableCell>{row.city}</TableCell>
@@ -38,8 +41,8 @@ export default function PatientTableRow({
         <TableCell>{row.type_id==1 ? "Dr.Dhairya" : "DR. ?"}</TableCell>
         <TableCell align="right">
         <Box display="flex" justifyContent="flex-end">
-            <Button variant='contained' size='small' onClick={handleEdit} color='primary' sx={{marginRight:1}}>Edit</Button>
-            <Button variant='contained' size='small' color='error' onClick={()=>handleDelete(row.id)}>Delete</Button>
+            <Button variant='contained' disabled={!isAdmin} size='small' onClick={handleEdit} color='primary' sx={{marginRight:1}}>Edit</Button>
+            <Button variant='contained' disabled={!isAdmin} size='small' color='error' onClick={()=>handleDelete(row.id)}>Delete</Button>
         </Box>
         </TableCell>
       

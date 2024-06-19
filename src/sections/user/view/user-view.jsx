@@ -19,6 +19,8 @@ import {
   CircularProgress,
   Box
 } from '@mui/material';
+import { ToastContainer, toast } from 'react-toastify';
+
 import ConfirmationDialog from '../../../utils/confirmation_dialog'
 import { USER, getData, insertData, callAxiosApi, deleteData, updateData } from 'src/utils/api_utils';
 import Iconify from 'src/components/iconify';
@@ -32,6 +34,7 @@ import UserTableToolbar from '../user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 import { getLocalItem } from 'src/utils/local_operations';
 // import UserTableRow from './user-table-row';
+import 'react-toastify/dist/ReactToastify.css';
 
 // ----------------------------------------------------------------------
 
@@ -49,6 +52,8 @@ export default function UserPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [confirmation, setConfirmation] = useState(false);
   const [deleteID, setDeleteID] = useState(-1);
+  const [isMaster, setIsMaster] = useState();
+
 
   useEffect(() => {
     // Fetch users from API
@@ -63,6 +68,8 @@ export default function UserPage() {
     };
 
     fetchUsers();
+    let role = getLocalItem("data")?.isMaster
+    setIsMaster(role)
   }, [isDataUpdated]);
 
   const handleSort = (event, id) => {
@@ -98,8 +105,7 @@ export default function UserPage() {
     console.log(currentUser)
 
     if (!(currentUser?.name?.trim()) || (!currentUser?.mobile?.trim() || currentUser?.mobile?.trim()?.length != 10) || !(currentUser?.username?.trim()) || !(currentUser?.password?.trim())) {
-      alert("All fields are required")
-      
+      toast.error("All fields are required")
       return
     }
     if (isEditing) {
@@ -173,13 +179,16 @@ export default function UserPage() {
   }
 
   return (
+    <>
+    <ToastContainer position='top-right'/>
     <Container maxWidth="xl">
+
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Users</Typography>
 
-        <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleAddNewUser}>
+        {isMaster && <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleAddNewUser}>
           New User
-        </Button>
+        </Button>}
       </Stack>
 
       <Card >
@@ -189,7 +198,7 @@ export default function UserPage() {
           onFilterName={handleFilterByName}
         />
 
-<Scrollbar>
+        <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
             <Table sx={{ minWidth: 800 }}>
               <UserTableHead
@@ -197,6 +206,7 @@ export default function UserPage() {
                 orderBy={orderBy}
                 rowCount={users.length}
                 headLabel={[
+                  { id: 'sr', label: 'Sr.' },
                   { id: 'name', label: 'Name' },
                   { id: 'mobile', label: 'Mobile' },
                   { id: 'username', label: 'Username' },
@@ -210,10 +220,12 @@ export default function UserPage() {
               <TableBody>
                 {dataFiltered
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => (
+                  .map((row, index) => (
                     <UserTableRow
                       key={row.id}
                       id={row.id}
+                      sr={index + 1}
+                      isAdmin={isMaster}
                       selected={false}  // 
                       name={row.name}
                       mobile={row.mobile} // Add this field to your data if needed
@@ -252,7 +264,7 @@ export default function UserPage() {
 
       <Dialog open={openDialog} onClose={handleDialogClose}>
         <DialogTitle>{isEditing ? 'Edit User' : 'Add New User'}</DialogTitle>
-       {isLoading ? <CircularProgress/> : <>
+        {isLoading ? <CircularProgress /> : <>
           <DialogContent>
             <TextField
               margin="dense"
@@ -308,7 +320,9 @@ export default function UserPage() {
         </>}
       </Dialog>
 
+
       <ConfirmationDialog openDialog={confirmation} message={"Are You Sure"} handleSave={handleConfirmation} />
     </Container>
+    </>
   );
 }

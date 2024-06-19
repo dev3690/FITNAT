@@ -24,9 +24,11 @@ export default function UserTableRow({
   name,
   id,
   avatarUrl,
+  sr,
   mobile,
   username,
   password,
+  isAdmin,
   isMaster,
   type_id,
   handleClick,
@@ -45,14 +47,13 @@ export default function UserTableRow({
 
   return (
     <>
-      <TableRow hover tabIndex={-1}>
-        {/* <TableCell padding="checkbox">
-          <Checkbox disableRipple checked={selected} onChange={handleClick} />
-        </TableCell> */}
+      <TableRow>
+        <TableCell align='center' padding="checkbox">
+          {sr}
+        </TableCell>
 
-        <TableCell component="th" scope="row" padding="none">
+        <TableCell  align='center'>
           <Stack direction="row" alignItems="center" spacing={2}>
-            <Avatar alt={name} src={avatarUrl} />
             <Typography variant="subtitle2" noWrap>
               {name}
             </Typography>
@@ -63,7 +64,7 @@ export default function UserTableRow({
 
         <TableCell>{username}</TableCell>
 
-        <TableCell align="center">{password}</TableCell>
+        <TableCell align="center">{ isAdmin ? password : "--"}</TableCell>
 
         <TableCell>
           <Label color={(isMaster) ? 'success' : "primary"}>{isMaster ? "ADMIN":"USER"}</Label>
@@ -73,8 +74,8 @@ export default function UserTableRow({
         </TableCell>
 
         <TableCell align="right">
-        <Button variant='contained' size='small' color='primary' onClick={handleEdit} sx={{marginRight:1}}>Edit</Button>
-             <Button variant='contained' size='small' onClick={()=>handleDelete(id)} color='error'>Delete</Button>
+        <Button variant='contained' disabled={!isAdmin} size='small' color='primary' onClick={handleEdit} sx={{marginRight:1}}>Edit</Button>
+             <Button variant='contained' disabled={!isAdmin} size='small' onClick={()=>handleDelete(id)} color='error'>Delete</Button>
         </TableCell>
       </TableRow>
     </>

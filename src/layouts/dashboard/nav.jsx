@@ -168,10 +168,18 @@ function NavItem({ item }) {
 
   const active = item.path === pathname;
 
+ const logout = (title) =>{
+  console.log(title);
+  if(title == "logout"){
+    localStorage.clear();
+  }  
+ }
+
   return (
     <ListItemButton
       component={RouterLink}
       href={item.path}
+      onClick={()=>logout(item.title)}
       sx={{
         minHeight: 44,
         borderRadius: 0.75,

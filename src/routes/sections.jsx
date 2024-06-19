@@ -1,6 +1,5 @@
 import { lazy, Suspense } from 'react';
 import { Outlet, Navigate, useRoutes } from 'react-router-dom';
-
 import DashboardLayout from 'src/layouts/dashboard';
 
 export const IndexPage = lazy(() => import('src/pages/app'));
@@ -10,10 +9,13 @@ export const Ex1 = lazy(() => import('src/pages/ex1'));
 export const LoginPage = lazy(() => import('src/pages/login'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
-export const JordanFlex = lazy(() => import('src/pages/JordanFlex')); // Import the new page
-export const BirdEyeView = lazy(() => import('src/pages/bird-eye-view')); // Import the new page
+export const JordanFlex = lazy(() => import('src/pages/JordanFlex'));
+export const BirdEyeView = lazy(() => import('src/pages/bird-eye-view'));
 
-// ----------------------------------------------------------------------
+const PrivateRoute = ({ children }) => {
+  const data = localStorage.getItem('data');
+  return data ? children : <Navigate to="/login" replace />;
+};
 
 export default function Router() {
   const routes = useRoutes([
@@ -26,11 +28,12 @@ export default function Router() {
         </DashboardLayout>
       ),
       children: [
-        { element: <IndexPage />, index: true },
-        { path: 'user', element: <UserPage /> },
-        { path: 'products', element: <ProductsPage /> },
-        { path: 'blog', element: <BlogPage /> },
-        { path: 'ex1', element: <Ex1 /> },
+        { element: <PrivateRoute><IndexPage /></PrivateRoute>, index: true },
+        { path: 'user', element: <PrivateRoute><UserPage /></PrivateRoute> },
+        { path: 'products', element: <PrivateRoute><ProductsPage /></PrivateRoute> },
+        { path: 'blog', element: <PrivateRoute><BlogPage /></PrivateRoute> },
+        { path: 'patients', element: <PrivateRoute><Ex1 /></PrivateRoute> },
+        { path: 'birdeyeview', element: <PrivateRoute><BirdEyeView /></PrivateRoute> },
       ],
     },
     {
@@ -44,10 +47,6 @@ export default function Router() {
     {
       path: '*',
       element: <Navigate to="/404" replace />,
-    },
-    {
-      path: 'jordanflex', // Add route for JordanFlex
-      element: <BirdEyeView />,
     },
   ]);
 

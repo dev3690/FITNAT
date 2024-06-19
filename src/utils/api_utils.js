@@ -12,7 +12,7 @@ const loginApi = `${localApiUrl}/login`
 const birdViewApi = `${localApiUrl}/birdView`
 const updateData = `${localApiUrl}/updateData`
 const deleteData = `${localApiUrl}/deleteData`
-
+const getDashboardData = `${localApiUrl}/getDashboardData`
 
 
 const headers = {
@@ -47,4 +47,4 @@ const STATUS = "statusUpdate"
 const PATIENT = "patient"
 
 
-export { USER, STATUS, getData, PATIENT, deleteData, loginApi, insertData, updateData, birdViewApi, callAxiosApi, insertPatient }
+export { USER, STATUS, getData, PATIENT, deleteData, loginApi, insertData, updateData, birdViewApi,getDashboardData, callAxiosApi, insertPatient }

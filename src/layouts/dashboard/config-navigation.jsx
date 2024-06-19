@@ -30,12 +30,12 @@ const navConfig = [
  
   {
     title: 'Patients',
-    path: '/ex1',
+    path: '/patients',
     icon: icon('patient1'),
   },
   {
     title: 'Birds Eye View', // Add new menu item
-    path: '/jordanflex',
+    path: '/birdeyeview',
     icon: icon('eye'),
   },
   {

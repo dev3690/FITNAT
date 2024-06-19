@@ -54,6 +54,8 @@ export default function Ex1() {
   const [isEditing, setIsEditing] = useState(false);
   const [isDataUpdated, setisDataUpdated] = useState(false);
   const [deleteID, setDeleteID] = useState(-1);
+  const [isMaster, setIsMaster] = useState();
+
 
   const painOptions = [
     'Headache', 'Neck Pain', 'Shoulder Pain', 'Back Pain', 'Hip Pain',
@@ -64,6 +66,8 @@ export default function Ex1() {
 
   useEffect(() => {
     fetchUsers();
+    let role = getLocalItem("data")?.isMaster
+    setIsMaster(role)
   }, [isDataUpdated]);
 
   const fetchUsers = async () => {
@@ -205,9 +209,9 @@ export default function Ex1() {
     <Container maxWidth="xl">
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Patients</Typography>
-        <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleAddNewUser}>
+        {isMaster && <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleAddNewUser}>
           New Patient
-        </Button>
+        </Button>}
       </Stack>
 
       <Card>
@@ -224,6 +228,8 @@ export default function Ex1() {
                 orderBy={orderBy}
                 rowCount={patient.length}
                 headLabel={[
+                  { id: 'sr', label: 'Sr.' },
+
                   { id: 'name', label: 'Name' },
                   { id: 'mobile', label: 'Mobile' },
                   { id: 'city', label: 'City' },
@@ -241,8 +247,8 @@ export default function Ex1() {
               <TableBody>
                 {dataFiltered
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => (
-                    <PatientTableRow row={row} handleEdit={() => handleEdit({ ...row })} handleDelete={handleDelete}
+                  .map((row,index) => (
+                    <PatientTableRow sr={index+1} isAdmin={isMaster} row={row} handleEdit={() => handleEdit({ ...row })} handleDelete={handleDelete}
                     />
                   ))}
 
