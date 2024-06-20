@@ -37,11 +37,13 @@ export default function BirdEyeView() {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(15);
   const [openDialog, setOpenDialog] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [isDataUpdated, setisDataUpdated] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [showFilterButton, setShowFilterButton] = useState(true); // Set to true to show initially
+
   let optionList = [
     { id: 1, label: "Name" },
     { id: 2, label: "Package" },
@@ -111,6 +113,9 @@ export default function BirdEyeView() {
     setCurrentUser(user);
     setIsEditing(true);
     setOpenDialog(true);
+  };
+  const toggleFilterButton = () => {
+    setShowFilterButton(!showFilterButton);
   };
 
   const handleDelete = async (id) => {
@@ -222,6 +227,7 @@ export default function BirdEyeView() {
             filterName={filterName}
             handleSelectedColumns={handleSelectedColumns}
             onFilterName={handleFilterByName}
+            showFilterButton={showFilterButton}
           />
 
           {/* <Scrollbar> */}
@@ -229,7 +235,7 @@ export default function BirdEyeView() {
             <Table sx={{ minWidth: 800 }}>
               <UserTableHead
                 // order={order}
-                // orderBy={orderBy}
+              // orderBy={orderBy}
                 // rowCount={users.length}
                 headLabel={
                   optionList?.filter((item) => selectedColumns.includes(item?.label))
@@ -277,7 +283,7 @@ export default function BirdEyeView() {
             count={users.length}
             rowsPerPage={rowsPerPage}
             onPageChange={handleChangePage}
-            rowsPerPageOptions={[5, 10, 25]}
+            rowsPerPageOptions={[15, 25, 50]}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Card>

@@ -19,7 +19,7 @@ import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-export default function UserTableToolbar({ numSelected, filterName, onFilterName,handleSelectedColumns }) {
+export default function UserTableToolbar({ numSelected, filterName, onFilterName,handleSelectedColumns, showFilterButton }) {
 
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -106,6 +106,15 @@ export default function UserTableToolbar({ numSelected, filterName, onFilterName
             </IconButton>
           </Tooltip>
         )} */}
+
+{showFilterButton ? (
+    <Tooltip title="Filter list">
+      <IconButton onClick={handleClick}>
+        <Iconify icon="ic:round-filter-list" />
+      </IconButton>
+    </Tooltip>
+  ) : null}
+
       </Toolbar>
 
       <Menu

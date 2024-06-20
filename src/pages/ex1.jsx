@@ -51,7 +51,7 @@ export default function Ex1() {
   const [confirmation, setConfirmation] = useState(false);
 
   const [filterName, setFilterName] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [openDialog, setOpenDialog] = useState(false);
   const [currentPatient, setCurrentPatient] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -292,7 +292,7 @@ export default function Ex1() {
           count={patient.length}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[10, 20, 50]}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Card>

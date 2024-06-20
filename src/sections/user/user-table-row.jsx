@@ -12,6 +12,7 @@ import {
   MenuItem,
   TableCell,
   Typography,
+  Box
 } from '@mui/material';
 
 import Label from 'src/components/label';
@@ -52,7 +53,7 @@ export default function UserTableRow({
           {sr}
         </TableCell>
 
-        <TableCell  align='center'>
+        <TableCell align='center'>
           <Stack direction="row" alignItems="center" spacing={2}>
             <Typography variant="subtitle2" noWrap>
               {name}
@@ -64,18 +65,22 @@ export default function UserTableRow({
 
         <TableCell>{username}</TableCell>
 
-        <TableCell align="center">{ isAdmin ? password : "--"}</TableCell>
+        <TableCell align="center">{isAdmin ? password : "--"}</TableCell>
 
         <TableCell>
-          <Label color={(isMaster) ? 'success' : "primary"}>{isMaster ? "ADMIN":"USER"}</Label>
+          <Label color={(isMaster) ? 'success' : "primary"}>{isMaster ? "ADMIN" : "USER"}</Label>
         </TableCell>
         <TableCell>
-          <Label color={(type_id == 1) ? 'success' : "primary"}>{type_id == 1 ? "ADMIN1":"ADMIN2"}</Label>
+          <Label color={(type_id == 1) ? 'success' : "primary"}>{type_id == 1 ? "ADMIN1" : "ADMIN2"}</Label>
         </TableCell>
 
         <TableCell align="right">
-        <Button variant='contained' disabled={!isAdmin} size='small' color='primary' onClick={handleEdit} sx={{marginRight:1}}>Edit</Button>
-             <Button variant='contained' disabled={!isAdmin} size='small' onClick={()=>handleDelete(id)} color='error'>Delete</Button>
+          {/* <Button variant='contained' disabled={!isAdmin} size='small' color='primary' onClick={handleEdit} sx={{ marginRight: 1 }}>Edit</Button>
+          <Button variant='contained' disabled={!isAdmin} size='small' onClick={() => handleDelete(id)} color='error'>Delete</Button> */}
+          <Box display="flex" justifyContent="flex-end">
+            <Button variant='contained' disabled={!isAdmin} size='small' onClick={handleEdit} color='primary' sx={{marginRight:1}}>Edit</Button>
+            <Button variant='contained' disabled={!isAdmin} size='small' color='error' onClick={()=>handleDelete(row.id)}>Delete</Button>
+        </Box>
         </TableCell>
       </TableRow>
     </>
