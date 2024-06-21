@@ -229,7 +229,7 @@ export default function UserPage() {
                     { id: 'username', label: 'Username' },
                     { id: 'password', label: 'Password' },
                     { id: 'isMaster', label: 'Is Master' },
-                    { id: 'type_id', label: 'Type ID' },
+                    { id: 'type_id', label: 'Created By' },
                     { id: 'actions', label: 'Actions', align: 'center' },
                   ]}
                   onRequestSort={handleSort}

@@ -53,6 +53,7 @@ export default function BirdEyeView() {
     { id: 3, label: "Link" },
     { id: 4, label: "Start Date" },
     { id: 5, label: "End Date" },
+    { id: 6, label: "Pain" },
     ...Array.from({ length: 12 }, (_, i) => `Week ${i + 1}`).map((item, index) => (({ id: `${item}-${index}`, label: item })))
   ]
   const [selectedColumns, setSelectedColumns] = useState(optionList?.map((item) => item?.label));
@@ -153,7 +154,7 @@ export default function BirdEyeView() {
           alert("All fields are required")
           return
         }
-        const data = currentUser
+        // const data = currentUser
 
         const response = await callAxiosApi(insertData, { ...currentUser, table: USER })
         console.log("insert RESP", response)

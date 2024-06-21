@@ -71,7 +71,7 @@ export default function UserTableRow({
           <Label color={(isMaster) ? 'success' : "primary"}>{isMaster ? "ADMIN" : "USER"}</Label>
         </TableCell>
         <TableCell>
-          <Label color={(type_id == 1) ? 'success' : "primary"}>{type_id == 1 ? "ADMIN1" : "ADMIN2"}</Label>
+          <Label color={(type_id == 1) ? 'success' : "primary"}>{type_id == 1 ? "DR DHAIRYA" : "DR NIDHI"}</Label>
         </TableCell>
 
         <TableCell align="right">
