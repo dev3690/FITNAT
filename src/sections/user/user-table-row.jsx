@@ -79,7 +79,7 @@ export default function UserTableRow({
           <Button variant='contained' disabled={!isAdmin} size='small' onClick={() => handleDelete(id)} color='error'>Delete</Button> */}
           <Box display="flex" justifyContent="flex-end">
             <Button variant='contained' disabled={!isAdmin} size='small' onClick={handleEdit} color='primary' sx={{marginRight:1}}>Edit</Button>
-            <Button variant='contained' disabled={!isAdmin} size='small' color='error' onClick={()=>handleDelete(row.id)}>Delete</Button>
+            <Button variant='contained' disabled={!isAdmin} size='small' color='error' onClick={()=>handleDelete(id)}>Delete</Button>
         </Box>
         </TableCell>
       </TableRow>
