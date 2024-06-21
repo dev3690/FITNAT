@@ -76,8 +76,7 @@ export default function Ex1() {
 
   const fetchUsers = async () => {
     try {
-      setIsLoading(true)
-
+      setIsLoading(true) 
       const response = await callAxiosApi(getData, { table: PATIENT })
       console.log(">>>>>>>", response)
       setPatient(response.data.data); // Assuming response.data contains the data array

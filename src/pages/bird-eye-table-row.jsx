@@ -11,6 +11,7 @@ import {
 
 import { STATUS, updateData, callAxiosApi } from 'src/utils/api_utils';
 import { getWeeklyEndDates } from 'src/utils/date_time';
+import { getLocalItem } from 'src/utils/local_operations';
 
 
 // ----------------------------------------------------------------------
@@ -37,6 +38,19 @@ export default function BirdEyeTableRow({
   const [open, setOpen] = useState(null);
   const [currentWeek, setCurrentWeek] = useState(-1);
   const [isUpcoming, setIsUpcoming] = useState(false);
+  const [typeId, setTypeId] = useState();
+
+
+
+
+  useEffect(() => {
+    // fetchUsers();
+    let role = getLocalItem("data")?.type_id
+    setTypeId(role)
+  },
+    // [isDataUpdated]
+  );
+
 
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
@@ -82,18 +96,32 @@ export default function BirdEyeTableRow({
       {selectedColumns?.includes("End Date") && <TableCell align="center">{new Date(end_date).toLocaleString().split(",")[0]}</TableCell>}
       {Array.from({ length: 12 }, (_, i) => i).map((item) => (
         selectedColumns.includes(`Week ${item + 1}`) && <TableCell id={`index${item}`} align="center" sx={{ backgroundColor: isUpcoming && item + 1 == currentWeek ? "#b5ddf2" : (item + 1 == currentWeek && "#e4eaec"), borderRadius: item + 1 == currentWeek && "20px 0px 20px 0px" }} >
-          <Button
-            variant="contained"
-            size="small"
-            color={status[`week${item + 1}u1`] == 1 ? 'success' : "error"}
-            disabled={item + 1 > totalWeeks}
-            onClick={() => onstatusChanged({ id, table: STATUS, [`week${item + 1}u1`]: status[`week${item + 1}u1`] == 1 ? 0 : 1 })}
-          // style={{ minWidth: '40px', padding: '4px 8px' }}
-          // disabled={i >= packageDetails[user.details.find(detail => detail.label === 'Package').value]}
-          >
+
+          {(typeId == 1) ? <Button
+              variant="contained"
+              size="small"
+              color={status[`week${item + 1}u1`] == 1 ? 'success' : "error"}
+              disabled={item + 1 > totalWeeks}
+              onClick={() => onstatusChanged({ id, table: STATUS, [`week${item + 1}u1`]: status[`week${item + 1}u1`] == 1 ? 0 : 1 })}
+            // style={{ minWidth: '40px', padding: '4px 8px' }}
+            // disabled={i >= packageDetails[user.details.find(detail => detail.label === 'Package').value]}
+            >
             UPD
-          </Button>
-          <Button
+            </Button> : <Button
+              variant="contained"
+              size="small"
+              sx={{ margin: "10px" }}
+              color={status[`week${item + 1}u1`] == 1 ? 'success' : "error"}
+              disabled={item + 1 > totalWeeks}
+              onClick={() => onstatusChanged({ id, table: STATUS, [`week${item + 1}u1`]: status[`week${item + 1}u1`] == 1 ? 0 : 1 })}
+            // style={{ minWidth: '40px', padding: '4px 8px' }}
+            // disabled={i >= packageDetails[user.details.find(detail => detail.label === 'Package').value]}
+            >
+              UPD1
+            </Button>
+          }
+
+          {(typeId == 1) ? <Button
             variant="contained"
             size="small"
             sx={{ margin: "10px" }}
@@ -104,7 +132,31 @@ export default function BirdEyeTableRow({
           // disabled={i >= packageDetails[user.details.find(detail => detail.label === 'Package').value]}
           >
             TKS
-          </Button>
+          </Button> : <Button
+              variant="contained"
+              size="small"
+              sx={{ margin: "10px" }}
+              color={status[`week${item + 1}u2`] == 1 ? 'success' : "error"}
+              disabled={item + 1 > totalWeeks}
+              onClick={() => onstatusChanged({ id, table: STATUS, [`week${item + 1}u2`]: status[`week${item + 1}u2`] == 1 ? 0 : 1 })}
+            // style={{ minWidth: '40px', padding: '4px 8px' }}
+            // disabled={i >= packageDetails[user.details.find(detail => detail.label === 'Package').value]}
+            >
+              UPD2
+            </Button>}
+
+          {(typeId == 2) &&  <Button
+            variant="contained"
+            size="small"
+            sx={{ margin: "10px" }}
+            color={status[`week${item + 1}u3`] == 1 ? 'success' : "error"}
+            disabled={item + 1 > totalWeeks}
+            onClick={() => onstatusChanged({ id, table: STATUS, [`week${item + 1}u3`]: status[`week${item + 1}u3`] == 1 ? 0 : 1 })}
+          // style={{ minWidth: '40px', padding: '4px 8px' }}
+          // disabled={i >= packageDetails[user.details.find(detail => detail.label === 'Package').value]}
+          >
+            UPD3
+          </Button>}
         </TableCell>
       )
       )
