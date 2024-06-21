@@ -22,6 +22,8 @@ export const calcTimeline = (patient) => {
   return { currentWeek, totalWeeks }
 }
 
+
+
 export const getWeeklyEndDates = (startDate, endDate) => {
   const start = new Date(startDate);
   const end = new Date(endDate);

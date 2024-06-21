@@ -260,8 +260,8 @@ export default function Ex1() {
                   { id: 'start_date', label: 'Start Date' },
                   { id: 'end_date', label: 'End Date' },
                   { id: 'package', label: 'Package' },
-                  { id: 'created_by', label: 'Created By' },
-                  { id: 'type_id', label: 'Type ID' },
+                  // { id: 'created_by', label: 'Created By' },
+                  { id: 'type_id', label: 'Client Of' },
                   { id: 'actions', label: 'Actions', align: 'center' },
                 ]}
                 onRequestSort={handleSort}

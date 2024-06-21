@@ -38,8 +38,8 @@ export const secondary = {
 export const info = {
   lighter: '#CAFDF5',
   light: '#61F3F3',
-  main: '#00B8D9',
-  dark: '#006C9C',
+  main: '#FF0000',
+  dark: '#00B8D9',
   darker: '#003768',
   contrastText: '#FFFFFF',
 };
@@ -65,7 +65,7 @@ export const warning = {
 export const error = {
   lighter: '#FFE9D5',
   light: '#FFAC82',
-  main: '#FF5630',
+  main: '#964B00',
   dark: '#B71D18',
   darker: '#7A0916',
   contrastText: '#FFFFFF',

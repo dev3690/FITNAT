@@ -22,6 +22,7 @@ export default function BirdEyeTableRow({
   id,
   pack,
   pain,
+  row,
   selectedColumns,
   url,
   // currentWeek,
@@ -75,9 +76,9 @@ export default function BirdEyeTableRow({
   }, [])
 
   return (
-    <TableRow hover tabIndex={-1}>
+    <TableRow hover tabIndex={-1} >
       {selectedColumns?.includes("Name") && <TableCell>{name}</TableCell>}
-      {selectedColumns?.includes("Package") && <TableCell>{pack}</TableCell>}
+      {selectedColumns?.includes("Package") && <TableCell>{pack == 1 ? "Fitnat Coaching Premium" : pack == 2 ? "Fitnat Coaching Delux" : "Fitnat Personal Training"}</TableCell>}
       {selectedColumns?.includes("Link") && <TableCell align="center">
         <Button
           variant="outlined"
@@ -97,59 +98,36 @@ export default function BirdEyeTableRow({
       {Array.from({ length: 12 }, (_, i) => i).map((item) => (
         selectedColumns.includes(`Week ${item + 1}`) && <TableCell id={`index${item}`} align="center" sx={{ backgroundColor: isUpcoming && item + 1 == currentWeek ? "#b5ddf2" : (item + 1 == currentWeek && "#e4eaec"), borderRadius: item + 1 == currentWeek && "20px 0px 20px 0px" }} >
 
-          {(typeId == 1) ? <Button
-              variant="contained"
-              size="small"
-              color={status[`week${item + 1}u1`] == 1 ? 'success' : "error"}
-              disabled={item + 1 > totalWeeks}
-              onClick={() => onstatusChanged({ id, table: STATUS, [`week${item + 1}u1`]: status[`week${item + 1}u1`] == 1 ? 0 : 1 })}
-            // style={{ minWidth: '40px', padding: '4px 8px' }}
-            // disabled={i >= packageDetails[user.details.find(detail => detail.label === 'Package').value]}
-            >
-            UPD
-            </Button> : <Button
-              variant="contained"
-              size="small"
-              sx={{ margin: "10px" }}
-              color={status[`week${item + 1}u1`] == 1 ? 'success' : "error"}
-              disabled={item + 1 > totalWeeks}
-              onClick={() => onstatusChanged({ id, table: STATUS, [`week${item + 1}u1`]: status[`week${item + 1}u1`] == 1 ? 0 : 1 })}
-            // style={{ minWidth: '40px', padding: '4px 8px' }}
-            // disabled={i >= packageDetails[user.details.find(detail => detail.label === 'Package').value]}
-            >
-              UPD1
-            </Button>
-          }
+          <Button
+            variant="contained"
+            size="small"
+            color={status[`week${item + 1}u1`] == 1 ? 'success' : (status[`week${item + 1}u1`] == 0 && item + 1 < currentWeek) ? "info" : "error"}
+            disabled={item + 1 > totalWeeks}
+            onClick={() => onstatusChanged({ id, table: STATUS, [`week${item + 1}u1`]: status[`week${item + 1}u1`] == 1 ? 0 : 1 })}
+          // style={{ minWidth: '40px', padding: '4px 8px' }}
+          // disabled={i >= packageDetails[user.details.find(detail => detail.label === 'Package').value]}
+          >
+            {(typeId == 1) ? "UPD" : "UPD1"}
+          </Button>
 
-          {(typeId == 1) ? <Button
+          <Button
             variant="contained"
             size="small"
             sx={{ margin: "10px" }}
-            color={status[`week${item + 1}u2`] == 1 ? 'success' : "error"}
+            color={status[`week${item + 1}u2`] == 1 ? 'success' : (status[`week${item + 1}u1`] == 0 && item + 1 < currentWeek) ? "info" : "error"}
             disabled={item + 1 > totalWeeks}
             onClick={() => onstatusChanged({ id, table: STATUS, [`week${item + 1}u2`]: status[`week${item + 1}u2`] == 1 ? 0 : 1 })}
           // style={{ minWidth: '40px', padding: '4px 8px' }}
           // disabled={i >= packageDetails[user.details.find(detail => detail.label === 'Package').value]}
           >
-            TKS
-          </Button> : <Button
-              variant="contained"
-              size="small"
-              sx={{ margin: "10px" }}
-              color={status[`week${item + 1}u2`] == 1 ? 'success' : "error"}
-              disabled={item + 1 > totalWeeks}
-              onClick={() => onstatusChanged({ id, table: STATUS, [`week${item + 1}u2`]: status[`week${item + 1}u2`] == 1 ? 0 : 1 })}
-            // style={{ minWidth: '40px', padding: '4px 8px' }}
-            // disabled={i >= packageDetails[user.details.find(detail => detail.label === 'Package').value]}
-            >
-              UPD2
-            </Button>}
+            {(typeId == 1) ? "TKS" : "UPD2"}
+          </Button>
 
-          {(typeId == 2) &&  <Button
+          {(typeId == 2) && <Button
             variant="contained"
             size="small"
             sx={{ margin: "10px" }}
-            color={status[`week${item + 1}u3`] == 1 ? 'success' : "error"}
+            color={status[`week${item + 1}u3`] == 1 ? 'success' : (status[`week${item + 1}u1`] == 0 && item + 1 < currentWeek) ? "info" : "error"}
             disabled={item + 1 > totalWeeks}
             onClick={() => onstatusChanged({ id, table: STATUS, [`week${item + 1}u3`]: status[`week${item + 1}u3`] == 1 ? 0 : 1 })}
           // style={{ minWidth: '40px', padding: '4px 8px' }}

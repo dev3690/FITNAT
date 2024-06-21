@@ -19,6 +19,7 @@ import {
 
 import { USER, insertData, birdViewApi, callAxiosApi } from 'src/utils/api_utils';
 import { useNavigate } from 'react-router-dom';
+import { getLocalItem } from 'src/utils/local_operations';
 
 import BirdEyeTableRow from './bird-eye-table-row';
 import TableNoData from '../sections/user/table-no-data';
@@ -44,6 +45,8 @@ export default function BirdEyeView() {
   const [isEditing, setIsEditing] = useState(false);
   const [showFilterButton, setShowFilterButton] = useState(true); // Set to true to show initially
 
+
+
   let optionList = [
     { id: 1, label: "Name" },
     { id: 2, label: "Package" },
@@ -58,9 +61,11 @@ export default function BirdEyeView() {
     // Fetch users from API
     const fetchUsers = async () => {
       try {
+        let localData = getLocalItem("data")
+
         const response = await callAxiosApi(birdViewApi)
 
-        const data = response?.data?.map((item) => ({
+        const data = response?.data?.filter((item) => item?.patient_master?.user_master?.type_id == localData?.type_id)?.map((item) => ({
           ...item?.patient_master,
           id: item?.id,
           totalWeeks: calcTimeline(item?.patient_master)?.totalWeeks,
@@ -68,7 +73,7 @@ export default function BirdEyeView() {
           status: filterWeekKeys(item)
           // .filter(key => key.startsWith('week'))
         }))
-        console.log("RESP>>>>>", response?.data[0], data)
+        console.log("RESP>>>>>", response?.data, data)
         setUsers(data);
       } catch (error) {
         console.error('Failed to fetch users:', error);
@@ -209,7 +214,7 @@ export default function BirdEyeView() {
     console.log(">>>>>>>>", selected)
     setSelectedColumns(selected)
   }
-  
+
 
   const notFound = !dataFiltered.length && !!filterName;
 
@@ -235,7 +240,7 @@ export default function BirdEyeView() {
             <Table sx={{ minWidth: 800 }}>
               <UserTableHead
                 // order={order}
-              // orderBy={orderBy}
+                // orderBy={orderBy}
                 // rowCount={users.length}
                 headLabel={
                   optionList?.filter((item) => selectedColumns.includes(item?.label))
