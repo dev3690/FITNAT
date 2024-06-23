@@ -127,7 +127,7 @@ export default function LoginView() {
           }}
         >
           {/* <img src="/src/components/iconify/fitnatlogo.png" alt="Logo" style={{ width: '150px', marginBottom: '16px' }} /> */}
-          <img src="assets\fitnatlogo.png" alt="Logo" style={{ width: '150px', marginBottom: '16px' }} />
+          <img src="assets\fitnatlogo.png" alt="Logo" style={{ width: '150px', marginBottom: '17px' }} />
           <Typography variant="h4">Sign in to FITNAT</Typography>
           <Divider sx={{ my: 3 }} />
           {renderForm}
