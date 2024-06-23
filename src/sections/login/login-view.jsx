@@ -126,7 +126,8 @@ export default function LoginView() {
             textAlign: 'center', // Center the content inside the Card
           }}
         >
-          <img src="/src/components/iconify/fitnatlogo.png" alt="Logo" style={{ width: '150px', marginBottom: '16px' }} />
+          {/* <img src="/src/components/iconify/fitnatlogo.png" alt="Logo" style={{ width: '150px', marginBottom: '16px' }} /> */}
+          <img src="assets\fitnatlogo.png" alt="Logo" style={{ width: '150px', marginBottom: '16px' }} />
           <Typography variant="h4">Sign in to FITNAT</Typography>
           <Divider sx={{ my: 3 }} />
           {renderForm}
@@ -135,3 +136,5 @@ export default function LoginView() {
     </Box>
   );
 }
+
+

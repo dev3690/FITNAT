@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const localApiUrl = "http://localhost:3690"
+const localApiUrl = "https://fitnat.onrender.com"
 // const localApiUrl = "    "
 
 

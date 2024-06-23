@@ -98,7 +98,7 @@ export default function BirdEyeTableRow({
       {selectedColumns?.includes("Pain") && <TableCell>{pain}</TableCell>}
         
       {Array.from({ length: 12 }, (_, i) => i).map((item) => (
-        selectedColumns.includes(`Week ${item + 1}`) && <TableCell id={`index${item}`} align="center" sx={{ backgroundColor: isUpcoming && item + 1 == currentWeek ? "#25ec3a" : (item + 1 == currentWeek && "#e4eaec"), borderRadius: item + 1 == currentWeek && "20px 0px 20px 0px" }} >
+        selectedColumns.includes(`Week ${item + 1}`) && <TableCell id={`index${item}`} align="center" sx={{ backgroundColor: isUpcoming && item + 1 == currentWeek ? "#76bfff" : (item + 1 == currentWeek && "#e4eaec"), borderRadius: item + 1 == currentWeek && "20px 0px 20px 0px" }} >
 
           <Button
             variant="contained"
