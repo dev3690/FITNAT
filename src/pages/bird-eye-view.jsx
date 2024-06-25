@@ -205,9 +205,9 @@ export default function BirdEyeView() {
   });
 
   const handleExit = () => {
-    window.close();
+    // window.close();
 
-    navigate('/');
+    navigate('/patients');
   };
   const navigate = useNavigate();
 

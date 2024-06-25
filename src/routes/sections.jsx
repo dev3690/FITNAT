@@ -33,7 +33,7 @@ export default function Router() {
         { path: 'products', element: <PrivateRoute><ProductsPage /></PrivateRoute> },
         { path: 'blog', element: <PrivateRoute><BlogPage /></PrivateRoute> },
         { path: 'patients', element: <PrivateRoute><Ex1 /></PrivateRoute> },
-        // { path: 'birdeyeview', element: <PrivateRoute><BirdEyeView /></PrivateRoute> },
+        { path: 'birdeyeview', element: <PrivateRoute><BirdEyeView /></PrivateRoute> },
       ],
     },
     {
@@ -44,10 +44,10 @@ export default function Router() {
       path: '404',
       element: <Page404 />,
     },
-    {
-      path: 'birdeyeview',
-      element: <BirdEyeView />,
-    },
+    // {
+    //   path: 'birdeyeview',
+    //   element: <BirdEyeView />,
+    // },
     {
       path: '*',
       element: <Navigate to="/404" replace />,
