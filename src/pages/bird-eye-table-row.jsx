@@ -19,6 +19,8 @@ import { getLocalItem } from 'src/utils/local_operations';
 export default function BirdEyeTableRow({
   selected,
   name,
+  currentWeek,
+  isNotify,
   id,
   pack,
   pain,
@@ -37,8 +39,6 @@ export default function BirdEyeTableRow({
   handleDelete,
 }) {
   const [open, setOpen] = useState(null);
-  const [currentWeek, setCurrentWeek] = useState(-1);
-  const [isUpcoming, setIsUpcoming] = useState(false);
   const [typeId, setTypeId] = useState();
 
 
@@ -69,10 +69,7 @@ export default function BirdEyeTableRow({
   }
 
   useEffect(() => {
-    let { isNotify, currWeek } = getWeeklyEndDates(new Date(start_date).toLocaleString().split(",")[0], new Date(end_date).toLocaleString().split(",")[0], currentWeek)
-    setCurrentWeek(currWeek)
-    setIsUpcoming(isNotify)
-    console.log("WEEK range", { isNotify, currWeek })
+    // let { isNotify, currWeek } = getWeeklyEndDates(new Date(start_date).toLocaleString().split(",")[0], new Date(end_date).toLocaleString().split(",")[0], currentWeek)
   }, [])
 
   return (
@@ -98,7 +95,7 @@ export default function BirdEyeTableRow({
       {selectedColumns?.includes("Pain") && <TableCell>{pain}</TableCell>}
         
       {Array.from({ length: 12 }, (_, i) => i).map((item) => (
-        selectedColumns.includes(`Week ${item + 1}`) && <TableCell id={`index${item}`} align="center" sx={{ backgroundColor: isUpcoming && item + 1 == currentWeek ? "#76bfff" : (item + 1 == currentWeek && "#e4eaec"), borderRadius: item + 1 == currentWeek && "20px 0px 20px 0px" }} >
+        selectedColumns.includes(`Week ${item + 1}`) && <TableCell id={`index${item}`} align="center" sx={{ backgroundColor: isNotify && item + 1 == currentWeek ? "#76bfff" : (item + 1 == currentWeek && "#e4eaec"), borderRadius: item + 1 == currentWeek && "20px 0px 20px 0px" }} >
 
           <Button
             variant="contained"
@@ -118,10 +115,7 @@ export default function BirdEyeTableRow({
             sx={{ margin: "10px" }}
             color={status[`week${item + 1}u2`] == 1 ? 'success' : (status[`week${item + 1}u1`] == 0 && item + 1 < currentWeek) ? "info" : "error"}
             disabled={item + 1 > totalWeeks}
-            onClick={() => onstatusChanged({ id, table: STATUS, [`week${item + 1}u2`]: status[`week${item + 1}u2`] == 1 ? 0 : 1 })}
-          // style={{ minWidth: '40px', padding: '4px 8px' }}
-          // disabled={i >= packageDetails[user.details.find(detail => detail.label === 'Package').value]}
-          >
+            onClick={() => onstatusChanged({ id, table: STATUS, [`week${item + 1}u2`]: status[`week${item + 1}u2`] == 1 ? 0 : 1 })}>
             {(typeId == 1) ? "TKS" : "UPD2"}
           </Button>
 
@@ -131,29 +125,12 @@ export default function BirdEyeTableRow({
             sx={{ margin: "10px" }}
             color={status[`week${item + 1}u3`] == 1 ? 'success' : (status[`week${item + 1}u1`] == 0 && item + 1 < currentWeek) ? "info" : "error"}
             disabled={item + 1 > totalWeeks}
-            onClick={() => onstatusChanged({ id, table: STATUS, [`week${item + 1}u3`]: status[`week${item + 1}u3`] == 1 ? 0 : 1 })}
-          // style={{ minWidth: '40px', padding: '4px 8px' }}
-          // disabled={i >= packageDetails[user.details.find(detail => detail.label === 'Package').value]}
-          >
+            onClick={() => onstatusChanged({ id, table: STATUS, [`week${item + 1}u3`]: status[`week${item + 1}u3`] == 1 ? 0 : 1 })}>
             UPD3
           </Button>}
         </TableCell>
-      )
-      )
+      ))
       }
     </TableRow>
   );
 }
-
-// UserTableRow.propTypes = {
-//   selected: PropTypes.bool,
-//   name: PropTypes.string,
-//   avatarUrl: PropTypes.string,
-//   mobile: PropTypes.string,
-//   username: PropTypes.string,
-//   isVerified: PropTypes.bool,
-//   status: PropTypes.string,
-//   handleClick: PropTypes.func,
-//   handleEdit: PropTypes.func,
-//   handleDelete: PropTypes.func,
-// };

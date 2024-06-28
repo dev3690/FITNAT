@@ -66,15 +66,17 @@ export default function BirdEyeView() {
 
         const response = await callAxiosApi(birdViewApi)
 
+        console.log("RESP BIRD EYE",response)
         const data = response?.data?.filter((item) => item?.patient_master?.user_master?.type_id == localData?.type_id)?.map((item) => ({
           ...item?.patient_master,
           id: item?.id,
           totalWeeks: calcTimeline(item?.patient_master)?.totalWeeks,
-          currentWeek: calcTimeline(item?.patient_master)?.currentWeek,
+          currentWeek : item?.currentWeek,
+          isNotify : item?.isNotify,          
           status: filterWeekKeys(item)
           // .filter(key => key.startsWith('week'))
         }))
-        console.log("RESP>>>>>", response?.data, data)
+        console.log("RESP>>>>>", data)
         setUsers(data);
       } catch (error) {
         console.error('Failed to fetch users:', error);
@@ -255,6 +257,7 @@ export default function BirdEyeView() {
                       id={row.id}
                       index={index}
                       currentWeek={row?.currentWeek}
+                      isNotify={row?.isNotify} 
                       totalWeeks={row?.totalWeeks}
                       selected={false}  // Modify based on your selection logic
                       name={row.name}
@@ -266,7 +269,6 @@ export default function BirdEyeView() {
                       start_date={row.start_date} // Modify or remove based on your data structure
                       end_date={row.end_date} // Modify or remove based on your data structure
                       type_id={row.type_id}
-                      handleClick={() => { }} // Implement if needed
                       handleEdit={() => handleEdit(row)}
                       handleDelete={() => handleDelete(row.id)}
                     />
