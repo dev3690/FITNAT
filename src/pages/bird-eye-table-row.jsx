@@ -108,7 +108,7 @@ export default function BirdEyeTableRow({
             variant="contained"
             size="small"
             sx={{ margin: "10px" }}
-            color={status[`week${item + 1}u2`] == 1 ? 'success' : (status[`week${item + 1}u1`] == 0 && item + 1 < currentWeek) ? "info" : "error"}
+            color={status[`week${item + 1}u2`] == 1 ? 'success' : (status[`week${item + 1}u2`] == 0 && item + 1 < currentWeek) ? "info" : "error"}
             disabled={item + 1 > totalWeeks}
             onClick={() => onstatusChanged({ id, table: STATUS, [`week${item + 1}u2`]: status[`week${item + 1}u2`] == 1 ? 0 : 1 })}>
             {(typeId == 1) ? "TKS" : "UPD2"}
@@ -118,7 +118,7 @@ export default function BirdEyeTableRow({
             variant="contained"
             size="small"
             sx={{ margin: "10px" }}
-            color={status[`week${item + 1}u3`] == 1 ? 'success' : (status[`week${item + 1}u1`] == 0 && item + 1 < currentWeek) ? "info" : "error"}
+            color={status[`week${item + 1}u3`] == 1 ? 'success' : (status[`week${item + 1}u3`] == 0 && item + 1 < currentWeek) ? "info" : "error"}
             disabled={item + 1 > totalWeeks}
             onClick={() => onstatusChanged({ id, table: STATUS, [`week${item + 1}u3`]: status[`week${item + 1}u3`] == 1 ? 0 : 1 })}>
             UPD3
