@@ -10,7 +10,6 @@ import {
 } from '@mui/material';
 
 import { STATUS, updateData, callAxiosApi } from 'src/utils/api_utils';
-import { getWeeklyEndDates } from 'src/utils/date_time';
 import { getLocalItem } from 'src/utils/local_operations';
 
 
@@ -67,10 +66,6 @@ export default function BirdEyeTableRow({
     upliftState()
     console.log("<><><><><><>", response)
   }
-
-  useEffect(() => {
-    // let { isNotify, currWeek } = getWeeklyEndDates(new Date(start_date).toLocaleString().split(",")[0], new Date(end_date).toLocaleString().split(",")[0], currentWeek)
-  }, [])
 
   return (
     <TableRow hover tabIndex={-1} >
