@@ -74,7 +74,8 @@ export default function BirdEyeTableRow({
       {selectedColumns?.includes("Link") && <TableCell align="center">
         <Button
           variant="outlined"
-          href={url}
+          // href={"https://"+url}
+          href={!url.startsWith('https://') ? 'https://' + url : url}
           size="small"
           color="success"
         // onClick={() => handleTasks(user.id, week)}
