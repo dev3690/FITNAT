@@ -89,9 +89,9 @@ export default function BirdEyeTableRow({
       {selectedColumns?.includes("Start Date") && <TableCell align="center">{new Date(start_date).toLocaleString().split(",")[0]}</TableCell>}
       {selectedColumns?.includes("End Date") && <TableCell align="center">{new Date(end_date).toLocaleString().split(",")[0]}</TableCell>}
       {selectedColumns?.includes("Pain") && <TableCell>{pain}</TableCell>}
-        
+
       {Array.from({ length: 12 }, (_, i) => i).map((item) => (
-        selectedColumns.includes(`Week ${item + 1}`) && <TableCell id={`index${item}`} align="center" sx={{ backgroundColor: isNotify && item + 1 == currentWeek ? "#76bfff" : (item + 1 == currentWeek && "#e4eaec"), borderRadius: item + 1 == currentWeek && "20px 0px 20px 0px" }} >
+        selectedColumns.includes(`Week ${item + 1}`) && <TableCell id={`index${item}`} align="center" sx={{ backgroundColor: isNotify && item + 1 == currentWeek ? "#76bfff" : (item + 1 == currentWeek && "#e4eaec"), borderRadius: item + 1 == currentWeek && "20px 0px 20px 0px", padding:3 }} >
 
           <Button
             variant="contained"
@@ -99,10 +99,10 @@ export default function BirdEyeTableRow({
             color={status[`week${item + 1}u1`] == 1 ? 'success' : (status[`week${item + 1}u1`] == 0 && item + 1 < currentWeek) ? "info" : "error"}
             disabled={item + 1 > totalWeeks}
             onClick={() => onstatusChanged({ id, table: STATUS, [`week${item + 1}u1`]: status[`week${item + 1}u1`] == 1 ? 0 : 1 })}
-          // style={{ minWidth: '40px', padding: '4px 8px' }}
+            style={{ minWidth: '40px', padding: '4px 8px' }}
           // disabled={i >= packageDetails[user.details.find(detail => detail.label === 'Package').value]}
           >
-            {(typeId == 1) ? "UPD" : "UPD1"}
+            {(typeId == 1) ? "1" : "1"}
           </Button>
 
           <Button
@@ -110,9 +110,10 @@ export default function BirdEyeTableRow({
             size="small"
             sx={{ margin: "10px" }}
             color={status[`week${item + 1}u2`] == 1 ? 'success' : (status[`week${item + 1}u2`] == 0 && item + 1 < currentWeek) ? "info" : "error"}
+            style={{ minWidth: '40px', padding: '4px 8px' }}
             disabled={item + 1 > totalWeeks}
             onClick={() => onstatusChanged({ id, table: STATUS, [`week${item + 1}u2`]: status[`week${item + 1}u2`] == 1 ? 0 : 1 })}>
-            {(typeId == 1) ? "TKS" : "UPD2"}
+            {(typeId == 1) ? "2" : "2"}
           </Button>
 
           {(typeId == 2) && <Button
@@ -120,9 +121,10 @@ export default function BirdEyeTableRow({
             size="small"
             sx={{ margin: "10px" }}
             color={status[`week${item + 1}u3`] == 1 ? 'success' : (status[`week${item + 1}u3`] == 0 && item + 1 < currentWeek) ? "info" : "error"}
+            style={{ minWidth: '40px', padding: '4px 8px' }}
             disabled={item + 1 > totalWeeks}
             onClick={() => onstatusChanged({ id, table: STATUS, [`week${item + 1}u3`]: status[`week${item + 1}u3`] == 1 ? 0 : 1 })}>
-            UPD3
+            3
           </Button>}
         </TableCell>
       ))

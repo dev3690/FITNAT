@@ -124,20 +124,20 @@ export default function Ex1() {
 
   const handleDialogSave = async () => {
 
-    if ((!currentPatient?.start_date || !currentPatient?.end_date || new Date(currentPatient?.start_date) >= new Date(currentPatient?.end_date))) {
-      toast.error("please select valid dates")
-      // alert("please select valid dates")
-      return
-    }
-    console.log(currentPatient?.pain)
-    if (!(currentPatient?.name?.trim()) || !(currentPatient?.city?.trim()) ||
-      !(currentPatient?.country?.trim()) ||
-      !(currentPatient?.pain?.join()?.length) || !(currentPatient?.package) ||
-      !(currentPatient?.url?.trim()) || (currentPatient?.mobile?.trim().length != 10)) {
-      toast.error("please provide all Details")
-      // alert("please provide all Details")
-      return
-    }
+    // if ((!currentPatient?.start_date || !currentPatient?.end_date || new Date(currentPatient?.start_date) >= new Date(currentPatient?.end_date))) {
+    //   toast.error("please select valid dates")
+    //   // alert("please select valid dates")
+    //   return
+    // }
+    // console.log(currentPatient?.pain)
+    // if (!(currentPatient?.name?.trim()) || !(currentPatient?.city?.trim()) ||
+    //   !(currentPatient?.country?.trim()) ||
+    //   !(currentPatient?.pain?.join()?.length) || !(currentPatient?.package) ||
+    //   !(currentPatient?.url?.trim()) || (currentPatient?.mobile?.trim().length != 10)) {
+    //   toast.error("please provide all Details")
+    //   // alert("please provide all Details")
+    //   return
+    // }
 
     let pain = currentPatient?.pain.join(",")
     currentPatient.pain = pain
