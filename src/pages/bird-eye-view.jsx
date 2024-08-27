@@ -6,18 +6,16 @@ import {
   Grid,
   Table,
   Button,
-  Dialog,
   Container,
   TableBody,
   TextField,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   TableContainer,
   TablePagination,
+  TableRow,
+  TableCell,
 } from '@mui/material';
 
-import { USER, insertData, birdViewApi, callAxiosApi } from 'src/utils/api_utils';
+import { getData, USER, insertData, birdViewApi, callAxiosApi } from 'src/utils/api_utils';
 import { useNavigate } from 'react-router-dom';
 import { getLocalItem } from 'src/utils/local_operations';
 
@@ -28,12 +26,12 @@ import TableEmptyRows from '../sections/user/table-empty-rows';
 import UserTableToolbar from '../sections/user/user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../sections/user/utils';
 import { calcTimeline } from 'src/utils/date_time';
-// import UserTableRow from './user-table-row';
 
 // ----------------------------------------------------------------------
 
 export default function BirdEyeView() {
   const [users, setUsers] = useState([]);
+  const [userMap, setUserMap] = useState(new Map());
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('name');
@@ -41,11 +39,9 @@ export default function BirdEyeView() {
   const [rowsPerPage, setRowsPerPage] = useState(15);
   const [openDialog, setOpenDialog] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
-  const [isDataUpdated, setisDataUpdated] = useState(false);
+  const [isDataUpdated, setIsDataUpdated] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [showFilterButton, setShowFilterButton] = useState(true); // Set to true to show initially
-
-
 
   let optionList = [
     { id: 1, label: "Name" },
@@ -54,29 +50,38 @@ export default function BirdEyeView() {
     { id: 4, label: "Start Date" },
     { id: 5, label: "End Date" },
     { id: 6, label: "Pain" },
+    { id: 7, label: "Assign To" }, // New column
     ...Array.from({ length: 12 }, (_, i) => `Week ${i + 1}`).map((item, index) => (({ id: `${item}-${index}`, label: item })))
-  ]
+  ];
   const [selectedColumns, setSelectedColumns] = useState(optionList?.map((item) => item?.label));
 
   useEffect(() => {
     // Fetch users from API
     const fetchUsers = async () => {
       try {
-        let localData = getLocalItem("data")
+        let localData = getLocalItem("data");
 
-        const response = await callAxiosApi(birdViewApi)
-        // filter((item) => item?.patient_master?.user_master?.type_id == localData?.type_id)?
-        console.log("RESP BIRD EYE",response)
+        const response = await callAxiosApi(birdViewApi);
+        console.log("RESP BIRD EYE", response);
+        // const response = await callAxiosApi(getData, { table: USER });
+
+        const usersResponse = await callAxiosApi(getData, { table: USER }); // Fetch user-masters data
+        console.log("User table data-->", usersResponse)
+        const usersData = usersResponse.data.data;
+
         const data = response?.data?.map((item) => ({
           ...item?.patient_master,
           id: item?.id,
           totalWeeks: calcTimeline(item?.patient_master)?.totalWeeks,
-          currentWeek : item?.currentWeek,
-          isNotify : item?.isNotify,          
-          status: filterWeekKeys(item)
-          // .filter(key => key.startsWith('week'))
-        }))
-        console.log("RESP>>>>>", data)
+          currentWeek: item?.currentWeek,
+          isNotify: item?.isNotify,
+          status: filterWeekKeys(item),
+          assign_to: item?.patient_master?.assign_to, // Ensure this field exists
+        }));
+
+        // Create a map of user IDs to names
+        const userMapping = new Map(usersData.map(user => [user.id, user.name]));
+        setUserMap(userMapping);
         setUsers(data);
       } catch (error) {
         console.error('Failed to fetch users:', error);
@@ -90,26 +95,8 @@ export default function BirdEyeView() {
         return acc;
       }, {});
 
-    // {
-    //   table:"statusUpdate",
-    //   id:"row_id"
-    // }
-
-
-
     fetchUsers();
   }, [isDataUpdated]);
-  //   {
-  //     "id": 1,
-  //     "name": "Deep",
-  //     "mobile": "6353783314",
-  //     "username": "deep",
-  //     "password": "123",
-  //     "isMaster": true,
-  //     "type_id": 1,
-  //     "createdAt": "2024-06-15T12:16:19.000Z",
-  //     "updatedAt": "2024-06-15T12:16:19.000Z"
-  // }
 
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
@@ -122,6 +109,7 @@ export default function BirdEyeView() {
     setIsEditing(true);
     setOpenDialog(true);
   };
+
   const toggleFilterButton = () => {
     setShowFilterButton(!showFilterButton);
   };
@@ -137,7 +125,6 @@ export default function BirdEyeView() {
 
   const handleDialogClose = () => {
     setOpenDialog(false);
-    // setCurrentUser({});
     setIsEditing(false);
   };
 
@@ -151,19 +138,14 @@ export default function BirdEyeView() {
       }
     } else {
       try {
-        //     setCurrentUser({ name: '', mobile: '', username: '', password: '', isMaster: false, type_id: '' });
         if (!(currentUser?.name) || !(currentUser?.mobile) || !(currentUser?.username) || !(currentUser?.password) || !(currentUser?.type_id)) {
-          alert("All fields are required")
-          return
+          alert("All fields are required");
+          return;
         }
-        // const data = currentUser
 
-        const response = await callAxiosApi(insertData, { ...currentUser, table: USER })
-        console.log("insert RESP", response)
-        setisDataUpdated(!isDataUpdated)
-
-        // const response = await axios.post('http://localhost:3690/user_masters', currentUser);
-        // setUsers([...users, { ...currentUser, id: response.data.id, createdAt: response.data.createdAt, updatedAt: response.data.updatedAt }]);
+        const response = await callAxiosApi(insertData, { ...currentUser, table: USER });
+        console.log("insert RESP", response);
+        setIsDataUpdated(!isDataUpdated);
       } catch (error) {
         console.error('Failed to add user:', error);
       }
@@ -172,8 +154,8 @@ export default function BirdEyeView() {
   };
 
   const upliftState = () => {
-    setisDataUpdated(!isDataUpdated)
-  }
+    setIsDataUpdated(!isDataUpdated);
+  };
 
   const handleAddNewUser = () => {
     setCurrentUser({ name: '', mobile: '', username: '', password: '', isMaster: false, type_id: '' });
@@ -207,26 +189,21 @@ export default function BirdEyeView() {
   });
 
   const handleExit = () => {
-    // window.close();
-
     navigate('/patients');
   };
   const navigate = useNavigate();
 
   const handleSelectedColumns = (selected) => {
-    console.log(">>>>>>>>", selected)
-    setSelectedColumns(selected)
-  }
-
+    console.log(">>>>>>>>", selected);
+    setSelectedColumns(selected);
+  };
 
   const notFound = !dataFiltered.length && !!filterName;
 
   return (
     <Container sx={{ display: "flex" }}>
-
       <Grid xs={12} md={2} margin={5}>
-
-        <div >
+        <div>
           <Button onClick={handleExit} variant='contained' color='primary'>Exit</Button>
         </div>
         <Card sx={{ marginTop: "10px" }}>
@@ -238,16 +215,13 @@ export default function BirdEyeView() {
             showFilterButton={showFilterButton}
           />
 
-          {/* <Scrollbar> */}
           <TableContainer sx={{ overflow: 'auto' }}>
             <Table sx={{ minWidth: 800 }}>
               <UserTableHead
-                // order={order}
-                // orderBy={orderBy}
-                // rowCount={users.length}
                 headLabel={
                   optionList?.filter((item) => selectedColumns.includes(item?.label))
-                } />
+                }
+              />
               <TableBody>
                 {dataFiltered
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
@@ -257,7 +231,7 @@ export default function BirdEyeView() {
                       id={row.id}
                       index={index}
                       currentWeek={row?.currentWeek}
-                      isNotify={row?.isNotify} 
+                      isNotify={row?.isNotify}
                       totalWeeks={row?.totalWeeks}
                       selected={false}  // Modify based on your selection logic
                       name={row.name}
@@ -265,10 +239,12 @@ export default function BirdEyeView() {
                       status={row?.status}
                       pack={row.package} // Add this field to your data if needed
                       url={row.url} // Modify or remove based on your data structure
-                      pain={row.pain} // Modify or remove based on your data structure
+                      pain={row.pain} // Modify or remove based on your data
+                      // pain={row.pain} // Modify or remove based on your data structure
                       start_date={row.start_date} // Modify or remove based on your data structure
                       end_date={row.end_date} // Modify or remove based on your data structure
                       type_id={row.type_id}
+                      assign_to={row.user_master?.name} // Display the name corresponding to assign_to ID
                       handleEdit={() => handleEdit(row)}
                       handleDelete={() => handleDelete(row.id)}
                     />
@@ -283,7 +259,6 @@ export default function BirdEyeView() {
               </TableBody>
             </Table>
           </TableContainer>
-          {/* </Scrollbar> */}
 
           <TablePagination
             page={page}
@@ -296,73 +271,6 @@ export default function BirdEyeView() {
           />
         </Card>
       </Grid>
-
-
-
-
-      <Dialog open={openDialog} onClose={handleDialogClose}>
-        <DialogTitle>{isEditing ? 'Edit User' : 'Add New User'}</DialogTitle>
-        <DialogContent>
-          <TextField
-            margin="dense"
-            name="name"
-            label="Name"
-            type="text"
-            fullWidth
-            value={currentUser?.name || ''}
-            onChange={handleInputChange}
-          />
-          <TextField
-            margin="dense"
-            name="mobile"
-            label="Mobile"
-            type="text"
-            fullWidth
-            value={currentUser?.mobile || ''}
-            onChange={handleInputChange}
-          />
-          <TextField
-            margin="dense"
-            name="username"
-            label="Username"
-            type="text"
-            fullWidth
-            value={currentUser?.username || ''}
-            onChange={handleInputChange}
-          />
-          <TextField
-            margin="dense"
-            name="password"
-            label="Password"
-            type="text"
-            fullWidth
-            value={currentUser?.password || ''}
-            onChange={handleInputChange}
-          />
-          <label>
-            <input
-              name="isMaster"
-              type="checkbox"
-              checked={currentUser?.isMaster || false}
-              onChange={(e) => setCurrentUser({ ...currentUser, isMaster: e.target.checked })}
-            />
-            IsMaster
-          </label>
-          <TextField
-            margin="dense"
-            name="type_id"
-            label="Type ID"
-            type="number"
-            fullWidth
-            value={currentUser?.type_id || ''}
-            onChange={handleInputChange}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDialogClose}>Cancel</Button>
-          <Button onClick={handleDialogSave}>{isEditing ? 'Save' : 'Add'}</Button>
-        </DialogActions>
-      </Dialog>
     </Container>
   );
 }
