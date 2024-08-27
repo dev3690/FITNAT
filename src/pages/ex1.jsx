@@ -1,5 +1,5 @@
 
-
+// Old ex1
 
 import { useState, useEffect } from 'react';
 
@@ -27,7 +27,7 @@ import {
 import { ToastContainer, toast } from 'react-toastify';
 
 import { getLocalItem } from 'src/utils/local_operations';
-import { getData, PATIENT, callAxiosApi, insertPatient, updateData, deleteData } from 'src/utils/api_utils';
+import { getData, PATIENT, USER, callAxiosApi, insertPatient, updateData, deleteData } from 'src/utils/api_utils';
 import { formatDateYYMMDD } from 'src/utils/date_time';
 
 import Iconify from 'src/components/iconify';
@@ -70,21 +70,35 @@ export default function Ex1() {
 
 
   useEffect(() => {
-    fetchUsers();    
+    fetchUsers();
     fetchTeammates(); // Load teammates when component mounts
 
     let role = getLocalItem("data")?.isMaster
     setIsMaster(role)
   }, [isDataUpdated]);
 
-  const fetchTeammates = async () => {
-    // Fetch the teammates from an API or use a static list
-    const response = await callAxiosApi(getData, { table: 'user_masters' });
-    // setTeammates(response.data.data);
-        setTeammates(response.data.data || []); // Ensure it's an array
 
-    console.log(response.data.data)
+
+  // const fetchTeammates = async () => {
+  //   // Fetch the teammates from an API or use a static list
+  //   const response = await callAxiosApi(getData, { table: USER });
+  //   // setTeammates(response.data.data);
+  //       setTeammates("User data -->",response.data.data || []); // Ensure it's an array
+
+  //   console.log("User data -->",response.data.data)
+  // };
+  const fetchTeammates = async () => {
+    try {
+      const response = await callAxiosApi(getData, { table: USER });
+      // Ensure the data is an array
+      setTeammates(Array.isArray(response.data.data) ? response.data.data : []);
+      console.log("User-masters data:", response.data.data); // Print user-masters data to console
+    } catch (error) {
+      console.error('Failed to fetch teammates:', error);
+    }
   };
+
+
   const handleAssignChange = (patientId, teammateId) => {
     setPatient((prevPatients) =>
       prevPatients.map((p) =>
@@ -95,10 +109,10 @@ export default function Ex1() {
   };
 
 
-  
+
   const fetchUsers = async () => {
     try {
-      setIsLoading(true) 
+      setIsLoading(true)
       const response = await callAxiosApi(getData, { table: PATIENT })
       console.log(">>>>>>>", response)
       setPatient(response.data.data); // Assuming response.data contains the data array
@@ -188,6 +202,21 @@ export default function Ex1() {
 
     }
     handleDialogClose();
+  };
+
+
+
+  const handleAssignToChange = (event) => {
+    const { value } = event.target;
+    setCurrentPatient({
+      ...currentPatient,
+      assign_to: value,
+    });
+  };
+
+  const getTeammateName = (id) => {
+    const teammate = Array.isArray(teammates) ? teammates.find((t) => t.id === id) : null;
+    return teammate ? teammate.name : '';
   };
 
   const handleAddNewUser = () => {
@@ -296,20 +325,20 @@ export default function Ex1() {
                     <PatientTableRow sr={index + 1} isAdmin={isMaster} row={row} handleEdit={() => handleEdit({ ...row })} handleDelete={handleDelete}
                     />
                   ))} */}
-                  {dataFiltered
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row, index) => (
-                      <PatientTableRow
-                        key={row.id}
-                        sr={index + 1}
-                        isAdmin={isMaster}
-                        row={row}
-                        handleEdit={() => handleEdit({ ...row })}
-                        handleDelete={handleDelete}
-                        teammates={teammates}
-                        handleAssignChange={handleAssignChange}
-                      />
-                    ))}
+                {dataFiltered
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row, index) => (
+                    <PatientTableRow
+                      key={row.id}
+                      sr={index + 1}
+                      isAdmin={isMaster}
+                      row={row}
+                      handleEdit={() => handleEdit({ ...row })}
+                      handleDelete={handleDelete}
+                      teammates={getTeammateName(row.assign_to)}
+                      handleAssignChange={handleAssignChange}
+                    />
+                  ))}
 
                 {/* <TableEmptyRows
                   height={77}
@@ -487,7 +516,9 @@ export default function Ex1() {
                 onChange={handleInputChange}
               />
             </Grid>
-            <Grid xs={12} item sm={12}>
+
+
+            {/* <Grid xs={12} item sm={12}>
               <TextField
                 margin="dense"
                 name="assign_to"
@@ -497,7 +528,28 @@ export default function Ex1() {
                 value={currentPatient?.assign_to || ''}
                 onChange={handleInputChange}
               />
+            </Grid> */}
+
+
+            <Grid item xs={12} sm={12}>
+              <FormControl fullWidth margin="dense">
+                <InputLabel>Assign To</InputLabel>
+                <Select
+                  value={currentPatient?.assign_to || ''}
+                  onChange={handleAssignToChange}
+                >
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  {teammates.map((teammate) => (
+                    <MenuItem key={teammate.id} value={teammate.id}>
+                      {teammate.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Grid>
+
           </Grid>
         </DialogContent>
         <DialogActions>

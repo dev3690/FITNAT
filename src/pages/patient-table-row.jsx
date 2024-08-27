@@ -80,12 +80,21 @@ export default function PatientTableRow({
   sr,
   isAdmin,
   handleDelete,
+  teammates,
+  handleAssignChange
 }) {
   const [open, setOpen] = useState(null);
 
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
   };
+  
+  
+  // Function to get the name of the teammate based on their ID
+  // const getTeammateName = (id) => {
+  //   const teammate = teammates.map((t) => t.id === id);
+  //   return teammate ? teammate.name : 'Not Assigned';
+  // };
 
   const handleCloseMenu = () => {
     setOpen(null);
@@ -102,7 +111,8 @@ export default function PatientTableRow({
       <TableCell>{new Date(row.start_date).toLocaleDateString()}</TableCell>
       <TableCell>{new Date(row.end_date).toLocaleDateString()}</TableCell>
       <TableCell>{getPackageName(row.package)}</TableCell>
-      <TableCell>{row.assign_to}</TableCell>
+      <TableCell>{teammates}</TableCell>
+
 
       <TableCell>{row.type_id==1 ? "Dr. Dhairya" : "Dr. Nidhi"}</TableCell>
 
