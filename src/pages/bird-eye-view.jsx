@@ -65,9 +65,9 @@ export default function BirdEyeView() {
         let localData = getLocalItem("data")
 
         const response = await callAxiosApi(birdViewApi)
-
+        // filter((item) => item?.patient_master?.user_master?.type_id == localData?.type_id)?
         console.log("RESP BIRD EYE",response)
-        const data = response?.data?.filter((item) => item?.patient_master?.user_master?.type_id == localData?.type_id)?.map((item) => ({
+        const data = response?.data?.map((item) => ({
           ...item?.patient_master,
           id: item?.id,
           totalWeeks: calcTimeline(item?.patient_master)?.totalWeeks,

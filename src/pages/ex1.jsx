@@ -49,6 +49,7 @@ export default function Ex1() {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('name');
   const [confirmation, setConfirmation] = useState(false);
+  const [teammates, setTeammates] = useState([]); // New state for teammates
 
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -69,11 +70,32 @@ export default function Ex1() {
 
 
   useEffect(() => {
-    fetchUsers();
+    fetchUsers();    
+    fetchTeammates(); // Load teammates when component mounts
+
     let role = getLocalItem("data")?.isMaster
     setIsMaster(role)
   }, [isDataUpdated]);
 
+  const fetchTeammates = async () => {
+    // Fetch the teammates from an API or use a static list
+    const response = await callAxiosApi(getData, { table: 'user_masters' });
+    // setTeammates(response.data.data);
+        setTeammates(response.data.data || []); // Ensure it's an array
+
+    console.log(response.data.data)
+  };
+  const handleAssignChange = (patientId, teammateId) => {
+    setPatient((prevPatients) =>
+      prevPatients.map((p) =>
+        p.id === patientId ? { ...p, assign_to: teammateId } : p
+      )
+    );
+    // Optionally, update the backend immediately or wait for dialog save
+  };
+
+
+  
   const fetchUsers = async () => {
     try {
       setIsLoading(true) 
@@ -124,20 +146,20 @@ export default function Ex1() {
 
   const handleDialogSave = async () => {
 
-    // if ((!currentPatient?.start_date || !currentPatient?.end_date || new Date(currentPatient?.start_date) >= new Date(currentPatient?.end_date))) {
-    //   toast.error("please select valid dates")
-    //   // alert("please select valid dates")
-    //   return
-    // }
-    // console.log(currentPatient?.pain)
-    // if (!(currentPatient?.name?.trim()) || !(currentPatient?.city?.trim()) ||
-    //   !(currentPatient?.country?.trim()) ||
-    //   !(currentPatient?.pain?.join()?.length) || !(currentPatient?.package) ||
-    //   !(currentPatient?.url?.trim()) || (currentPatient?.mobile?.trim().length != 10)) {
-    //   toast.error("please provide all Details")
-    //   // alert("please provide all Details")
-    //   return
-    // }
+    if ((!currentPatient?.start_date || !currentPatient?.end_date || new Date(currentPatient?.start_date) >= new Date(currentPatient?.end_date))) {
+      toast.error("please select valid dates")
+      // alert("please select valid dates")
+      return
+    }
+    console.log(currentPatient?.pain)
+    if (!(currentPatient?.name?.trim()) || !(currentPatient?.city?.trim()) ||
+      !(currentPatient?.country?.trim()) ||
+      !(currentPatient?.pain?.join()?.length) || !(currentPatient?.package) ||
+      !(currentPatient?.url?.trim()) || (currentPatient?.mobile?.trim().length != 10)) {
+      toast.error("please provide all Details")
+      // alert("please provide all Details")
+      return
+    }
 
     let pain = currentPatient?.pain.join(",")
     currentPatient.pain = pain
@@ -260,6 +282,7 @@ export default function Ex1() {
                   { id: 'start_date', label: 'Start Date' },
                   { id: 'end_date', label: 'End Date' },
                   { id: 'package', label: 'Package' },
+                  { id: 'assign_to', label: 'Assigned To' }, // New column
                   // { id: 'created_by', label: 'Created By' },
                   { id: 'type_id', label: 'Client Of' },
                   { id: 'actions', label: 'Actions', align: 'center' },
@@ -267,12 +290,26 @@ export default function Ex1() {
                 onRequestSort={handleSort}
               />
               <TableBody>
-                {dataFiltered
+                {/* {dataFiltered
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => (
                     <PatientTableRow sr={index + 1} isAdmin={isMaster} row={row} handleEdit={() => handleEdit({ ...row })} handleDelete={handleDelete}
                     />
-                  ))}
+                  ))} */}
+                  {dataFiltered
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row, index) => (
+                      <PatientTableRow
+                        key={row.id}
+                        sr={index + 1}
+                        isAdmin={isMaster}
+                        row={row}
+                        handleEdit={() => handleEdit({ ...row })}
+                        handleDelete={handleDelete}
+                        teammates={teammates}
+                        handleAssignChange={handleAssignChange}
+                      />
+                    ))}
 
                 {/* <TableEmptyRows
                   height={77}
@@ -450,6 +487,17 @@ export default function Ex1() {
                 onChange={handleInputChange}
               />
             </Grid>
+            <Grid xs={12} item sm={12}>
+              <TextField
+                margin="dense"
+                name="assign_to"
+                label="Assign To"
+                type="text"
+                fullWidth
+                value={currentPatient?.assign_to || ''}
+                onChange={handleInputChange}
+              />
+            </Grid>
           </Grid>
         </DialogContent>
         <DialogActions>
@@ -462,3 +510,4 @@ export default function Ex1() {
     </Container>
   );
 }
+

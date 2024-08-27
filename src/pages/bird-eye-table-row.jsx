@@ -1,6 +1,7 @@
 
 
 
+
 import { useState, useEffect } from 'react';
 
 import {
@@ -13,7 +14,7 @@ import { STATUS, updateData, callAxiosApi } from 'src/utils/api_utils';
 import { getLocalItem } from 'src/utils/local_operations';
 
 
-// ----------------------------------------------------------------------
+// ---------------------------------------------------------------------- 
 
 export default function BirdEyeTableRow({
   selected,
@@ -26,7 +27,7 @@ export default function BirdEyeTableRow({
   row,
   selectedColumns,
   url,
-  // currentWeek,
+  // currentWeek, 
   totalWeeks,
   status,
   index,
@@ -44,11 +45,11 @@ export default function BirdEyeTableRow({
 
 
   useEffect(() => {
-    // fetchUsers();
+    // fetchUsers(); 
     let role = getLocalItem("data")?.type_id
     setTypeId(role)
   },
-    // [isDataUpdated]
+    // [isDataUpdated] 
   );
 
 
@@ -64,71 +65,81 @@ export default function BirdEyeTableRow({
     console.log("data to update", data)
     const response = await callAxiosApi(updateData, data)
     upliftState()
+    
     console.log("<><><><><><>", response)
   }
 
   return (
-    <TableRow hover tabIndex={-1} >
+    <TableRow hover tabIndex={-1}>
       {selectedColumns?.includes("Name") && <TableCell>{name}</TableCell>}
       {selectedColumns?.includes("Package") && <TableCell>{pack == 1 ? "Fitnat Coaching Premium" : pack == 2 ? "Fitnat Coaching Delux" : "Fitnat Personal Training"}</TableCell>}
       {selectedColumns?.includes("Link") && <TableCell align="center">
         <Button
           variant="outlined"
-          // href={"https://"+url}
           href={!url.startsWith('https://') ? 'https://' + url : url}
           size="small"
           color="success"
-        // onClick={() => handleTasks(user.id, week)}
-        // style={{ minWidth: '40px', padding: '4px 8px' }}
-        // disabled={i >= packageDetails[user.details.find(detail => detail.label === 'Package').value]}
         >
           link
         </Button>
-
       </TableCell>}
       {selectedColumns?.includes("Start Date") && <TableCell align="center">{new Date(start_date).toLocaleString().split(",")[0]}</TableCell>}
       {selectedColumns?.includes("End Date") && <TableCell align="center">{new Date(end_date).toLocaleString().split(",")[0]}</TableCell>}
       {selectedColumns?.includes("Pain") && <TableCell>{pain}</TableCell>}
 
       {Array.from({ length: 12 }, (_, i) => i).map((item) => (
-        selectedColumns.includes(`Week ${item + 1}`) && <TableCell id={`index${item}`} align="center" sx={{ backgroundColor: isNotify && item + 1 == currentWeek ? "#76bfff" : (item + 1 == currentWeek && "#e4eaec"), borderRadius: item + 1 == currentWeek && "20px 0px 20px 0px", padding:3 }} >
-
-          <Button
-            variant="contained"
-            size="small"
-            color={status[`week${item + 1}u1`] == 1 ? 'success' : (status[`week${item + 1}u1`] == 0 && item + 1 < currentWeek) ? "info" : "error"}
-            disabled={item + 1 > totalWeeks}
-            onClick={() => onstatusChanged({ id, table: STATUS, [`week${item + 1}u1`]: status[`week${item + 1}u1`] == 1 ? 0 : 1 })}
-            style={{ minWidth: '40px', padding: '4px 8px' }}
-          // disabled={i >= packageDetails[user.details.find(detail => detail.label === 'Package').value]}
+        selectedColumns.includes(`Week ${item + 1}`) && (
+          <TableCell
+            id={`index${item}`}
+            align="center"
+            sx={{
+             
+              backgroundColor: isNotify && item + 1 === currentWeek ? "#76bfff" : (item + 1 === currentWeek && "#e4eaec"),
+              
+              borderRadius: item + 1 === currentWeek && "20px 0px 20px 0px",
+              padding: 1,
+            }}
           >
-            {(typeId == 1) ? "1" : "1"}
-          </Button>
+            <Button
+              variant="contained"
+              size="small"
+              color={status[`week${item + 1}u1`] == 1 ? 'success' : (status[`week${item + 1}u1`] == 0 && item + 1 < currentWeek) ? "info" : "error"}
+              disabled={item + 1 > totalWeeks}
+              onClick={() => onstatusChanged({ id, table: STATUS, [`week${item + 1}u1`]: status[`week${item + 1}u1`] == 1 ? 0 : 1 })}
+              style={{ minWidth: '40px', padding: '4px 8px' }}
+            >
+              {(typeId == 1) ? "1" : "1"}
+            </Button>
 
-          <Button
-            variant="contained"
-            size="small"
-            sx={{ margin: "10px" }}
-            color={status[`week${item + 1}u2`] == 1 ? 'success' : (status[`week${item + 1}u2`] == 0 && item + 1 < currentWeek) ? "info" : "error"}
-            style={{ minWidth: '40px', padding: '4px 8px' }}
-            disabled={item + 1 > totalWeeks}
-            onClick={() => onstatusChanged({ id, table: STATUS, [`week${item + 1}u2`]: status[`week${item + 1}u2`] == 1 ? 0 : 1 })}>
-            {(typeId == 1) ? "2" : "2"}
-          </Button>
+            <Button
+              variant="contained"
+              size="small"
+              sx={{ margin: "10px" }}
+              color={status[`week${item + 1}u2`] == 1 ? 'success' : (status[`week${item + 1}u2`] == 0 && item + 1 < currentWeek) ? "info" : "error"}
+              style={{ minWidth: '40px', padding: '4px 8px' }}
+              disabled={item + 1 > totalWeeks}
+              onClick={() => onstatusChanged({ id, table: STATUS, [`week${item + 1}u2`]: status[`week${item + 1}u2`] == 1 ? 0 : 1 })}
+            >
+              {(typeId == 1) ? "2" : "2"}
+            </Button>
 
-          {(typeId == 2) && <Button
-            variant="contained"
-            size="small"
-            sx={{ margin: "10px" }}
-            color={status[`week${item + 1}u3`] == 1 ? 'success' : (status[`week${item + 1}u3`] == 0 && item + 1 < currentWeek) ? "info" : "error"}
-            style={{ minWidth: '40px', padding: '4px 8px' }}
-            disabled={item + 1 > totalWeeks}
-            onClick={() => onstatusChanged({ id, table: STATUS, [`week${item + 1}u3`]: status[`week${item + 1}u3`] == 1 ? 0 : 1 })}>
-            3
-          </Button>}
-        </TableCell>
-      ))
-      }
+            {(typeId == 2) && (
+              <Button
+                variant="contained"
+                size="small"
+                sx={{ margin: "10px" }}
+                color={status[`week${item + 1}u3`] == 1 ? 'success' : (status[`week${item + 1}u3`] == 0 && item + 1 < currentWeek) ? "info" : "error"}
+                style={{ minWidth: '40px', padding: '4px 8px' }}
+                disabled={item + 1 > totalWeeks}
+                onClick={() => onstatusChanged({ id, table: STATUS, [`week${item + 1}u3`]: status[`week${item + 1}u3`] == 1 ? 0 : 1 })}
+              >
+                3
+              </Button>
+            )}
+          </TableCell>
+        )
+      ))}
     </TableRow>
   );
+
 }

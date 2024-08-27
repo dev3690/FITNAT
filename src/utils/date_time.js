@@ -21,3 +21,85 @@ export const calcTimeline = (patient) => {
 
   return { currentWeek, totalWeeks }
 }
+
+
+
+export const getWeeklyEndDates = (startDate, endDate) => {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  const result = [];
+
+  // Check if the start date is greater than the end date
+  if (start > end) {
+    throw new Error("Start date must be before end date");
+  }
+
+  let current = new Date(start);
+
+  // Adjust current to the first end of week date
+  current.setDate(current.getDate() + 7);
+
+  while (current <= end) {
+    result.push(new Date(current));
+    //   console.log(">>>>",current) // Move to the next week
+    current.setDate(current.getDate() + 7);
+  }
+
+  // Ensure that the last date added is within the range
+  if (current > end) {
+    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+    let flag = true
+    result.forEach((item) => {
+      if (item.getDate() == new Date(end).getDate()) { flag = false }
+    })
+    if (flag)
+      result.push(new Date(end));
+  }
+  let dt = result?.findIndex((item) => new Date() < item)
+  console.log("DIFF", result, dt + 1, new Date().getDate())
+  return { currWeek: dt + 1, isNotify: result[dt==-1 ? 0 : dt].getDay() - 2 == new Date().getDay() }
+};
+
+
+
+// export const getWeeklyEndDates = (startDate, endDate) => {
+//   const start = new Date(startDate);
+//   const end = new Date(endDate);
+//   const result = [];
+//   const reminderDay = 6; // Assuming Tuesday as reminder day (0 = Sunday, 1 = Monday, 2 = Tuesday, ...)
+
+//   // Check if the start date is greater than the end date
+//   if (start > end) {
+//     throw new Error("Start date must be before end date");
+//   }
+
+//   let current = new Date(start);
+
+//   // Adjust current to the first end of week date
+//   current.setDate(current.getDate() + 7);
+
+//   while (current <= end) {
+//     result.push(new Date(current));
+//     // Move to the next week
+//     current.setDate(current.getDate() + 7);
+//   }
+
+//   // Ensure that the last date added is within the range
+//   if (current > end) {
+//     let flag = true;
+//     result.forEach((item) => {
+//       if (item.getDate() === new Date(end).getDate()) {
+//         flag = false;
+//       }
+//     });
+//     if (flag) result.push(new Date(end));
+//   }
+
+//   // Find the index of the current week
+//   let dt = result.findIndex((item) => new Date() < item);
+  
+//   // Determine if it's the reminder day
+//   const isNotify = new Date().getDay() === reminderDay;
+// console.log(isNotify)
+  // return { currWeek: dt + 1, isNotify };
+// };
