@@ -214,10 +214,15 @@ export default function Ex1() {
     });
   };
 
+  // const getTeammateName = (id) => {
+  //   const teammate = Array.isArray(teammates) ? teammates.find((t) => t.id === id) : null;
+  //   return teammate ? teammate.name : '';
+  // };
   const getTeammateName = (id) => {
     const teammate = Array.isArray(teammates) ? teammates.find((t) => t.id === id) : null;
     return teammate ? teammate.name : '';
   };
+  
 
   const handleAddNewUser = () => {
     // setCurrentPatient({ name: '', number: '', role: '', isVerified: false, status: 'Inactive' });
@@ -244,11 +249,42 @@ export default function Ex1() {
     setCurrentPatient({ ...currentPatient, [name]: value });
   };
 
+ 
+
+
+  // const applyFilter = ({ inputData, comparator, filterName }) => {
+  //   const stabilizedThis = inputData.map((el, index) => [el, index]);
+  
+  //   stabilizedThis.sort((a, b) => {
+  //     const order = comparator(a[0], b[0]);
+  //     if (order !== 0) return order;
+  //     return a[1] - b[1];
+  //   });
+  
+  //   if (filterName) {
+  //     inputData = inputData.filter((item) => {
+  //       const teammateName = getTeammateName(item.assign_to).toLowerCase(); // Fetch the teammate's name
+  //       return (
+  //         item.name.toLowerCase().includes(filterName.toLowerCase()) || // Filter by patient's name
+  //         teammateName.includes(filterName.toLowerCase()) // Filter by teammate's name
+  //       );
+  //     });
+  //   }
+  
+  //   return stabilizedThis.map((el) => el[0]);
+  // };
+  
+
+
+
   const dataFiltered = applyFilter({
     inputData: patient,
     comparator: getComparator(order, orderBy),
     filterName,
+    getTeammateName,  // Pass the getTeammateName function
+
   });
+
 
   const handleConfirmation = async (data) => {
     console.log(">>>>>", data)

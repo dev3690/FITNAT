@@ -206,6 +206,7 @@ export default function BirdEyeView() {
         <div>
           <Button onClick={handleExit} variant='contained' color='primary'>Exit</Button>
         </div>
+
         <Card sx={{ marginTop: "10px" }}>
           <UserTableToolbar
             numSelected={0}
@@ -244,7 +245,7 @@ export default function BirdEyeView() {
                       start_date={row.start_date} // Modify or remove based on your data structure
                       end_date={row.end_date} // Modify or remove based on your data structure
                       type_id={row.type_id}
-                      assign_to={row.user_master?.name} // Display the name corresponding to assign_to ID
+                      assign_to={row.assignee.name} // Display the name corresponding to assign_to ID
                       handleEdit={() => handleEdit(row)}
                       handleDelete={() => handleDelete(row.id)}
                     />
