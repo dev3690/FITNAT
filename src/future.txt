@@ -3757,7 +3757,7 @@ tasks to do for the last update
 1. turn on search feature in patients page from both name and assign_to --> Done
 2. turn on search feature in Birdseyeview page from both name and assign_to --> half Done
 3. birdseyeview page should show only respected type_id patients, not all
-4. remove completed ones
+4. remove completed ones --> half Done
 5. validation in inserting date in patient of 3 months --> half Done
 
 
