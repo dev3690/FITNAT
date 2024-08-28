@@ -55,8 +55,34 @@ export function getComparator(order, orderBy) {
 //   return inputData;
 // }
 
+// ==========================================================
+// // utils.js
+// export const applyFilter = ({ inputData, comparator, filterName, getTeammateName }) => {
+//   const stabilizedThis = inputData.map((el, index) => [el, index]);
+//   stabilizedThis.sort((a, b) => {
+//     const order = comparator(a[0], b[0]);
+//     if (order !== 0) return order;
+//     return a[1] - b[1];
+//   });
 
-// utils.js
+//   if (filterName) {
+//     return stabilizedThis
+//       .map((el) => el[0])
+//       .filter((item) => {
+//         const teammateName = item.assign_to ? getTeammateName(item.assign_to) : '';
+//         return teammateName.toLowerCase().indexOf(filterName.toLowerCase()) !== -1;
+//       });
+//   }
+
+//   return stabilizedThis.map((el) => el[0]);
+// };
+
+
+
+// ---------------------==================-------------------=================
+
+// utils.js or wherever your utility functions are defined
+
 export const applyFilter = ({ inputData, comparator, filterName, getTeammateName }) => {
   const stabilizedThis = inputData.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
@@ -70,12 +96,10 @@ export const applyFilter = ({ inputData, comparator, filterName, getTeammateName
       .map((el) => el[0])
       .filter((item) => {
         const teammateName = item.assign_to ? getTeammateName(item.assign_to) : '';
-        return teammateName.toLowerCase().indexOf(filterName.toLowerCase()) !== -1;
+        return item.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
+               teammateName.toLowerCase().indexOf(filterName.toLowerCase()) !== -1;
       });
   }
 
   return stabilizedThis.map((el) => el[0]);
 };
-
-
-
