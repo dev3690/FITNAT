@@ -143,6 +143,41 @@ export default function Ex1() {
     setOpenDialog(true);
   };
 
+  // const handleEdit = (patient = {}) => {
+  //   let startDate = formatDateYYMMDD(patient?.start_date);
+  //   let endDate = formatDateYYMMDD(patient?.end_date);
+
+  //   // Validate dates
+  //   if (!startDate || !endDate || new Date(startDate) >= new Date(endDate)) {
+  //     toast.error("Please select valid dates");
+  //     return;
+  //   }
+
+  //   // Check if date range exceeds 90 days (12 weeks)
+  //   const start = new Date(startDate);
+  //   const end = new Date(endDate);
+  //   const timeDiff = end.getTime() - start.getTime();
+  //   const daysDiff = timeDiff / (1000 * 3600 * 24);
+
+  //   if (daysDiff > 90) {
+  //     toast.error("Date range should not exceed 90 days");
+  //     return;
+  //   }
+
+  //   // Update the patient object with the validated dates
+  //   patient["start_date"] = startDate;
+  //   patient["end_date"] = endDate;
+  //   patient.pain = patient?.pain?.split(",");
+
+  //   setCurrentPatient(patient);
+  //   setIsEditing(true);
+  //   setOpenDialog(true);
+  // };
+
+
+
+
+
   const handleDelete = (id) => {
     try {
       setConfirmation(true)
@@ -160,17 +195,35 @@ export default function Ex1() {
 
   const handleDialogSave = async () => {
 
-    if ((!currentPatient?.start_date || !currentPatient?.end_date || new Date(currentPatient?.start_date) >= new Date(currentPatient?.end_date))) {
-      toast.error("please select valid dates")
-      // alert("please select valid dates")
-      return
-    }
+    // if ((!currentPatient?.start_date || !currentPatient?.end_date || new Date(currentPatient?.start_date) >= new Date(currentPatient?.end_date))) {
+    //   toast.error("please select valid dates")
+    //   // alert("please select valid dates")
+    //   return
+    // }
+    const twelveWeeksInMilliseconds = 12 * 7 * 24 * 60 * 60 * 1000; // 12 weeks in milliseconds
+
+if (
+  !currentPatient?.start_date ||
+  !currentPatient?.end_date ||
+  new Date(currentPatient?.start_date) >= new Date(currentPatient?.end_date) ||
+  (new Date(currentPatient?.end_date) - new Date(currentPatient?.start_date)) > twelveWeeksInMilliseconds
+) {
+  toast.error("Please select valid dates and period should extend more than 12 weeks");
+  // alert("please select valid dates");
+  return;
+}
+
     console.log(currentPatient?.pain)
     if (!(currentPatient?.name?.trim()) || !(currentPatient?.city?.trim()) ||
       !(currentPatient?.country?.trim()) ||
       !(currentPatient?.pain?.join()?.length) || !(currentPatient?.package) ||
-      !(currentPatient?.url?.trim()) || (currentPatient?.mobile?.trim().length != 10)) {
+      !(currentPatient?.url?.trim()) ) {
       toast.error("please provide all Details")
+      // alert("please provide all Details")
+      return
+    }
+    if ((currentPatient?.mobile?.trim().length != 10)) {
+      toast.error("please provide 10 digit mobile number! ")
       // alert("please provide all Details")
       return
     }
@@ -222,7 +275,7 @@ export default function Ex1() {
     const teammate = Array.isArray(teammates) ? teammates.find((t) => t.id === id) : null;
     return teammate ? teammate.name : '';
   };
-  
+
 
   const handleAddNewUser = () => {
     // setCurrentPatient({ name: '', number: '', role: '', isVerified: false, status: 'Inactive' });
@@ -249,18 +302,18 @@ export default function Ex1() {
     setCurrentPatient({ ...currentPatient, [name]: value });
   };
 
- 
+
 
 
   // const applyFilter = ({ inputData, comparator, filterName }) => {
   //   const stabilizedThis = inputData.map((el, index) => [el, index]);
-  
+
   //   stabilizedThis.sort((a, b) => {
   //     const order = comparator(a[0], b[0]);
   //     if (order !== 0) return order;
   //     return a[1] - b[1];
   //   });
-  
+
   //   if (filterName) {
   //     inputData = inputData.filter((item) => {
   //       const teammateName = getTeammateName(item.assign_to).toLowerCase(); // Fetch the teammate's name
@@ -270,10 +323,10 @@ export default function Ex1() {
   //       );
   //     });
   //   }
-  
+
   //   return stabilizedThis.map((el) => el[0]);
   // };
-  
+
 
 
 
