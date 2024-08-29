@@ -88,7 +88,7 @@ export default function BirdEyeTableRow({
       {selectedColumns?.includes("End Date") && <TableCell align="center">{new Date(end_date).toLocaleString().split(",")[0]}</TableCell>}
       {selectedColumns?.includes("Pain") && <TableCell>{pain}</TableCell>}
       {selectedColumns?.includes("Assign To") && <TableCell>{assign_to}</TableCell>}
-
+        
       {Array.from({ length: 12 }, (_, i) => i).map((item) => (
         selectedColumns.includes(`Week ${item + 1}`) && (
           <TableCell
