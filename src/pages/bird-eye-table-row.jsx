@@ -41,6 +41,7 @@ export default function BirdEyeTableRow({
 }) {
   const [open, setOpen] = useState(null);
   const [typeId, setTypeId] = useState();
+  const [client_package, setClient_Package] = useState();
 
 
 
@@ -49,6 +50,8 @@ export default function BirdEyeTableRow({
     // fetchUsers(); 
     let role = getLocalItem("data")?.type_id
     setTypeId(role)
+    let package_data = getLocalItem("data")?.package
+    setClient_Package(package_data)
   },
     // [isDataUpdated] 
   );
@@ -125,7 +128,7 @@ export default function BirdEyeTableRow({
               {(typeId == 1) ? "2" : "2"}
             </Button>
 
-            {(typeId == 2) && (
+            {(pack == 3) && (
               <Button
                 variant="contained"
                 size="small"
