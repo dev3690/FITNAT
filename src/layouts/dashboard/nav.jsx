@@ -49,10 +49,14 @@ export default function Nav({ openNav, onCloseNav }) {
         bgcolor: (theme) => alpha(theme.palette.grey[500], 0.12),
       }}
     >
-      <Avatar sx={{borderRadius: 0}} src={account.photoURL} alt="photoURL" />
+      <Avatar sx={{ borderRadius: 0 }} src={account.photoURL} alt="photoURL" />
 
       <Box sx={{ ml: 2 }}>
-        <Typography variant="h5" color={"gray"}>{account.displayName}</Typography>
+        <Typography variant="h5" color={"grey"}>
+
+          {/* {account.displayName} */}
+          FITNAT
+          </Typography>
 
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
           {account.role}
@@ -168,18 +172,18 @@ function NavItem({ item }) {
 
   const active = item.path === pathname;
 
- const logout = (title) =>{
-  console.log(title);
-  if(title == "logout"){
-    localStorage.clear();
-  }  
- }
+  const logout = (title) => {
+    console.log(title);
+    if (title == "logout") {
+      localStorage.clear();
+    }
+  }
 
   return (
     <ListItemButton
       component={RouterLink}
       href={item.path}
-      onClick={()=>logout(item.title)}
+      onClick={() => logout(item.title)}
       sx={{
         minHeight: 44,
         borderRadius: 0.75,
@@ -201,7 +205,10 @@ function NavItem({ item }) {
         {item.icon}
       </Box>
 
-      <Box component="span">{item.title} </Box>
+      <Box component="span">
+        {item.title}
+        {/* hello */}
+      </Box>
     </ListItemButton>
   );
 }

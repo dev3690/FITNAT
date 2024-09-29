@@ -30,11 +30,11 @@ export default function BirdEyeView() {
   const [userMap, setUserMap] = useState(new Map());
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
-  const [orderBy, setOrderBy] = useState('assign_to'); 
+  const [orderBy, setOrderBy] = useState('assign_to');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(15);
   const [isDataUpdated, setIsDataUpdated] = useState(false);
-  const [showFilterButton, setShowFilterButton] = useState(true); 
+  const [showFilterButton, setShowFilterButton] = useState(true);
 
   let optionList = [
     { id: 'name', label: 'Name' },
@@ -43,7 +43,7 @@ export default function BirdEyeView() {
     { id: 'start_date', label: 'Start Date' },
     { id: 'end_date', label: 'End Date' },
     { id: 'pain', label: 'Pain' },
-    { id: 'assign_to', label: 'Assign To' }, 
+    { id: 'assign_to', label: 'Assign To' },
     ...Array.from({ length: 12 }, (_, i) => `Week ${i + 1}`).map((item, index) => ({ id: `${item}-${index}`, label: item })),
   ];
 
@@ -51,7 +51,7 @@ export default function BirdEyeView() {
 
   const loggedInUser = getLocalItem('data');
   const loggedInUserTypeId = loggedInUser?.type_id;
-console.log("loggedInUser",loggedInUser);
+  console.log("loggedInUser", loggedInUser);
 
 
   useEffect(() => {
@@ -59,34 +59,83 @@ console.log("loggedInUser",loggedInUser);
     const fetchUsers = async () => {
       try {
         const response = await callAxiosApi(birdViewApi);
-        const usersResponse = await callAxiosApi(getData, { table: USER }); 
+        const usersResponse = await callAxiosApi(getData, { table: USER });
         const usersData = usersResponse.data.data;
+        const isAdmin = loggedInUser?.isMaster; // Assuming 'isMaster' identifies admin users
+
+        console.log("patients data", response);
 
         const currentDate = new Date();
-        
+
+        //   const data = response?.data
+        //   ?.map((item) => ({
+        //     ...item?.patient_master,
+        //     id: item?.id,
+        //     totalWeeks: calcTimeline(item?.patient_master)?.totalWeeks,
+        //     currentWeek: item?.currentWeek,
+        //     isNotify: item?.isNotify,
+        //     status: filterWeekKeys(item),
+            // type_id: item?.patient_master?.type_id, 
+        //   }))
+        //   // console.log("data before",data)
+        //   .filter((data) => 
+        //     new Date(data.end_date) >= currentDate 
+        //   &&
+        //   data?.creator.type_id === loggedInUserTypeId ,
+        // );
+
+
+        // const data = response?.data
+        //   ?.map((item) => ({
+        //     ...item?.patient_master,
+        //     id: item?.id,
+        //     totalWeeks: calcTimeline(item?.patient_master)?.totalWeeks,
+        //     currentWeek: item?.currentWeek,
+        //     isNotify: item?.isNotify,
+        //     status: filterWeekKeys(item),
+        //     assign_to: item?.patient_master?.assign_to, // Assign_to field
+        //     type_id: item?.patient_master?.type_id,
+        //     creator: item?.creator, // Assuming creator contains the user's details
+        //   }))
+        //   // Filtering based on admin or non-admin privileges
+        //   .filter((data) => {
+        //     const isPatientActive = new Date(data.end_date) >= currentDate; // Check if patient is active
+
+        //     // If user is an admin, show all patients, otherwise show only assigned patients
+        //     return isPatientActive && (isAdmin || data.assign_to === loggedInUser.id);
+        //   });
+
         const data = response?.data
-        ?.map((item) => ({
-          ...item?.patient_master,
-          id: item?.id,
-          totalWeeks: calcTimeline(item?.patient_master)?.totalWeeks,
-          currentWeek: item?.currentWeek,
-          isNotify: item?.isNotify,
-          status: filterWeekKeys(item),
-          type_id: item?.patient_master?.type_id, 
-        }))
-        // console.log("data before",data)
-        .filter((data) => 
-          new Date(data.end_date) >= currentDate 
-        &&
-        data?.creator.type_id === loggedInUserTypeId ,
-      );
-      
-          
-          const userMapping = new Map(usersData.map(user => [user.id, user.name]));
-          setUserMap(userMapping);
-          setUsers(data);
-          console.log("Data is ",data);
-          // console.log("data.creator.type_id",data.creator.type_id)
+          ?.map((item) => ({
+            ...item?.patient_master,
+            id: item?.id,
+            totalWeeks: calcTimeline(item?.patient_master)?.totalWeeks,
+            currentWeek: item?.currentWeek,
+            isNotify: item?.isNotify,
+            status: filterWeekKeys(item),
+            assign_to: item?.patient_master?.assign_to, // Assigned field
+            // type_id: item?.patient_master?.type_id, 
+            // creator: item?.creator, 
+          }))
+          // Filtering based on admin or non-admin privileges
+          .filter((data) => {
+            const isPatientActive = new Date(data.end_date) >= currentDate; // Check if patient is active
+
+            // If user is an admin, show patients with the same type_id
+            if (isAdmin) {
+              return isPatientActive && data?.creator.type_id === loggedInUserTypeId;
+            }
+
+            // If not an admin, show only the patients assigned to the user
+            return isPatientActive && data.assign_to === loggedInUser.id;
+          });
+
+
+        const userMapping = new Map(usersData.map(user => [user.id, user.name]));
+        setUserMap(userMapping);
+        setUsers(data);
+        console.log("Data is ", data);
+        // console.log("data.creator.type_id",data.creator.type_id)
         // console.log("Filtered Data",);
       } catch (error) {
         console.error('Failed to fetch users:', error);
@@ -122,7 +171,7 @@ console.log("loggedInUser",loggedInUser);
     inputData: users,
     comparator: getComparator(order, orderBy),
     filterName,
-    filterBy: 'assign_to', 
+    filterBy: 'assign_to',
   });
 
   const notFound = !dataFiltered.length && !!filterName;
@@ -193,6 +242,9 @@ console.log("loggedInUser",loggedInUser);
                       start_date={row?.start_date}
                       end_date={row?.end_date}
                       assign_to={userMap.get(row.assign_to)} 
+                      start_date={row.start_date}
+                      end_date={row.end_date}
+                      assign_to={userMap.get(row.assign_to)}
                       handleEdit={() => handleEdit(row)}
                       handleDelete={() => handleDelete(row.id)}
                     />
