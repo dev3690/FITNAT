@@ -190,8 +190,8 @@ console.log("loggedInUser",loggedInUser);
                       pack={row.package}
                       url={row.url}
                       pain={row.pain}
-                      start_date={row.start_date}
-                      end_date={row.end_date}
+                      start_date={row?.start_date}
+                      end_date={row?.end_date}
                       assign_to={userMap.get(row.assign_to)} 
                       handleEdit={() => handleEdit(row)}
                       handleDelete={() => handleDelete(row.id)}

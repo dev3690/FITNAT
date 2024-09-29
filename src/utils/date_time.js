@@ -14,8 +14,8 @@ export const formatDateYYMMDD = (isoDate) => {
 
 export const calcTimeline = (patient) => {
   const currentDate = new Date();
-  const startDate = new Date(patient.start_date);
-  const endDate = new Date(patient.end_date);
+  const startDate = new Date(patient?.start_date);
+  const endDate = new Date(patient?.end_date);
   const totalWeeks = Math.ceil((endDate - startDate) / (7 * 24 * 60 * 60 * 1000));
   const currentWeek = Math.ceil((currentDate - startDate) / (7 * 24 * 60 * 60 * 1000));
 

@@ -222,11 +222,11 @@ if (
       // alert("please provide all Details")
       return
     }
-    if ((currentPatient?.mobile?.trim().length != 10)) {
-      toast.error("please provide 10 digit mobile number! ")
-      // alert("please provide all Details")
-      return
-    }
+    // if ((currentPatient?.mobile?.trim().length != 10)) {
+    //   toast.error("please provide 10 digit mobile number! ")
+    //   // alert("please provide all Details")
+    //   return
+    // }
 
     let pain = currentPatient?.pain.join(",")
     currentPatient.pain = pain

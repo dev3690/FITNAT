@@ -1,8 +1,8 @@
 import axios from "axios"
 
 // const localApiUrl = "https://fitnat.onrender.com"
-const localApiUrl = "http://localhost:3690"
-
+const localApiUrl = "http://27.116.52.24:8084"
+// const localApiUrl = "http://localhost:8085"
 
 // All api routes
 const getData = `${localApiUrl}/getData`
