@@ -242,9 +242,6 @@ export default function BirdEyeView() {
                       start_date={row?.start_date}
                       end_date={row?.end_date}
                       assign_to={userMap.get(row.assign_to)} 
-                      start_date={row?.start_date}
-                      end_date={row?.end_date}
-                      assign_to={userMap.get(row.assign_to)}
                       handleEdit={() => handleEdit(row)}
                       handleDelete={() => handleDelete(row.id)}
                     />
