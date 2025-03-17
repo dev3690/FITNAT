@@ -37,7 +37,8 @@ export default function BirdEyeTableRow({
   upliftState,
   handleEdit,
   handleDelete,
-  assign_to
+  assign_to,
+  isActive
 }) {
   const [open, setOpen] = useState(null);
   const [typeId, setTypeId] = useState();
@@ -74,7 +75,12 @@ export default function BirdEyeTableRow({
   }
 
   return (
-    <TableRow hover tabIndex={-1}>
+    <TableRow hover tabIndex={-1} sx={{
+      backgroundColor: !isActive ? '#ff8282' : 'inherit', // Grey background for inactive patients
+      '&:hover': {
+        backgroundColor: !isActive ? '#eeeeee' : '#ff8282',
+      },
+    }}>
       {selectedColumns?.includes("Name") && <TableCell>{name}</TableCell>}
       {selectedColumns?.includes("Package") && <TableCell>{pack == 1 ? "Fitnat Coaching Premium" : pack == 2 ? "Fitnat Coaching Delux" : "Fitnat Personal Training"}</TableCell>}
       {selectedColumns?.includes("Link") && <TableCell align="center">

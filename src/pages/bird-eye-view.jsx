@@ -116,6 +116,7 @@ export default function BirdEyeView() {
             assign_to: item?.patient_master?.assign_to, // Assigned field
             // type_id: item?.patient_master?.type_id, 
             // creator: item?.creator, 
+            isActive: new Date(item?.patient_master?.end_date) >= currentDate, // Add isActive flag
           }))
           // Filtering based on admin or non-admin privileges
           .filter((data) => {
@@ -123,7 +124,7 @@ export default function BirdEyeView() {
 
             // If user is an admin, show patients with the same type_id
             if (isAdmin) {
-              return isPatientActive && data?.creator.type_id === loggedInUserTypeId;
+              return data?.creator.type_id === loggedInUserTypeId;
             }
 
             // If not an admin, show only the patients assigned to the user
@@ -224,6 +225,7 @@ export default function BirdEyeView() {
                 {dataFiltered
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => (
+                    // In the render section, pass isActive to BirdEyeTableRow
                     <BirdEyeTableRow
                       key={row.id}
                       selectedColumns={selectedColumns}
@@ -241,7 +243,8 @@ export default function BirdEyeView() {
                       pain={row.pain}
                       start_date={row?.start_date}
                       end_date={row?.end_date}
-                      assign_to={userMap.get(row.assign_to)} 
+                      assign_to={userMap.get(row.assign_to)}
+                      isActive={row.isActive} // Add this prop
                       handleEdit={() => handleEdit(row)}
                       handleDelete={() => handleDelete(row.id)}
                     />
