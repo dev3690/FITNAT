@@ -351,6 +351,50 @@ if (
     // setIsLoading(false)
   }
 
+// Add new state for reset confirmation
+const [resetConfirmation, setResetConfirmation] = useState(false);
+
+// Modify the reset handler
+const handleReset = () => {
+  setResetConfirmation(true);
+};
+
+// Add handler for reset confirmation
+const handleResetConfirmation = (confirmed) => {
+  if (confirmed) {
+    // Create a copy of current patient with all week statuses reset
+    const resetPatient = {
+      ...currentPatient,
+      currentWeek: 1,
+      isNotify: false,
+      status: { // Reset status object
+      // Reset all week statuses
+      week1u1: 0, week1u2: 0, week1u3: 0,
+      week2u1: 0, week2u2: 0, week2u3: 0,
+      week3u1: 0, week3u2: 0, week3u3: 0,
+      week4u1: 0, week4u2: 0, week4u3: 0,
+      week5u1: 0, week5u2: 0, week5u3: 0,
+      week6u1: 0, week6u2: 0, week6u3: 0,
+      week7u1: 0, week7u2: 0, week7u3: 0,
+      week8u1: 0, week8u2: 0, week8u3: 0,
+      week9u1: 0, week9u2: 0, week9u3: 0,
+      week10u1: 0, week10u2: 0, week10u3: 0,
+      week11u1: 0, week11u2: 0, week11u3: 0,
+      week12u1: 0, week12u2: 0, week12u3: 0,
+      // Keep other essential fields
+      assign_to: currentPatient.assign_to,
+      assignee: currentPatient.assignee,
+      creator: currentPatient.creator,
+      totalWeeks: currentPatient.totalWeeks
+    }};
+    console.log("Reset Patient", resetPatient)
+    setCurrentPatient(resetPatient);
+  }
+  setResetConfirmation(false);
+};
+
+
+
   const handlePainChange = (event) => {
     const { target: { value } } = event;
     console.log(value)
@@ -361,12 +405,15 @@ if (
   };
   const notFound = !dataFiltered.length && !!filterName;
 
+
+
+
   return (
     <Container maxWidth="xl">
       <ToastContainer position='top-right' />
 
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-        <Typography variant="h4">Patients</Typography>
+        <Typography variant="h4"></Typography>
         {isMaster && <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleAddNewUser}>
           New Patient
         </Button>}
@@ -643,11 +690,18 @@ if (
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDialogClose}>Cancel</Button>
+          <Button 
+            onClick={handleReset}
+            color="warning"
+          >
+            Reset
+          </Button>
           <Button onClick={handleDialogSave}>{isEditing ? 'Save' : 'Add'}</Button>
         </DialogActions>
       </Dialog>}
       <ConfirmationDialog openDialog={confirmation} message={"Are You Sure"} handleSave={handleConfirmation} />
-
+      <ConfirmationDialog openDialog={confirmation} message={"Are You Sure"} handleSave={handleConfirmation} />
+      <ConfirmationDialog openDialog={resetConfirmation} message={"Are you sure you want to reset the form?"} handleSave={handleResetConfirmation} />
     </Container>
   );
 }
