@@ -30,7 +30,7 @@ export default function BirdEyeView() {
   const [userMap, setUserMap] = useState(new Map());
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
-  const [orderBy, setOrderBy] = useState('assign_to');
+  const [orderBy, setOrderBy] = useState(''); // Remove default 'assign_to'
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(15);
   const [isDataUpdated, setIsDataUpdated] = useState(false);
@@ -169,10 +169,17 @@ export default function BirdEyeView() {
   };
 
   const dataFiltered = applyFilter({
-    inputData: users,
+    inputData: [...users].sort((a, b) => {
+      // Only sort by active status
+      if (a.isActive !== b.isActive) {
+        return a.isActive ? -1 : 1;
+      }
+      // Apply column sorting only if orderBy is set
+      return orderBy ? getComparator(order, orderBy)(a, b) : 0;
+    }),
     comparator: getComparator(order, orderBy),
     filterName,
-    filterBy: 'assign_to',
+    filterBy: 'name', // Change filterBy to 'name' instead of 'assign_to'
   });
 
   const notFound = !dataFiltered.length && !!filterName;
