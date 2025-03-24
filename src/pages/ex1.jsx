@@ -178,13 +178,42 @@ export default function Ex1() {
 
 
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     try {
-      setConfirmation(true)
-      setDeleteID(id)
+      setConfirmation(true);
+      setDeleteID(id);
     } catch (error) {
       console.error('Failed to delete patient:', error);
     }
+  };
+
+  const handleConfirmation = async (confirmed) => {
+    if (confirmed) {
+      try {
+        // Delete from patient_master table
+        await callAxiosApi(deleteData, { table: PATIENT, id: deleteID });
+
+        // Delete from status_update table (bird view data)
+        const birdViewResponse = await callAxiosApi(birdViewApi);
+        const birdViewEntry = birdViewResponse.data?.find(item => 
+          item.patient_id === deleteID
+        );
+        
+        if (birdViewEntry) {
+          await callAxiosApi(deleteData, { 
+            table: 'statusUpdate', 
+            id: birdViewEntry.id 
+          });
+        }
+
+        setisDataUpdated(!isDataUpdated);
+        toast.success("Patient deleted successfully");
+      } catch (error) {
+        console.error('Failed to delete patient:', error);
+        toast.error("Failed to delete patient");
+      }
+    }
+    setConfirmation(false);
   };
 
   const handleDialogClose = () => {
@@ -339,17 +368,17 @@ if (
   });
 
 
-  const handleConfirmation = async (data) => {
-    console.log(">>>>>", data)
-    // setIsLoading(true)
-    if (data) {
-      let response = await callAxiosApi(deleteData, { table: PATIENT, id: deleteID })
-      setisDataUpdated(!isDataUpdated)
-      console.log("response", response)
-    }
-    setConfirmation(false)
-    // setIsLoading(false)
-  }
+  // const handleConfirmation = async (data) => {
+  //   console.log(">>>>>", data)
+  //   // setIsLoading(true)
+  //   if (data) {
+  //     let response = await callAxiosApi(deleteData, { table: PATIENT, id: deleteID })
+  //     setisDataUpdated(!isDataUpdated)
+  //     console.log("response", response)
+  //   }
+  //   setConfirmation(false)
+  //   // setIsLoading(false)
+  // }
 
 // Add new state for reset confirmation
 const [resetConfirmation, setResetConfirmation] = useState(false);

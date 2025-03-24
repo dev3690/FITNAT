@@ -13,9 +13,10 @@ import {
   TablePagination,
 } from '@mui/material';
 
-import { getData, USER, birdViewApi, callAxiosApi } from 'src/utils/api_utils';
+import { getData, USER, birdViewApi, callAxiosApi, deleteData } from 'src/utils/api_utils';
 import { useNavigate } from 'react-router-dom';
 import { getLocalItem } from 'src/utils/local_operations';
+import { toast } from 'react-toastify';
 
 import BirdEyeTableRow from './bird-eye-table-row';
 import TableNoData from '../sections/user/table-no-data';
@@ -35,6 +36,9 @@ export default function BirdEyeView() {
   const [rowsPerPage, setRowsPerPage] = useState(15);
   const [isDataUpdated, setIsDataUpdated] = useState(false);
   const [showFilterButton, setShowFilterButton] = useState(true);
+  const navigate = useNavigate();
+
+
 
   let optionList = [
     { id: 'name', label: 'Name' },
@@ -281,3 +285,32 @@ export default function BirdEyeView() {
     </Container>
   );
 }
+
+
+// Add this new handler near your other handlers
+const handleDelete = async (patientId) => {
+  try {
+    // Delete from patient_master table
+    await callAxiosApi(deleteData, { table: 'patient_master', id: patientId });
+    
+    // Delete from status_update table (bird view data)
+    const birdViewResponse = await callAxiosApi(birdViewApi);
+    const birdViewEntry = birdViewResponse.data?.find(item => 
+      item.patient_id === patientId
+    );
+    
+    if (birdViewEntry) {
+      await callAxiosApi(deleteData, { 
+        table: 'statusUpdate', 
+        id: birdViewEntry.id 
+      });
+    }
+
+    // Refresh the data
+    setIsDataUpdated(!isDataUpdated);
+    toast.success("Patient deleted successfully");
+  } catch (error) {
+    console.error('Failed to delete patient:', error);
+    toast.error("Failed to delete patient");
+  }
+};
